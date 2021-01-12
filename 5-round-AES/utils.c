@@ -230,6 +230,8 @@ uchar PrepareKey(uchar **round_keys, uchar *key) {
     for (j = 0; j < CELLS; j++) {
       round_keys[i + 1][j] = key[j];
     }
+    PrintByteArray(key, CELLS, (const uchar *)"======>key");
+    PrintByteArray(round_keys[i + 1], CELLS, (const uchar *)"======>round_key");
   }
   return return_code;
 }
