@@ -29,7 +29,7 @@
 #define SEARCH_LEN 17
 #define CIPHER 0
 #define DECIPHER 1
-#define AES_ROUNDS 10
+#define AES_ROUNDS 5
 #define AES_KEYS 11
 #define AES_KEYSTR_LEN 48
 

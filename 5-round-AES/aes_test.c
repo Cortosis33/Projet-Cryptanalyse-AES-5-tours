@@ -12,6 +12,7 @@ int main(int argc, char const *argv[]) {
   for (uchar i = 0; i < CELLS; i++)
     plaintext[i] = PLAINTEXT[i];
 
+  /* Some tests */
   PrintByteArray(plaintext, 16, (const uchar *)"Plaintext");
 
   SubBytes(plaintext);
@@ -27,6 +28,26 @@ int main(int argc, char const *argv[]) {
   PrintByteArray(plaintext, 16, (const uchar *)"Plaintext after MixColumn");
 
   PrintByteArray(plaintext, 16, (const uchar *)"Plaintext after MixColumn");
+
+  /* Keys creation */
+  uchar key[CELLS];
+  for (uchar i = 0; i < CELLS; i++)
+    key[i] = KEY[i];
+
+  PrintByteArray(KEY, 16, (const uchar *)"key");
+
+  uchar *round_keys[AES_ROUNDS + 1]; /* (Rounds + 1) keys */
+  for (size_t i = 0; i < AES_ROUNDS + 1; i++) {
+    uchar tmp_array[CELLS];
+    round_keys[i] = tmp_array;
+  }
+
+  PrepareKey(round_keys, KEY);
+
+  for (size_t i = 0; i < AES_ROUNDS + 1; i++) {
+    PrintByteArray(round_keys[i], CELLS, (const uchar *)"key");
+    fprintf(stdout, "%zu\n", i);
+  }
 
   return 0;
 }

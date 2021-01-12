@@ -30,6 +30,10 @@ uchar PrintByteArray(uchar *message, uchar len, const uchar *name) {
 
 #endif /* DEBUG_LVL*/
 
+/******************************************************************************/
+/***************************** AES MANAGMENT **********************************/
+/******************************************************************************/
+
 /*
 SubBytes functions
 */
@@ -140,6 +144,9 @@ uchar IShiftRow(uchar *message) {
   return EXIT_SUCCESS;
 }
 
+/*
+MixColumn functions (equivalent to a matrix product in GF(2^8))
+*/
 uchar MixColumn(uchar *message) {
   uchar column;
   uchar v, u, t;
@@ -184,6 +191,11 @@ uchar IMixColumn(uchar *message) {
   return return_code;
 }
 
+/******************************************************************************/
+/**************************** KEYS MANAGMENT **********************************/
+/******************************************************************************/
+
+/* compute a 128-bits subkey from key */
 uchar UnrollKey(uchar *key, uchar round) {
   uchar tmp;
   uchar row;
@@ -205,23 +217,24 @@ uchar UnrollKey(uchar *key, uchar round) {
   return EXIT_SUCCESS;
 }
 
+/* create a list with subparts of 128-bits key */
 uchar PrepareKey(uchar **round_keys, uchar *key) {
   uchar i, j;
   uchar return_code = EXIT_FAILURE;
 
-  for (j = 0; j < 16; j++) {
+  for (j = 0; j < CELLS; j++) {
     round_keys[0][j] = key[j];
   }
-  for (i = 0; i < 10; i++) {
+  for (i = 0; i < AES_ROUNDS; i++) {
     return_code = UnrollKey(key, i);
-    for (j = 0; j < 16; j++) {
+    for (j = 0; j < CELLS; j++) {
       round_keys[i + 1][j] = key[j];
     }
   }
   return return_code;
 }
 
-// Source: Wikipedia
+/* compute hamming distance */
 unsigned hamdist(unsigned x, unsigned y) {
   unsigned dist = 0, val = x ^ y; // XOR
 
