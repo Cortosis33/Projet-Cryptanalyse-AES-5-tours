@@ -4,10 +4,10 @@ OFLAGS=-o2 -o
 
 all: AES_TEST
 
-AES_TEST: utils.o exercise1.o
+AES_TEST: utils.o aes_test.o
 	$(CC)  $^ $(OFLAGS) $@
 
-exercise1.o: exercise1.c
+aes_test.o: aes_test.c
 	$(CC) $(CFLAGS) $^ $(OFLAGS) $@
 
 utils.o: utils.c
