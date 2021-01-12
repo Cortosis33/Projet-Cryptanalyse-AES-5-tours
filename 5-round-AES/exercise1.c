@@ -10,8 +10,9 @@ uchar PLAINTEXT[16] =  {0x39, 0x02, 0xDC, 0x19,
                         0x84, 0x09, 0x85, 0x0B,
                         0x1D, 0xFB, 0x97, 0x32};
 
+
+
 int main(int argc, char const *argv[]) {
-  fprintf(stderr, "ok\n");
 
   uchar plaintext[CELLS];
   for(uchar i = 0; i < CELLS; i++)
@@ -21,7 +22,19 @@ int main(int argc, char const *argv[]) {
 
   SubBytes(plaintext);
 
-  PrintByteArray(plaintext, 16, (const uchar *)"Plaintext");
+  PrintByteArray(plaintext, 16, (const uchar *)"Plaintext after SubBytes");
+
+  ShiftRow(plaintext);
+
+  PrintByteArray(plaintext, 16, (const uchar *)"Plaintext after ShiftRow");
+
+  MixColumn(plaintext);
+
+  PrintByteArray(plaintext, 16, (const uchar *)"Plaintext after MixColumn");
+
+  uchar value = xtime(0x05);
+
+  fprintf(stdout, "%x\n", value);
 
   return 0;
 }

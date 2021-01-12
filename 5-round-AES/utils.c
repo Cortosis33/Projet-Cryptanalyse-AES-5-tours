@@ -2,8 +2,10 @@
 #include "utils.h"
 
 
+/* if the DEBUG value is activated */
 #if DEBUG_LVL > 0
 
+/* ON case */
 uchar PrintByteArray(uchar * message, uchar len, const uchar * name)
 {
     uchar return_code = EXIT_FAILURE;
@@ -23,13 +25,18 @@ uchar PrintByteArray(uchar * message, uchar len, const uchar * name)
 }
 
 #else
-
+/* OFF case */
 uchar PrintByteArray(uchar * message, uchar len, const uchar * name)
 {
     return EXIT_SUCCESS;
 }
+
 #endif /* DEBUG_LVL*/
 
+
+/*
+SubBytes functions
+*/
 uchar SubBytes(uchar * message)
 {
     unsigned int i;
@@ -40,6 +47,20 @@ uchar SubBytes(uchar * message)
     return EXIT_SUCCESS;
 }
 
+uchar ISubBytes(uchar * message)
+{
+    unsigned int i;
+    for(i = 0; i < CELLS; i++)
+    {
+        message[i] = IS_box[message[i]];
+    }
+    return EXIT_SUCCESS;
+}
+
+
+/*
+function to compute 2*byte_value in GF(2^8)
+*/
 uchar xtime(uchar byte_value)
 {
     /* initialized random */

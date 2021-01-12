@@ -26,8 +26,6 @@
 #define ROWS 4
 #define COLS ROWS
 #define CELLS 16
-#define EXIT_SUCCESS 0
-#define EXIT_FAILURE 1
 #define SEARCH_LEN 17
 #define CIPHER 0
 #define DECIPHER 1
@@ -132,6 +130,9 @@ static const unsigned char GF256_INVERSE[256] = {
 uchar PrintByteArray(uchar * message, uchar len, const uchar * name);
 //#endif /* DEBUG_LVL 1*/
 
+uchar SubBytes(uchar * message);
+uchar ISubBytes(uchar * message);
+
 uchar PrepareKey(uchar ** round_keys, uchar * key);
 
 uchar xtime(uchar byte_value);
@@ -145,8 +146,6 @@ uchar ShiftRow(uchar * message);
 uchar IShiftRow(uchar * message);
 
 uchar UnrollKey(uchar * key, uchar round);
-
-uchar SubBytes(uchar * message);
 
 unsigned hamdist(unsigned x, unsigned y);
 
