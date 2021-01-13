@@ -14,4 +14,4 @@ utils.o: utils.c
 	$(CC) $(CFLAGS) $^ $(OFLAGS) $@
 
 clean:
-	rm -vf ./*.o ./*.out
+	rm -vf ./*.o ./*.out AES_TEST
