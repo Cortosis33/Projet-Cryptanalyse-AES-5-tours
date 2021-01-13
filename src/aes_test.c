@@ -36,17 +36,16 @@ int main(int argc, char const *argv[]) {
 
   for (size_t i = 0; i < AES_ROUNDS + 1; i++) {
     fprintf(stdout, "key %zu:\n", i);
-    PrintByteArray(round_keys[i], CELLS, (const uchar *)"Key");
+    PrintByteArray(round_keys[i], CELLS, (const uchar *)"");
   }
 
-  /*****************/
-  /*   Encryption  */
-  /*****************/
+  /*******************************/
+  /*   Encryption & Decryption   */
+  /*******************************/
 
   uchar plaintext[CELLS];
   for (uchar i = 0; i < CELLS; i++)
     plaintext[i] = PLAINTEXT[i];
-
 
   PrintByteArray(plaintext, CELLS, (const uchar *)"Plaintext");
 

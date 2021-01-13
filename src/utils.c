@@ -26,6 +26,7 @@ uchar PrintByteArray(uchar *message, uchar len, const uchar *name) {
 /* OFF case */
 uchar PrintByteArray(uchar *message, uchar len, const uchar *name) {
   return EXIT_SUCCESS;
+  
 }
 
 #endif /* DEBUG_LVL*/

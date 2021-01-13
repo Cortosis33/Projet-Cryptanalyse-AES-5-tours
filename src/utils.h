@@ -26,10 +26,8 @@
 #define ROWS 4
 #define COLS ROWS
 #define CELLS 16
-#define SEARCH_LEN 17
-#define CIPHER 0
-#define DECIPHER 1
-#define AES_ROUNDS 5
+
+#define AES_ROUNDS 6
 #define AES_KEYS 11
 #define AES_KEYSTR_LEN 48
 
@@ -45,6 +43,7 @@
 static const uchar hamming4[16] = {0, 1, 1, 2, 1, 2, 2, 3,
                                    1, 2, 2, 3, 2, 3, 3, 4};
 
+/* The key schedule produces the needed round keys from the initial key */
 static const uchar rcon[10] = {0x01, 0x02, 0x04, 0x08, 0x10,
                                0x20, 0x40, 0x80, 0x1b, 0x36};
 
