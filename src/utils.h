@@ -24,7 +24,7 @@
 
 #define DEBUG_LVL 1
 #define ROWS 4
-#define COLS ROWS
+#define COLS 4
 #define CELLS 16
 
 #define AES_ROUNDS 10
@@ -33,11 +33,6 @@
 
 #define MESSAGE_ARRAY_LEN 20
 #define BYTE_VALUES 256
-
-#define ARK 0
-#define SB 1
-#define SR 2
-#define MC 3
 
 /* Sboxes and rcon and other tabs*/
 static const uchar hamming4[16] = {0, 1, 1, 2, 1, 2, 2, 3,
