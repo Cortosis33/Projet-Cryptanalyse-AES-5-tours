@@ -27,7 +27,7 @@
 #define COLS ROWS
 #define CELLS 16
 
-#define AES_ROUNDS 6
+#define AES_ROUNDS 10
 #define AES_KEYS 11
 #define AES_KEYSTR_LEN 48
 

@@ -18,7 +18,7 @@ AES_TEST: utils.o aes_test.o
 utils.o: utils.c utils.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
 
-aes_test.o: aes_test.c
+aes_test.o: aes_test.c utils.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
 
 clean:
