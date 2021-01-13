@@ -55,7 +55,7 @@ int main(int argc, char const *argv[]) {
 
   Decryption(plaintext, round_keys);
 
-  PrintByteArray(plaintext, CELLS, (const uchar *)"Plaintext");
+  PrintByteArray(plaintext, CELLS, (const uchar *)"Decrypted");
 
 
   return 0;
