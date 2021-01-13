@@ -148,10 +148,7 @@ uchar PrintByteArray(uchar *message, uchar len, const uchar *name);
 uchar SubBytes(uchar *message);
 uchar ISubBytes(uchar *message);
 
-uchar PrepareKey(uchar **round_keys, uchar *key);
-
 uchar xtime(uchar byte_value);
-
 uchar FieldMul(uchar byte_value, uchar coeff);
 
 uchar MixColumn(uchar *message);
@@ -160,7 +157,14 @@ uchar IMixColumn(uchar *message);
 uchar ShiftRow(uchar *message);
 uchar IShiftRow(uchar *message);
 
+uchar AddRoundKey(uchar *message, uchar *key);
+
+uchar Encryption(uchar *plaintext, uchar **round_keys);
+uchar Decryption(uchar *ciphertext, uchar **round_keys);
+
+
 uchar UnrollKey(uchar *key, uchar round);
+uchar PrepareKey(uchar **round_keys, uchar *key);
 
 unsigned hamdist(unsigned x, unsigned y);
 

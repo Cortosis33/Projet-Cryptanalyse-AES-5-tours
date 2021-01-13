@@ -11,25 +11,6 @@ uchar PLAINTEXT[CELLS] = {0x39, 0x02, 0xDC, 0x19, 0x25, 0xDC, 0x11, 0x6A,
 
 int main(int argc, char const *argv[]) {
 
-  uchar plaintext[CELLS];
-  for (uchar i = 0; i < CELLS; i++)
-    plaintext[i] = PLAINTEXT[i];
-
-  /* Some tests */
-  PrintByteArray(plaintext, CELLS, (const uchar *)"Plaintext");
-
-  SubBytes(plaintext);
-
-  PrintByteArray(plaintext, CELLS, (const uchar *)"Plaintext after SubBytes");
-
-  ShiftRow(plaintext);
-
-  PrintByteArray(plaintext, CELLS, (const uchar *)"Plaintext after ShiftRow");
-
-  MixColumn(plaintext);
-
-  PrintByteArray(plaintext, CELLS, (const uchar *)"Plaintext after MixColumn");
-
   /*****************/
   /* Keys creation */
   /*****************/
@@ -57,6 +38,26 @@ int main(int argc, char const *argv[]) {
     fprintf(stdout, "key %zu:\n", i);
     PrintByteArray(round_keys[i], CELLS, (const uchar *)"Key");
   }
+
+  /*****************/
+  /*   Encryption  */
+  /*****************/
+
+  uchar plaintext[CELLS];
+  for (uchar i = 0; i < CELLS; i++)
+    plaintext[i] = PLAINTEXT[i];
+
+
+  PrintByteArray(plaintext, CELLS, (const uchar *)"Plaintext");
+
+  Encryption(plaintext, round_keys);
+
+  PrintByteArray(plaintext, CELLS, (const uchar *)"Encrypted");
+
+  Decryption(plaintext, round_keys);
+
+  PrintByteArray(plaintext, CELLS, (const uchar *)"Plaintext");
+
 
   return 0;
 }

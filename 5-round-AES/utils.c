@@ -191,6 +191,51 @@ uchar IMixColumn(uchar *message) {
   return return_code;
 }
 
+uchar AddRoundKey(uchar *message, uchar *key){
+  for (size_t i = 0; i < CELLS; i++) {
+    message[i]=message[i]^key[i];
+  }
+  return EXIT_SUCCESS;
+}
+
+uchar Encryption(uchar *plaintext, uchar **round_keys){
+  /* let's start with an AddRoundKey */
+  AddRoundKey(plaintext, round_keys[0]);
+
+  /**** Rounds starts ****/
+  for (size_t i = 1; i < AES_ROUNDS; i++) {
+    SubBytes(plaintext);
+    ShiftRow(plaintext);
+    MixColumn(plaintext);
+    AddRoundKey(plaintext, round_keys[i]);
+  }
+
+  /**** Last Round ****/
+  SubBytes(plaintext);
+  ShiftRow(plaintext);
+  AddRoundKey(plaintext, round_keys[AES_ROUNDS]);
+
+  return EXIT_SUCCESS;
+}
+
+uchar Decryption(uchar *ciphertext, uchar **round_keys){
+  /* let's start with an AddRoundKey */
+  AddRoundKey(ciphertext, round_keys[AES_ROUNDS]);
+  IShiftRow(ciphertext);
+  ISubBytes(ciphertext);
+
+  for (size_t i = AES_ROUNDS-1; i > 0 ; i--) {
+    AddRoundKey(ciphertext, round_keys[i]);
+    IMixColumn(ciphertext);
+    IShiftRow(ciphertext);
+    ISubBytes(ciphertext);
+  }
+
+  AddRoundKey(ciphertext, round_keys[0]);
+
+  return EXIT_SUCCESS;
+}
+
 /******************************************************************************/
 /**************************** KEYS MANAGMENT **********************************/
 /******************************************************************************/
@@ -230,8 +275,6 @@ uchar PrepareKey(uchar **round_keys, uchar *key) {
     for (j = 0; j < CELLS; j++) {
       round_keys[i + 1][j] = key[j];
     }
-    PrintByteArray(key, CELLS, (const uchar *)"======>key");
-    PrintByteArray(round_keys[i + 1], CELLS, (const uchar *)"======>round_key");
   }
   return return_code;
 }
