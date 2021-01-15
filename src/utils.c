@@ -38,14 +38,14 @@ uchar PrintByteArray(uchar *message, uchar len, const uchar *name) {
 SubBytes functions
 */
 bool SubBytes(uchar *message) {
-  for (unsigned int i = 0; i < CELLS; i++) {
+  for (uchar i = 0; i < CELLS; i++) {
     message[i] = S_box[message[i]];
   }
   return EXIT_SUCCESS;
 }
 
 bool ISubBytes(uchar *message) {
-  for (unsigned int i = 0; i < CELLS; i++) {
+  for (uchar i = 0; i < CELLS; i++) {
     message[i] = IS_box[message[i]];
   }
   return EXIT_SUCCESS;
@@ -77,7 +77,7 @@ uchar FieldMul(uchar byte_value, uchar coeff) {
 }
 
 bool ShiftRow(uchar *message) {
-  uchar tmp;
+  uchar tmp = 0;
 
   /* 2nd Row */
   tmp = message[4];
@@ -106,7 +106,7 @@ bool ShiftRow(uchar *message) {
 }
 
 bool IShiftRow(uchar *message) {
-  uchar tmp;
+  uchar tmp = 0;
 
   /* 4th Row */
   tmp = message[7];
@@ -143,8 +143,8 @@ A = 1 2 3 1   B = message
 it computes A*B
 */
 bool MixColumn(uchar *message) {
-  uchar column;
-  uchar v, u, t;
+  uchar column = 0;
+  uchar v, u, t = 0;
 
   for (column = 0; column < 4; column++) {
     t = message[column] ^ message[4 + column] ^ message[8 + column] ^
@@ -172,8 +172,9 @@ bool MixColumn(uchar *message) {
 
 bool IMixColumn(uchar *message) {
   uchar return_code = EXIT_FAILURE;
-  uchar column;
-  uchar v, u;
+  uchar column = 0;
+  uchar v, u = 0;
+
   for (column = 0; column < 4; column++) {
     u = xtime(xtime(message[column + 0] ^ message[column + 8]));
     v = xtime(xtime(message[column + 4] ^ message[column + 12]));
@@ -187,7 +188,7 @@ bool IMixColumn(uchar *message) {
 }
 
 bool AddRoundKey(uchar *message, uchar *key) {
-  for (size_t i = 0; i < CELLS; i++) {
+  for (uchar i = 0; i < CELLS; i++) {
     message[i] = message[i] ^ key[i];
   }
   return EXIT_SUCCESS;
@@ -198,7 +199,7 @@ bool Encryption(uchar *plaintext, uchar **round_keys) {
   AddRoundKey(plaintext, round_keys[0]);
 
   /**** Rounds starts ****/
-  for (size_t i = 1; i < AES_ROUNDS; i++) {
+  for (uchar i = 1; i < AES_ROUNDS; i++) {
     SubBytes(plaintext);
     ShiftRow(plaintext);
     MixColumn(plaintext);
@@ -219,7 +220,7 @@ bool Decryption(uchar *ciphertext, uchar **round_keys) {
   IShiftRow(ciphertext);
   ISubBytes(ciphertext);
 
-  for (size_t i = AES_ROUNDS - 1; i > 0; i--) {
+  for (uchar i = AES_ROUNDS - 1; i > 0; i--) {
     AddRoundKey(ciphertext, round_keys[i]);
     IMixColumn(ciphertext);
     IShiftRow(ciphertext);
@@ -237,9 +238,8 @@ bool Decryption(uchar *ciphertext, uchar **round_keys) {
 
 /* compute a 128-bits subkey from key */
 bool UnrollKey(uchar *key, uchar round) {
-  uchar tmp;
-  uchar row;
-  uchar column;
+  uchar tmp = 0;
+  uchar row, column = 0;
 
   /* evaluate 1st col */
   tmp = key[3];
@@ -259,15 +259,15 @@ bool UnrollKey(uchar *key, uchar round) {
 
 /* create a list with subparts of 128-bits key */
 bool PrepareKey(uchar **round_keys, uchar *key) {
-  uchar i, j;
+
   uchar return_code = EXIT_FAILURE;
 
-  for (j = 0; j < CELLS; j++) {
+  for (uchar j = 0; j < CELLS; j++) {
     round_keys[0][j] = key[j];
   }
-  for (i = 0; i < AES_ROUNDS; i++) {
+  for (uchar i = 0; i < AES_ROUNDS; i++) {
     return_code = UnrollKey(key, i);
-    for (j = 0; j < CELLS; j++) {
+    for (uchar j = 0; j < CELLS; j++) {
       round_keys[i + 1][j] = key[j];
     }
   }
