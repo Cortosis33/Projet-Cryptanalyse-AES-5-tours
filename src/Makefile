@@ -14,6 +14,7 @@ all: AES_TEST
 
 AES_TEST: utils.o aes_test.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+	@rm -f *.o
 
 utils.o: utils.c utils.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<

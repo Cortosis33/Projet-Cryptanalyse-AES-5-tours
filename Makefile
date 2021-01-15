@@ -10,6 +10,7 @@ all: build
 build:
 	@cd src && $(MAKE)
 	@cp -f src/$(EXE) ./
+	@cd src && make clean
 
 clean:
 	@cd src && $(MAKE) clean
