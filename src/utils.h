@@ -145,7 +145,6 @@ bool SubBytes(uchar *message);
 bool ISubBytes(uchar *message);
 
 uchar xtime(uchar byte_value);
-uchar xtime_bis(uchar byte_value);
 uchar FieldMul(uchar byte_value, uchar coeff);
 
 bool MixColumn(uchar *message);
@@ -159,9 +158,10 @@ bool AddRoundKey(uchar *message, uchar *key);
 bool Encryption(uchar *plaintext, uchar **round_keys);
 bool Decryption(uchar *ciphertext, uchar **round_keys);
 
-
 bool UnrollKey(uchar *key, uchar round);
 bool PrepareKey(uchar **round_keys, uchar *key);
+
+bool InvATurn(uchar *ciphertext, uchar **round_keys, int current_turn);
 
 unsigned hamdist(unsigned x, unsigned y);
 

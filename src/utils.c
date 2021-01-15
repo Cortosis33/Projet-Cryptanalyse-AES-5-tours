@@ -287,7 +287,7 @@ unsigned hamdist(unsigned x, unsigned y) {
   return dist;
 }
 
-uchar InvATurn(uchar *ciphertext, uchar **round_keys, int current_turn) {
+bool InvATurn(uchar *ciphertext, uchar **round_keys, int current_turn) {
 
   if (current_turn > AES_ROUNDS) {
     return EXIT_FAILURE;
