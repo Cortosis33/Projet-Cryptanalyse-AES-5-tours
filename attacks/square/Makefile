@@ -1,25 +1,27 @@
-
 # Variables
-EXE = aes_test
+EXE = square_test
 
 # Usual compilation flags
 CFLAGS = -Wall -Wextra -g -O2
-CPPFLAGS = -I../include -DDEBUG
+CPPFLAGS = -I../../include -DDEBUG
 
 # Special rules and targets
 .PHONY: all clean help
 
 # Rules and targets
-all: aes_test
+all: square_test
 
-aes_test: utils.o aes_test.o
+square_test: utils.o square.o square_test.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 	@rm -f *.o
 
-utils.o: utils.c ../include/utils.h
+utils.o: ../../src/utils.c ../../include/utils.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
 
-aes_test.o: aes_test.c ../include/utils.h
+square.o: square.c ../../include/square.h
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
+
+square_test.o: square_test.c ../../include/utils.h ../../include/square.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
 
 clean:

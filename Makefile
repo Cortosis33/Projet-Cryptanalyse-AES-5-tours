@@ -9,11 +9,13 @@ all: build
 
 build:
 	@cd src && $(MAKE)
+	@cd attacks/square && $(MAKE)
 	@cp -f src/$(EXE) ./
 	@cd src && make clean
 
 clean:
 	@cd src && $(MAKE) clean
+	@cd attacks/square && $(MAKE) clean
 #	@cd test && $(MAKE) clean
 	@rm -f $(EXE)
 
