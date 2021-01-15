@@ -26,7 +26,6 @@ uchar PrintByteArray(uchar *message, uchar len, const uchar *name) {
 /* OFF case */
 uchar PrintByteArray(uchar *message, uchar len, const uchar *name) {
   return EXIT_SUCCESS;
-  
 }
 
 #endif /* DEBUG_LVL*/
@@ -55,7 +54,7 @@ uchar ISubBytes(uchar *message) {
 }
 
 /*
-function to compute 2*byte_value in GF(2^8)
+multiplication by x in GF(2^8)
 */
 uchar xtime(uchar byte_value) {
   /* initialized random */
@@ -147,6 +146,11 @@ uchar IShiftRow(uchar *message) {
 
 /*
 MixColumn functions (equivalent to a matrix product in GF(2^8))
+    2 3 1 1
+A = 1 2 3 1   B = message
+    3 1 1 1
+
+it computes A*B
 */
 uchar MixColumn(uchar *message) {
   uchar column;
