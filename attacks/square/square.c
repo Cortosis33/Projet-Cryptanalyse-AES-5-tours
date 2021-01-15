@@ -5,6 +5,10 @@ fonction epermettant de creer le tableau des plaintexts
 */
 uchar create_plaintexts(plain_cipher *pairs, uchar fix_byte) {
 
+  if (fix_byte >= 16) {
+    return EXIT_FAILURE;
+  }
+
   for (uchar i = 0; i < 255; i++) {
 
     // on remplie de plaintext de 0
@@ -19,6 +23,8 @@ uchar create_plaintexts(plain_cipher *pairs, uchar fix_byte) {
 
   return EXIT_SUCCESS;
 }
+
+uchar encrypt_plaintexts(plain_cipher *pairs, uchar *round_keys) {}
 
 void print_all_plaintexts(plain_cipher *pairs) {
   for (size_t i = 0; i < 255; i++) {
