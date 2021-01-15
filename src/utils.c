@@ -1,7 +1,6 @@
 // code inspired by "DFA" from "carte à puces" courses
 
 #include "utils.h"
-#include "stdlib.h"
 
 /* if the DEBUG value is activated */
 #if DEBUG_LVL > 0
