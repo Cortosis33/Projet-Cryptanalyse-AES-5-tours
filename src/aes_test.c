@@ -2,8 +2,8 @@
 
 uchar SIZE_KEY = 16;
 
-uchar KEY[16] = {0xd0, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
-                 0xf9, 0x25, 0x0c, 0x0c, 0xa8, 0x89, 0xc8, 0xa6};
+static uchar KEY[16] = {0xd0, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
+                        0xf9, 0x25, 0x0c, 0x0c, 0xa8, 0x89, 0xc8, 0xa6};
 
 // key : d0c9e1b614ee3f63f9250c0ca889c8a6
 
@@ -18,29 +18,26 @@ int main() {
   /*        Keys creation        */
   /*******************************/
 
+  // to generate roundkeys
   uchar **round_keys = GenRoundkeys(KEY, 0);
 
   /*******************************/
   /*   Encryption & Decryption   */
   /*******************************/
+  PrintByteArray(PLAINTEXT, CELLS, (const uchar *)"Plaintext");
 
-  uchar plaintext[CELLS];
-  for (uchar i = 0; i < CELLS; i++)
-    plaintext[i] = PLAINTEXT[i];
+  // to encrypt
+  Encryption(PLAINTEXT, round_keys);
+  PrintByteArray(PLAINTEXT, CELLS, (const uchar *)"Encrypted");
 
-  PrintByteArray(plaintext, CELLS, (const uchar *)"Plaintext");
-
-  Encryption(plaintext, round_keys);
-
-  PrintByteArray(plaintext, CELLS, (const uchar *)"Encrypted");
-
-  Decryption(plaintext, round_keys);
-
-  PrintByteArray(plaintext, CELLS, (const uchar *)"Decrypted");
+  // to decrypt
+  Decryption(PLAINTEXT, round_keys);
+  PrintByteArray(PLAINTEXT, CELLS, (const uchar *)"Decrypted");
 
   /*******************************/
   /*          Some tests         */
   /*******************************/
+  KEY[0] = 1;
 
   return 0;
 }
