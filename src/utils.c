@@ -54,8 +54,8 @@ bool ISubBytes(uchar *message) {
 /*
 multiplication by x in GF(2^8)
 */
-uchar xtime(uchar byte_value){
-  return ((byte_value<<1) ^ (((byte_value>>7) & 1) * 0x1b));
+uchar xtime(uchar byte_value) {
+  return ((byte_value << 1) ^ (((byte_value >> 7) & 1) * 0x1b));
 }
 
 uchar FieldMul(uchar byte_value, uchar coeff) {
@@ -186,14 +186,14 @@ bool IMixColumn(uchar *message) {
   return return_code;
 }
 
-bool AddRoundKey(uchar *message, uchar *key){
+bool AddRoundKey(uchar *message, uchar *key) {
   for (size_t i = 0; i < CELLS; i++) {
     message[i] = message[i] ^ key[i];
   }
   return EXIT_SUCCESS;
 }
 
-bool Encryption(uchar *plaintext, uchar **round_keys){
+bool Encryption(uchar *plaintext, uchar **round_keys) {
   /* let's start with an AddRoundKey */
   AddRoundKey(plaintext, round_keys[0]);
 
@@ -213,7 +213,7 @@ bool Encryption(uchar *plaintext, uchar **round_keys){
   return EXIT_SUCCESS;
 }
 
-bool Decryption(uchar *ciphertext, uchar **round_keys){
+bool Decryption(uchar *ciphertext, uchar **round_keys) {
   /* let's start with an AddRoundKey */
   AddRoundKey(ciphertext, round_keys[AES_ROUNDS]);
   IShiftRow(ciphertext);
@@ -287,11 +287,29 @@ unsigned hamdist(unsigned x, unsigned y) {
   return dist;
 }
 
-uchar InvATurn(uchar *ciphertext, uchar **round_keys) {
-  /* let's start with an AddRoundKey */
-  AddRoundKey(ciphertext, round_keys[AES_ROUNDS]);
-  IShiftRow(ciphertext);
-  ISubBytes(ciphertext);
+uchar InvATurn(uchar *ciphertext, uchar **round_keys, int current_turn) {
 
-  return EXIT_SUCCESS;
+  if (current_turn > AES_ROUNDS) {
+    return EXIT_FAILURE;
+  }
+
+  if (AES_ROUNDS == current_turn) {
+    AddRoundKey(ciphertext, round_keys[AES_ROUNDS]);
+    IShiftRow(ciphertext);
+    ISubBytes(ciphertext);
+    return EXIT_SUCCESS;
+
+  } else if (current_turn == 0) {
+    AddRoundKey(ciphertext, round_keys[0]);
+    return EXIT_SUCCESS;
+
+  } else {
+    AddRoundKey(ciphertext, round_keys[current_turn]);
+    IMixColumn(ciphertext);
+    IShiftRow(ciphertext);
+    ISubBytes(ciphertext);
+    return EXIT_SUCCESS;
+  }
+
+  return EXIT_FAILURE;
 }
