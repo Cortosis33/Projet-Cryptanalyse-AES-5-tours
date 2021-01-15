@@ -10,6 +10,8 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
 
 /*
  * Define some useful values
@@ -27,7 +29,7 @@
 #define COLS 4
 #define CELLS 16
 
-#define AES_ROUNDS 10
+#define AES_ROUNDS 5
 #define AES_KEYS 11
 #define AES_KEYSTR_LEN 48
 
@@ -139,29 +141,28 @@ static const unsigned char GF256_INVERSE[256] = {
 uchar PrintByteArray(uchar *message, uchar len, const uchar *name);
 //#endif /* DEBUG_LVL 1*/
 
-uchar SubBytes(uchar *message);
-uchar ISubBytes(uchar *message);
+bool SubBytes(uchar *message);
+bool ISubBytes(uchar *message);
 
 uchar xtime(uchar byte_value);
+uchar xtime_bis(uchar byte_value);
 uchar FieldMul(uchar byte_value, uchar coeff);
 
-uchar MixColumn(uchar *message);
-uchar IMixColumn(uchar *message);
+bool MixColumn(uchar *message);
+bool IMixColumn(uchar *message);
 
-uchar ShiftRow(uchar *message);
-uchar IShiftRow(uchar *message);
+bool ShiftRow(uchar *message);
+bool IShiftRow(uchar *message);
 
-uchar AddRoundKey(uchar *message, uchar *key);
+bool AddRoundKey(uchar *message, uchar *key);
 
-uchar Encryption(uchar *plaintext, uchar **round_keys);
-uchar Decryption(uchar *ciphertext, uchar **round_keys);
+bool Encryption(uchar *plaintext, uchar **round_keys);
+bool Decryption(uchar *ciphertext, uchar **round_keys);
 
 
-uchar UnrollKey(uchar *key, uchar round);
-uchar PrepareKey(uchar **round_keys, uchar *key);
+bool UnrollKey(uchar *key, uchar round);
+bool PrepareKey(uchar **round_keys, uchar *key);
 
 unsigned hamdist(unsigned x, unsigned y);
-
-void str2state(uchar *str, uchar *state);
 
 #endif /* UTILS_H */

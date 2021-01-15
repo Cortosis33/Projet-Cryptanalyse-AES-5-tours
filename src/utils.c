@@ -37,17 +37,15 @@ uchar PrintByteArray(uchar *message, uchar len, const uchar *name) {
 /*
 SubBytes functions
 */
-uchar SubBytes(uchar *message) {
-  unsigned int i;
-  for (i = 0; i < CELLS; i++) {
+bool SubBytes(uchar *message) {
+  for (unsigned int i = 0; i < CELLS; i++) {
     message[i] = S_box[message[i]];
   }
   return EXIT_SUCCESS;
 }
 
-uchar ISubBytes(uchar *message) {
-  unsigned int i;
-  for (i = 0; i < CELLS; i++) {
+bool ISubBytes(uchar *message) {
+  for (unsigned int i = 0; i < CELLS; i++) {
     message[i] = IS_box[message[i]];
   }
   return EXIT_SUCCESS;
@@ -56,16 +54,8 @@ uchar ISubBytes(uchar *message) {
 /*
 multiplication by x in GF(2^8)
 */
-uchar xtime(uchar byte_value) {
-  /* initialized random */
-  uchar return_value[2];
-
-  /* Compute both values */
-  return_value[0] = byte_value << 1;
-  return_value[1] = return_value[0] ^ 0x1b;
-
-  /* Return the correct one */
-  return return_value[(byte_value & 0x80) >> 7];
+uchar xtime(uchar byte_value){
+  return ((byte_value<<1) ^ (((byte_value>>7) & 1) * 0x1b));
 }
 
 uchar FieldMul(uchar byte_value, uchar coeff) {
@@ -86,7 +76,7 @@ uchar FieldMul(uchar byte_value, uchar coeff) {
   return result;
 }
 
-uchar ShiftRow(uchar *message) {
+bool ShiftRow(uchar *message) {
   uchar tmp;
 
   /* 2nd Row */
@@ -115,7 +105,7 @@ uchar ShiftRow(uchar *message) {
   return EXIT_SUCCESS;
 }
 
-uchar IShiftRow(uchar *message) {
+bool IShiftRow(uchar *message) {
   uchar tmp;
 
   /* 4th Row */
@@ -152,7 +142,7 @@ A = 1 2 3 1   B = message
 
 it computes A*B
 */
-uchar MixColumn(uchar *message) {
+bool MixColumn(uchar *message) {
   uchar column;
   uchar v, u, t;
 
@@ -180,7 +170,7 @@ uchar MixColumn(uchar *message) {
   return EXIT_SUCCESS;
 }
 
-uchar IMixColumn(uchar *message) {
+bool IMixColumn(uchar *message) {
   uchar return_code = EXIT_FAILURE;
   uchar column;
   uchar v, u;
@@ -196,14 +186,14 @@ uchar IMixColumn(uchar *message) {
   return return_code;
 }
 
-uchar AddRoundKey(uchar *message, uchar *key){
+bool AddRoundKey(uchar *message, uchar *key){
   for (size_t i = 0; i < CELLS; i++) {
     message[i]=message[i]^key[i];
   }
   return EXIT_SUCCESS;
 }
 
-uchar Encryption(uchar *plaintext, uchar **round_keys){
+bool Encryption(uchar *plaintext, uchar **round_keys){
   /* let's start with an AddRoundKey */
   AddRoundKey(plaintext, round_keys[0]);
 
@@ -223,7 +213,7 @@ uchar Encryption(uchar *plaintext, uchar **round_keys){
   return EXIT_SUCCESS;
 }
 
-uchar Decryption(uchar *ciphertext, uchar **round_keys){
+bool Decryption(uchar *ciphertext, uchar **round_keys){
   /* let's start with an AddRoundKey */
   AddRoundKey(ciphertext, round_keys[AES_ROUNDS]);
   IShiftRow(ciphertext);
@@ -246,7 +236,7 @@ uchar Decryption(uchar *ciphertext, uchar **round_keys){
 /******************************************************************************/
 
 /* compute a 128-bits subkey from key */
-uchar UnrollKey(uchar *key, uchar round) {
+bool UnrollKey(uchar *key, uchar round) {
   uchar tmp;
   uchar row;
   uchar column;
@@ -268,7 +258,7 @@ uchar UnrollKey(uchar *key, uchar round) {
 }
 
 /* create a list with subparts of 128-bits key */
-uchar PrepareKey(uchar **round_keys, uchar *key) {
+bool PrepareKey(uchar **round_keys, uchar *key) {
   uchar i, j;
   uchar return_code = EXIT_FAILURE;
 

@@ -1,5 +1,4 @@
 #include "utils.h"
-#include <stdlib.h>
 
 uchar SIZE_KEY = 16;
 
@@ -63,19 +62,11 @@ int main(int argc, char const *argv[]) {
 
   PrintByteArray(plaintext, CELLS, (const uchar *)"Decrypted");
 
+  /*******************************/
+  /*          Some tests         */
+  /*******************************/
 
-  uchar test[16] = {0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04,
-                            0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04};
 
-  PrintByteArray(test, CELLS, (const uchar *)"avant test");
-
-  MixColumn(test);
-
-  PrintByteArray(test, CELLS, (const uchar *)"apres test");
-
-  uchar val = 6;
-
-  fprintf(stdout, "%d\n", xtime(val));
 
   return 0;
 }
