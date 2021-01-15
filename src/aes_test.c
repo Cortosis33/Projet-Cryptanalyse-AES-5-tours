@@ -12,38 +12,13 @@ uchar PLAINTEXT[CELLS] = {0x39, 0x02, 0xDC, 0x19, 0x25, 0xDC, 0x11, 0x6A,
 
 // data : 3902DC1925DC116A8409850B1DFB9732
 
-int main(int argc, char const *argv[]) {
+int main() {
 
-  /*****************/
-  /* Keys creation */
-  /*****************/
+  /*******************************/
+  /*        Keys creation        */
+  /*******************************/
 
-  /* init dynamic key */
-  uchar key[SIZE_KEY];
-  for (uchar i = 0; i < SIZE_KEY; i++)
-    key[i] = KEY[i];
-
-  /* key printing */
-  PrintByteArray(key, CELLS, (const uchar *)"Key");
-
-  /* array keys allocation (round +1 keys) */
-  uchar *round_keys[AES_ROUNDS + 1];
-
-  // fprintf(stdout, "error\n");
-
-  /* key's size allocation in the array */
-  for (size_t i = 0; i < AES_ROUNDS + 1; i++) {
-    round_keys[i] = (uchar *)malloc(CELLS * sizeof(uchar));
-  }
-
-  /* keys generation */
-  PrepareKey(round_keys, key);
-
-  /*
-  for (size_t i = 0; i < AES_ROUNDS + 1; i++) {
-    fprintf(stdout, "key %zu:\n", i);
-    PrintByteArray(round_keys[i], CELLS, (const uchar *)"");
-  }*/
+  uchar **round_keys = GenRoundkeys(KEY, 0);
 
   /*******************************/
   /*   Encryption & Decryption   */

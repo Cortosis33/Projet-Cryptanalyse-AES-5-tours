@@ -273,6 +273,44 @@ bool PrepareKey(uchar **round_keys, uchar *key) {
   return return_code;
 }
 
+/*****************/
+/* Keys creation */
+/*****************/
+
+uchar **GenRoundkeys(uchar *key, bool verb) {
+
+  /* init dynamic key */
+  uchar tmp_key[16];
+  for (uchar i = 0; i < 16; i++)
+    tmp_key[i] = key[i];
+
+  /* key printing */
+  if (verb) {
+    PrintByteArray(tmp_key, CELLS, (const uchar *)"Key");
+  }
+
+  /* array keys allocation (round +1 keys) */
+  // uchar *round_keys[AES_ROUNDS + 1];
+  uchar **round_keys = (uchar **)malloc((AES_ROUNDS + 1) * sizeof(uchar *));
+
+  /* key's size allocation in the array */
+  for (size_t i = 0; i < AES_ROUNDS + 1; i++) {
+    round_keys[i] = (uchar *)malloc(CELLS * sizeof(uchar));
+  }
+
+  PrepareKey(round_keys, tmp_key);
+
+  if (verb) {
+    for (size_t i = 0; i < AES_ROUNDS + 1; i++) {
+      fprintf(stdout, "key %zu:\n", i);
+      PrintByteArray(round_keys[i], CELLS, (const uchar *)"");
+    }
+  }
+
+  // return round_keys's adress
+  return round_keys;
+}
+
 /* compute hamming distance */
 unsigned hamdist(unsigned x, unsigned y) {
   unsigned dist = 0, val = x ^ y; // XOR
