@@ -1,3 +1,4 @@
+#include "square.h"
 #include "utils.h"
 
 uchar SIZE_KEY = 16;
@@ -12,60 +13,26 @@ uchar PLAINTEXT[CELLS] = {0x39, 0x02, 0xDC, 0x19, 0x25, 0xDC, 0x11, 0x6A,
 
 // data : 3902DC1925DC116A8409850B1DFB9732
 
-int main(int argc, char const *argv[]) {
+int main() {
 
-  /*****************/
-  /* Keys creation */
-  /*****************/
+  plain_cipher couple;
 
-  /* init dynamic key */
-  uchar key[SIZE_KEY];
-  for (uchar i = 0; i < SIZE_KEY; i++)
-    key[i] = KEY[i];
-
-  /* key printing */
-  PrintByteArray(key, CELLS, (const uchar *)"Key");
-
-  /* array keys allocation (round +1 keys) */
-  uchar *round_keys[AES_ROUNDS + 1];
-
-  // fprintf(stdout, "error\n");
-
-  /* key's size allocation in the array */
-  for (size_t i = 0; i < AES_ROUNDS + 1; i++) {
-    round_keys[i] = (uchar *)malloc(CELLS * sizeof(uchar));
+  for (size_t i = 0; i < 16; i++) {
+    couple.plaintext[i] = PLAINTEXT[i];
   }
 
-  /* keys generation */
-  PrepareKey(round_keys, key);
+  for (size_t i = 0; i < 16; i++) {
+    couple.ciphertext[i] = KEY[i];
+  }
 
-  /*
-  for (size_t i = 0; i < AES_ROUNDS + 1; i++) {
-    fprintf(stdout, "key %zu:\n", i);
-    PrintByteArray(round_keys[i], CELLS, (const uchar *)"");
-  }*/
+  PrintByteArray(couple.plaintext, CELLS, (const uchar *)"Plaintext");
 
-  /*******************************/
-  /*   Encryption & Decryption   */
-  /*******************************/
+  // on crée un tableau de couple
+  plain_cipher pairs[255];
 
-  uchar plaintext[CELLS];
-  for (uchar i = 0; i < CELLS; i++)
-    plaintext[i] = PLAINTEXT[i];
+  create_plaintexts(pairs, 0);
 
-  PrintByteArray(plaintext, CELLS, (const uchar *)"Plaintext");
-
-  Encryption(plaintext, round_keys);
-
-  PrintByteArray(plaintext, CELLS, (const uchar *)"Encrypted");
-
-  Decryption(plaintext, round_keys);
-
-  PrintByteArray(plaintext, CELLS, (const uchar *)"Decrypted");
-
-  /*******************************/
-  /*          Some tests         */
-  /*******************************/
+  print_all_plaintexts(pairs);
 
   return 0;
 }
