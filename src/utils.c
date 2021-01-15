@@ -188,7 +188,7 @@ bool IMixColumn(uchar *message) {
 
 bool AddRoundKey(uchar *message, uchar *key){
   for (size_t i = 0; i < CELLS; i++) {
-    message[i]=message[i]^key[i];
+    message[i] = message[i] ^ key[i];
   }
   return EXIT_SUCCESS;
 }
@@ -219,7 +219,7 @@ bool Decryption(uchar *ciphertext, uchar **round_keys){
   IShiftRow(ciphertext);
   ISubBytes(ciphertext);
 
-  for (size_t i = AES_ROUNDS-1; i > 0 ; i--) {
+  for (size_t i = AES_ROUNDS - 1; i > 0; i--) {
     AddRoundKey(ciphertext, round_keys[i]);
     IMixColumn(ciphertext);
     IShiftRow(ciphertext);
@@ -285,4 +285,13 @@ unsigned hamdist(unsigned x, unsigned y) {
   }
 
   return dist;
+}
+
+uchar InvATurn(uchar *ciphertext, uchar **round_keys) {
+  /* let's start with an AddRoundKey */
+  AddRoundKey(ciphertext, round_keys[AES_ROUNDS]);
+  IShiftRow(ciphertext);
+  ISubBytes(ciphertext);
+
+  return EXIT_SUCCESS;
 }
