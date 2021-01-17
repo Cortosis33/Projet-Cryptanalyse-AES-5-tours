@@ -36,5 +36,31 @@ int main() {
 
   // PrintAllPairs(pairs_2);
 
+  /*******************************/
+  /*      Last Round Attack      */
+  /*******************************/
+
+  uchar key_guess[16];
+  uchar b1 = 0;
+  uchar b2 = 0;
+  // pour toutes les valeurs de la clée
+  // (on represente nos valeurs sur 1 dimension)
+  for (uchar i = 0; i < 16; i++) {
+  test:
+    // pour toutes les valeurs possible d'un octet
+    for (size_t k_byte = 0; k_byte < 256; k_byte++) {
+      // pour tout les chiffrés
+      for (uchar c = 0; c < 255; c++) {
+        b1 = IS_box[pairs_1[c].ciphertext[i] ^ k_byte] ^ b1;
+        b2 = IS_box[pairs_2[c].ciphertext[i] ^ k_byte] ^ b2;
+      }
+      if (b1 != 0 && b2 != 0) {
+        // goto test;
+        break;
+      }
+      key_guess[i] = (uchar)k_byte;
+    }
+  }
+
   return 0;
 }
