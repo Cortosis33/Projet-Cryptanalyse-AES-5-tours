@@ -5,6 +5,8 @@ typedef struct {
   uchar ciphertext[CELLS];
 } plain_cipher;
 
-uchar create_plaintexts(plain_cipher *pairs, uchar fix_byte);
+uchar GenPlaintexts(plain_cipher *pairs, uchar fix_byte, uchar others_value);
 
-void print_all_plaintexts(plain_cipher *pairs);
+uchar EncryptPlaintexts(plain_cipher *pairs, uchar **round_keys);
+
+void PrintAllPairs(plain_cipher *pairs);
