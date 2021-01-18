@@ -15,7 +15,7 @@ int main() {
   /*******************************/
 
   // to generate roundkeys
-  uchar **round_keys = GenRoundkeys(KEY, 0);
+  uchar **round_keys = GenRoundkeys(KEY, 1);
 
   /*******************************/
   /*         Encryption          */
@@ -26,9 +26,12 @@ int main() {
   plain_cipher pairs_2[255];
 
   // on genere les clairs du premier lambda-set avec que des bits 0 à la suite
-  GenPlaintexts(pairs_1, 0, 0);
-  // on genere les clairs du premier lambda-set avec que des bits 1 à la suite
-  GenPlaintexts(pairs_2, 0, 0xFF);
+  GenPlaintexts(pairs_1, 0, 0xFF);
+  // PrintAllPairs(pairs_1);
+
+  // on genere les clairs du deuxieme lambda-set avec que des bits 1 à la suite
+  GenPlaintexts(pairs_2, 1, 0xFF);
+  // PrintAllPairs(pairs_2);
 
   // chiffrements des clairs dans plaintext de la structure plain_cipher
   EncryptPlaintexts(pairs_1, round_keys);
@@ -46,19 +49,22 @@ int main() {
   // pour toutes les valeurs de la clée
   // (on represente nos valeurs sur 1 dimension)
   for (uchar i = 0; i < 16; i++) {
-  test:
     // pour toutes les valeurs possible d'un octet
+    // (on utilise size_t pour que k atteigne 256)
     for (size_t k_byte = 0; k_byte < 256; k_byte++) {
       // pour tout les chiffrés
+      // printf("%x\n", k_byte);
+      b1 = 0;
+      b2 = 0;
       for (uchar c = 0; c < 255; c++) {
         b1 = IS_box[pairs_1[c].ciphertext[i] ^ k_byte] ^ b1;
         b2 = IS_box[pairs_2[c].ciphertext[i] ^ k_byte] ^ b2;
       }
-      if (b1 != 0 && b2 != 0) {
-        // goto test;
-        break;
+      // fprintf(stdout, "%x, %x\n", b1, b2);
+      if (b1 == 0 && b2 == 0) {
+        fprintf(stdout, "key is : %zx\n", k_byte);
       }
-      key_guess[i] = (uchar)k_byte;
+      // key_guess[i] = (uchar)k_byte;
     }
   }
 
