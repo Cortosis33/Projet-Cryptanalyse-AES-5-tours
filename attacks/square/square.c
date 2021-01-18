@@ -19,7 +19,7 @@ uchar GenPlaintexts(plain_cipher *pairs, uchar fix_byte, uchar others_value) {
     }
 
     // on fait varier l'octet identifié par fix_byte
-    // on varie de 1 à 255 pour ne pas avoir de valeurs nuls (d'ou le +1)
+    // on varie de 1 à 255 pour ne pas avoir de valeurs nulles (d'ou le +1)
     // soit de 0 à 254
     pairs[i].plaintext[fix_byte] = i + 1;
     pairs[i].ciphertext[fix_byte] = i + 1;
