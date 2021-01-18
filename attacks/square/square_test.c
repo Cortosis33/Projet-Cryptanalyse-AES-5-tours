@@ -24,8 +24,8 @@ int main() {
   /*******************************/
 
   // on crée les deux lambd-set avec un tableau de couple (clair, chiffré)
-  plain_cipher pairs_1[255];
-  plain_cipher pairs_2[255];
+  plain_cipher pairs_1[256];
+  plain_cipher pairs_2[256];
 
   // on genere les clairs du premier lambda-set avec que des bits 0 à la suite
   GenPlaintexts(pairs_1, 0, 0xFF);
@@ -64,7 +64,7 @@ int main() {
   uchar b1 = 0;
   uchar b2 = 0;
 
-  // pour toutes les valeurs de la clée
+  // pour toutes les octets de la clée
   // (on represente nos valeurs sur 1 dimension)
   for (uchar i = 0; i < 4; i++) {
     // pour toutes les valeurs possible d'un octet
@@ -74,13 +74,19 @@ int main() {
       // printf("%x\n", k_byte);
       b1 = 0;
       b2 = 0;
-      for (uchar c = 0; c < 255; c++) {
+      for (size_t c = 0; c < 256; c++) {
         b1 = IS_box[pairs_1[c].ciphertext[i] ^ k_byte] ^ b1;
         b2 = IS_box[pairs_2[c].ciphertext[i] ^ k_byte] ^ b2;
       }
       // fprintf(stdout, "%zx, %x, %x\n", k_byte, b1, b2);
-      if (b1 == 0 && b2 == 0) {
-        fprintf(stdout, "k_byte is : %zx\n", k_byte);
+      /*if (k_byte == 0xe5 && i == 0) {
+        fprintf(stdout, "i=%d, k_bye=%zx, b1=%x, b2=%x\n", i, k_byte, b1, b2);
+      }
+      if (k_byte == 0x49 && i == 1) {
+        fprintf(stdout, "i=%d, k_bye=%zx, b1=%x, b2=%x\n", i, k_byte, b1, b2);
+      }*/
+      if (b1 == b2) {
+        fprintf(stdout, "k_byte=%zx\n", k_byte);
       }
       // key_guess[i] = (uchar)k_byte;
     }
