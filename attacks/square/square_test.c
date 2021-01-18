@@ -66,7 +66,7 @@ int main() {
 
   // pour toutes les octets de la clée
   // (on represente nos valeurs sur 1 dimension)
-  for (uchar i = 0; i < 4; i++) {
+  for (uchar i = 0; i < 16; i++) {
     // pour toutes les valeurs possible d'un octet
     // (on utilise size_t pour que k atteigne 256)
     for (size_t k_byte = 0; k_byte < 256; k_byte++) {
@@ -75,15 +75,21 @@ int main() {
       b1 = 0;
       b2 = 0;
       for (size_t c = 0; c < 256; c++) {
-        b1 = IS_box[pairs_1[c].ciphertext[i] ^ k_byte] ^ b1;
-        b2 = IS_box[pairs_2[c].ciphertext[i] ^ k_byte] ^ b2;
+        uchar *tmp_cipher1 = CopyState(pairs_1[c].ciphertext);
+        uchar *tmp_cipher2 = CopyState(pairs_2[c].ciphertext);
+        IShiftRow(tmp_cipher1);
+        IShiftRow(tmp_cipher2);
+        b1 = IS_box[tmp_cipher1[i] ^ k_byte] ^ b1;
+        b2 = IS_box[tmp_cipher2[i] ^ k_byte] ^ b2;
       }
       if (b1 == 0 && b2 == 0) {
-        fprintf(stdout, "i=%d, k_bye=%zx, b1=%x, b2=%x\n", i, k_byte, b1, b2);
+        fprintf(stdout, "i=%d, k_bye=%zx\n", i, k_byte);
+        key_guess[i] = (uchar)k_byte;
       }
-      // key_guess[i] = (uchar)k_byte;
     }
   }
+  ShiftRow(key_guess);
+  PrintByteArray(key_guess, CELLS, (const uchar *)"key");
 
   /* Test du premier octet non concluant
 uchar listfirstoctet1[255];

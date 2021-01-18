@@ -46,3 +46,11 @@ void PrintAllPairs(plain_cipher *pairs) {
     PrintByteArray(pairs[i].ciphertext, CELLS, (const uchar *)"CipherText");
   }
 }
+
+uchar *CopyState(uchar *state) {
+  uchar *new_state = malloc(16 * sizeof(uchar));
+  for (size_t i = 0; i < 16; i++) {
+    new_state[i] = state[i];
+  }
+  return new_state;
+}
