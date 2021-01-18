@@ -278,6 +278,7 @@ bool PrepareKey(uchar **round_keys, uchar *key) {
 /*****************/
 
 uchar **GenRoundkeys(uchar *key, bool verb) {
+  fprintf(stdout, "%d Rounds AES\n", AES_ROUNDS);
 
   /* init dynamic key */
   uchar tmp_key[16];
@@ -286,7 +287,7 @@ uchar **GenRoundkeys(uchar *key, bool verb) {
 
   /* key printing */
   if (verb) {
-    PrintByteArray(tmp_key, CELLS, (const uchar *)"Key");
+    PrintByteArray(tmp_key, CELLS, (const uchar *)"Original Key");
   }
 
   /* array keys allocation (round +1 keys) */
