@@ -1,5 +1,7 @@
 #include "square.h"
 
+#define NBR_PAIRS 256;
+
 /*
 fonction permettant de creer le tableau des plaintexts
 */
@@ -18,8 +20,6 @@ uchar GenPlaintexts(plain_cipher *pairs, uchar fix_byte, uchar others_value) {
     }
 
     // on fait varier l'octet identifié par fix_byte
-    // on varie de 1 à 255 pour ne pas avoir de valeurs nulles (d'ou le +1)
-    // soit de 0 à 254
     pairs[i].plaintext[fix_byte] = i;
     pairs[i].ciphertext[fix_byte] = i;
   }
@@ -31,7 +31,7 @@ uchar GenPlaintexts(plain_cipher *pairs, uchar fix_byte, uchar others_value) {
 fonction permettant de chiffrer le clair de la structure plain_cipher
 */
 uchar EncryptPlaintexts(plain_cipher *pairs, uchar **round_keys) {
-  for (size_t i = 0; i < 255; i++) {
+  for (size_t i = 0; i < 256; i++) {
     // on chiffre ciphertext qui est initialisé avec le clair
     Encryption(pairs[i].ciphertext, round_keys);
   }

@@ -51,8 +51,8 @@ int main() {
   EncryptPlaintexts(pairs_1, round_keys);
   EncryptPlaintexts(pairs_2, round_keys);
 
-  PrintByteArray(pairs_1[0].plaintext, CELLS, (const uchar *)"Plaintext");
-  PrintByteArray(pairs_1[0].ciphertext, CELLS, (const uchar *)"Encrypted");
+  PrintByteArray(pairs_1[255].plaintext, CELLS, (const uchar *)"Plaintext");
+  PrintByteArray(pairs_1[255].ciphertext, CELLS, (const uchar *)"Encrypted");
 
   // PrintAllPairs(pairs_2);
 
@@ -78,15 +78,8 @@ int main() {
         b1 = IS_box[pairs_1[c].ciphertext[i] ^ k_byte] ^ b1;
         b2 = IS_box[pairs_2[c].ciphertext[i] ^ k_byte] ^ b2;
       }
-      // fprintf(stdout, "%zx, %x, %x\n", k_byte, b1, b2);
-      /*if (k_byte == 0xe5 && i == 0) {
+      if (b1 == 0 && b2 == 0) {
         fprintf(stdout, "i=%d, k_bye=%zx, b1=%x, b2=%x\n", i, k_byte, b1, b2);
-      }
-      if (k_byte == 0x49 && i == 1) {
-        fprintf(stdout, "i=%d, k_bye=%zx, b1=%x, b2=%x\n", i, k_byte, b1, b2);
-      }*/
-      if (b1 == b2) {
-        fprintf(stdout, "k_byte=%zx\n", k_byte);
       }
       // key_guess[i] = (uchar)k_byte;
     }
