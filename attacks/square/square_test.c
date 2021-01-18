@@ -1,5 +1,7 @@
 #include "square.h"
 #include "utils.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 uchar SIZE_KEY = 16;
 
@@ -61,6 +63,7 @@ int main() {
   uchar key_guess[16];
   uchar b1 = 0;
   uchar b2 = 0;
+
   // pour toutes les valeurs de la clée
   // (on represente nos valeurs sur 1 dimension)
   for (uchar i = 0; i < 4; i++) {
@@ -82,6 +85,30 @@ int main() {
       // key_guess[i] = (uchar)k_byte;
     }
   }
+
+  /* Test du premier octet non concluant
+uchar listfirstoctet1[255];
+uchar listfirstoctet2[255];
+
+for (int i = 0; i < 255; i++) {
+  listfirstoctet1[i] = pairs_1[i].ciphertext[0];
+  listfirstoctet2[i] = pairs_2[i].ciphertext[0];
+}
+
+uchar tmp1, tmp2;
+
+for (size_t key_byte = 0; key_byte <= 0xFF; key_byte++) {
+  tmp1 = 0;
+  tmp2 = 0;
+  for (int i = 0; i < 255; i++) {
+    tmp1 ^= (IS_box[(size_t)listfirstoctet1[i] ^ key_byte]);
+    tmp2 ^= (IS_box[(size_t)listfirstoctet2[i] ^ key_byte]);
+  }
+  if (tmp1 == 0 || tmp2 == 0) {
+    printf("L'octet 1 de la clé 5 peut être %lx\n", key_byte);
+  }
+}
+*/
 
   return 0;
 }
