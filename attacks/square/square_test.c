@@ -64,6 +64,12 @@ int main() {
   uchar b1 = 0;
   uchar b2 = 0;
 
+  // on applique le IShiftRow à l'avance sur les chiffrés
+  for (size_t i = 0; i < 256; i++) {
+    IShiftRow(pairs_1[i].ciphertext);
+    IShiftRow(pairs_2[i].ciphertext);
+  }
+
   // pour toutes les octets de la clée
   // (on represente nos valeurs sur 1 dimension)
   for (uchar i = 0; i < 16; i++) {
@@ -75,12 +81,8 @@ int main() {
       b1 = 0;
       b2 = 0;
       for (size_t c = 0; c < 256; c++) {
-        uchar *tmp_cipher1 = CopyState(pairs_1[c].ciphertext);
-        uchar *tmp_cipher2 = CopyState(pairs_2[c].ciphertext);
-        IShiftRow(tmp_cipher1);
-        IShiftRow(tmp_cipher2);
-        b1 = IS_box[tmp_cipher1[i] ^ k_byte] ^ b1;
-        b2 = IS_box[tmp_cipher2[i] ^ k_byte] ^ b2;
+        b1 = IS_box[pairs_1[c].ciphertext[i] ^ k_byte] ^ b1;
+        b2 = IS_box[pairs_2[c].ciphertext[i] ^ k_byte] ^ b2;
       }
       if (b1 == 0 && b2 == 0) {
         fprintf(stdout, "i=%d, k_bye=%zx\n", i, k_byte);
