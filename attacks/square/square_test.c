@@ -20,6 +20,7 @@ int main() {
   uchar **round_keys = GenRoundkeys(KEY, 1);
 
   if (AES_ROUNDS == 4) {
+
     /*******************************/
     /*         Encryption          */
     /*******************************/

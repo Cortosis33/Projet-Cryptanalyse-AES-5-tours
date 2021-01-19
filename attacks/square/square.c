@@ -1,19 +1,17 @@
 #include "../../include/square.h"
 
-#define NBR_PAIRS 256;
-
 /*
 fonction permettant de creer le tableau des plaintexts
 */
 uchar GenPlaintexts(plain_cipher *pairs, uchar fix_byte, uchar others_value) {
 
-  if (fix_byte >= 16) {
-    return EXIT_FAILURE;
+  if (fix_byte >= CELLS) {
+    errx(1, "GenPlaintexts : fix_byte is too large\n");
   }
 
-  for (size_t i = 0; i < 256; i++) {
+  for (size_t i = 0; i < NBR_PAIRS; i++) {
     // on remplie de plaintext de 0
-    for (size_t j = 0; j < 16; j++) {
+    for (size_t j = 0; j < CELLS; j++) {
       pairs[i].plaintext[j] = others_value;
       // on initilise aussi le text chiffré avec le text clair
       pairs[i].ciphertext[j] = others_value;
@@ -24,7 +22,6 @@ uchar GenPlaintexts(plain_cipher *pairs, uchar fix_byte, uchar others_value) {
     pairs[i].ciphertext[fix_byte] = i;
     pairs[i].ciphertext_tmp[fix_byte] = i;
   }
-
   return EXIT_SUCCESS;
 }
 
@@ -32,27 +29,26 @@ uchar GenPlaintexts(plain_cipher *pairs, uchar fix_byte, uchar others_value) {
 fonction permettant de chiffrer le clair de la structure plain_cipher
 */
 uchar EncryptPlaintexts(plain_cipher *pairs, uchar **round_keys) {
-  for (size_t i = 0; i < 256; i++) {
+  for (size_t i = 0; i < NBR_PAIRS; i++) {
     // on chiffre ciphertext qui est initialisé avec le clair
     Encryption(pairs[i].ciphertext, round_keys);
-    Encryption(pairs[i].ciphertext_tmp, round_keys);
+    // on copie le contenue du chiffré dans ciphertext_tmp
+    CopyState(pairs[i].ciphertext, pairs[i].ciphertext_tmp);
   }
-
   return EXIT_SUCCESS;
 }
 
 void PrintAllPairs(plain_cipher *pairs) {
-  for (size_t i = 0; i < 256; i++) {
+  for (size_t i = 0; i < NBR_PAIRS; i++) {
     fprintf(stdout, "%zu\n", i);
     PrintByteArray(pairs[i].plaintext, CELLS, (const uchar *)"Plaintext");
     PrintByteArray(pairs[i].ciphertext, CELLS, (const uchar *)"CipherText");
   }
 }
 
-uchar *CopyState(uchar *state) {
-  uchar *new_state = malloc(16 * sizeof(uchar));
-  for (size_t i = 0; i < 16; i++) {
-    new_state[i] = state[i];
+bool CopyState(uchar *state, uchar *copy) {
+  for (size_t i = 0; i < CELLS; i++) {
+    copy[i] = state[i];
   }
-  return new_state;
+  return EXIT_SUCCESS;
 }

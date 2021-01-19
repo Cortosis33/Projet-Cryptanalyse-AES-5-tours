@@ -366,8 +366,7 @@ unsigned hamdist(unsigned x, unsigned y) {
 bool InvATurn(uchar *ciphertext, uchar *current_key, int current_turn) {
 
   if (current_turn > AES_ROUNDS) {
-    fprintf(stderr, "InvATurn : %d is too large\n", current_turn);
-    return EXIT_FAILURE;
+    errx(1, "InvATurn : %d is too large\n", current_turn);
   }
 
   // last round

@@ -1,5 +1,7 @@
 #include "utils.h"
 
+#define NBR_PAIRS 256
+
 typedef struct {
   uchar plaintext[CELLS];
   uchar ciphertext[CELLS];
@@ -12,4 +14,4 @@ uchar EncryptPlaintexts(plain_cipher *pairs, uchar **round_keys);
 
 void PrintAllPairs(plain_cipher *pairs);
 
-uchar *CopyState(uchar *state);
+bool CopyState(uchar *state, uchar *copy);
