@@ -256,6 +256,26 @@ bool UnrollKey(uchar *key, uchar round) {
   return EXIT_SUCCESS;
 }
 
+bool RollKey(uchar *key, uchar round) {
+  uchar tmp = 0;
+  int row, column = 0;
+
+  for (row = 3; row >= 0; row--) {
+    for (column = 3; column >= 1; column--) {
+      key[(4 * row) + column] ^= key[(4 * row) + column - 1];
+    }
+  }
+
+  /* evaluate 1st col */
+  tmp = key[3];
+  key[0] = S_box[key[7]] ^ rcon[round] ^ key[0];
+  key[4] = S_box[key[11]] ^ key[4];
+  key[8] = S_box[key[15]] ^ key[8];
+  key[12] = S_box[tmp] ^ key[12];
+
+  return EXIT_SUCCESS;
+}
+
 /* create a list with subparts of 128-bits key */
 bool PrepareKey(uchar **round_keys, uchar *key) {
 

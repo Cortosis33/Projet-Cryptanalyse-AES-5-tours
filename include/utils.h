@@ -159,6 +159,7 @@ bool Encryption(uchar *plaintext, uchar **round_keys);
 bool Decryption(uchar *ciphertext, uchar **round_keys);
 
 bool UnrollKey(uchar *key, uchar round);
+bool RollKey(uchar *key, uchar round);
 bool PrepareKey(uchar **round_keys, uchar *key);
 uchar **GenRoundkeys(uchar *key, bool verb);
 
