@@ -110,6 +110,7 @@ bool ShiftRow(uchar *message) {
   return EXIT_SUCCESS;
 }
 
+/* O(16) */
 bool IShiftRow(uchar *message) {
   uchar tmp = 0;
 
