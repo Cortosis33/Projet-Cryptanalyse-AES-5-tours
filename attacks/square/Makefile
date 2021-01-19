@@ -2,7 +2,7 @@
 EXE = square_test
 
 # Usual compilation flags
-CFLAGS = -Wall -Wextra -g -O2
+CFLAGS = -Wall -Wextra -g -O3
 CPPFLAGS = -I../../include -DDEBUG
 
 # Special rules and targets

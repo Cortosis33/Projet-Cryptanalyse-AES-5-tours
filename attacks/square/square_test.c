@@ -26,8 +26,8 @@ int main() {
     /*******************************/
 
     // on crée les deux lambd-set avec un tableau de couple (clair, chiffré)
-    plain_cipher pairs_1[256];
-    plain_cipher pairs_2[256];
+    plain_cipher pairs_1[NBR_PAIRS];
+    plain_cipher pairs_2[NBR_PAIRS];
 
     // on genere les clairs du premier lambda-set avec que des bits 0 à la suite
     GenPlaintexts(pairs_1, 0, 0xFF);
@@ -63,7 +63,7 @@ int main() {
     /*                                 Attack                                 */
     /**************************************************************************/
 
-    uchar key_guess[16];
+    uchar key_guess[CELLS];
     uchar b1 = 0;
     uchar b2 = 0;
 
@@ -87,7 +87,7 @@ int main() {
         // printf("%x\n", k_byte);
         b1 = 0;
         b2 = 0;
-        for (size_t c = 0; c < 256; c++) {
+        for (size_t c = 0; c < NBR_PAIRS; c++) {
           b1 = IS_box[pairs_1[c].ciphertext[i] ^ k_byte] ^ b1;
           b2 = IS_box[pairs_2[c].ciphertext[i] ^ k_byte] ^ b2;
         }
@@ -110,11 +110,13 @@ int main() {
   }
 
   if (AES_ROUNDS == 5) {
-    plain_cipher pairs_1[256];
-    plain_cipher pairs_2[256];
-    plain_cipher pairs_3[256];
-    plain_cipher pairs_4[256];
-    plain_cipher pairs_5[256];
+    fprintf(stdout, "plaintext/ciphertext generation...\n");
+
+    plain_cipher pairs_1[NBR_PAIRS];
+    plain_cipher pairs_2[NBR_PAIRS];
+    plain_cipher pairs_3[NBR_PAIRS];
+    plain_cipher pairs_4[NBR_PAIRS];
+    plain_cipher pairs_5[NBR_PAIRS];
 
     // on genere les clairs
     GenPlaintexts(pairs_1, 0, 0xFF);
@@ -130,12 +132,16 @@ int main() {
     EncryptPlaintexts(pairs_4, round_keys);
     EncryptPlaintexts(pairs_5, round_keys);
 
+    fprintf(stdout, "plaintext/ciphertext generation OK\n");
+
+    fprintf(stdout, "key_guess generation...\n");
     uchar key_guess_5[16];
     uchar key_guess_4[16];
     for (size_t i = 0; i < 16; i++) {
       key_guess_5[i] = 0;
       key_guess_4[i] = 0;
     }
+    fprintf(stdout, "key_guess generation OK\n");
     uchar b1 = 0;
     uchar b2 = 0;
     uchar b3 = 0;
@@ -149,9 +155,25 @@ int main() {
       for (size_t key_2 = 0; key_2 < 1; key_2++) {
         key_guess_5[7] = key_2;
         key_guess_5[7] = 0x9d;
-        for (size_t key_3 = 0; key_3 < 1; key_3++) {
+
+        /* affichage */
+        int progress = 0;
+        int new_progress = 0;
+        /*************/
+
+        for (size_t key_3 = 0; key_3 < 256; key_3++) {
           key_guess_5[10] = key_3;
-          key_guess_5[10] = 0xd4;
+
+          /* affichage */
+          new_progress = (int)(100 * key_3 / 256);
+          if (new_progress > progress) {
+            progress = new_progress;
+            fprintf(stdout, "  %d%%\r", progress);
+            fflush(stdout);
+          }
+          /*************/
+
+          // key_guess_5[10] = 0xd4;
           for (size_t key_4 = 0; key_4 < 256; key_4++) {
             key_guess_5[13] = key_4;
             // key_guess_5[13] = 0xc7;
@@ -162,7 +184,7 @@ int main() {
               b3 = 0;
               b4 = 0;
               b5 = 0;
-              for (size_t i = 0; i < 256; i++) {
+              for (size_t i = 0; i < NBR_PAIRS; i++) {
                 // on remonte le tour 5
                 InvATurn(pairs_1[i].ciphertext_tmp, key_guess_5, 5);
                 InvATurn(pairs_2[i].ciphertext_tmp, key_guess_5, 5);
@@ -197,13 +219,15 @@ int main() {
               if (!b1 && !b2 && !b3 && !b4 && !b5) {
                 PrintByteArray(key_guess_5, CELLS,
                                (const uchar *)"key_guess_5");
+                goto outloops;
               }
             }
           }
         }
       }
     }
-    // RewindKey(key_guess_5, 5, 1);
+  outloops:
+    RewindKey(key_guess_5, 5, 1);
   }
 
   /*  */
