@@ -142,19 +142,17 @@ static const unsigned char GF256_INVERSE[256] = {
 uchar PrintByteArray(uchar *message, uchar len, const uchar *name);
 //#endif /* DEBUG_LVL 1*/
 
-void ErrorEvent(const uchar *fct_name, const uchar *error_txt);
-
 bool SubBytes(uchar *message);
 bool ISubBytes(uchar *message);
 
 uchar xtime(uchar byte_value);
 uchar FieldMul(uchar byte_value, uchar coeff);
 
-bool MixColumn(uchar *message);
-bool IMixColumn(uchar *message);
+bool MixColumns(uchar *message);
+bool IMixColumns(uchar *message);
 
-bool ShiftRow(uchar *message);
-bool IShiftRow(uchar *message);
+bool ShiftRows(uchar *message);
+bool IShiftRows(uchar *message);
 
 bool AddRoundKey(uchar *message, uchar *key);
 

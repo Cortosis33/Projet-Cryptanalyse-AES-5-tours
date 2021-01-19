@@ -70,10 +70,10 @@ int main() {
     /*  Last Round Attack on 4 Rounds AES  */
     /***************************************/
 
-    // on applique le IShiftRow à l'avance sur les chiffrés
+    // on applique le IShiftRows à l'avance sur les chiffrés
     for (size_t i = 0; i < 256; i++) {
-      IShiftRow(pairs_1[i].ciphertext);
-      IShiftRow(pairs_2[i].ciphertext);
+      IShiftRows(pairs_1[i].ciphertext);
+      IShiftRows(pairs_2[i].ciphertext);
     }
 
     // pour toutes les octets de la clée
@@ -96,7 +96,7 @@ int main() {
         }
       }
     }
-    ShiftRow(key_guess);
+    ShiftRows(key_guess);
     PrintByteArray(key_guess, CELLS, (const uchar *)"key");
 
     // maintenant qu'on a la cle, on peut remonter :
@@ -202,7 +202,7 @@ int main() {
         }
       }
     }
-    RewindKey(key_guess_5, 5, 1);
+    // RewindKey(key_guess_5, 5, 1);
   }
 
   /*  */

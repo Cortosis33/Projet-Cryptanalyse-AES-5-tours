@@ -30,11 +30,6 @@ uchar PrintByteArray(uchar *message, uchar len, const uchar *name) {
 
 #endif /* DEBUG_LVL*/
 
-void ErrorEvent(const uchar *fct_name, const uchar *error_txt) {
-  fprintf(stderr, "Error : %s : %s \n", fct_name, error_txt);
-  exit(-1);
-}
-
 /******************************************************************************/
 /***************************** AES MANAGMENT **********************************/
 /******************************************************************************/
@@ -81,7 +76,7 @@ uchar FieldMul(uchar byte_value, uchar coeff) {
   return result;
 }
 
-bool ShiftRow(uchar *message) {
+bool ShiftRows(uchar *message) {
   uchar tmp = 0;
 
   /* 2nd Row */
@@ -111,7 +106,7 @@ bool ShiftRow(uchar *message) {
 }
 
 /* O(16) */
-bool IShiftRow(uchar *message) {
+bool IShiftRows(uchar *message) {
   uchar tmp = 0;
 
   /* 4th Row */
@@ -141,14 +136,14 @@ bool IShiftRow(uchar *message) {
 }
 
 /*
-MixColumn functions (equivalent to a matrix product in GF(2^8))
+MixColumns functions (equivalent to a matrix product in GF(2^8))
     2 3 1 1
 A = 1 2 3 1   B = message
     3 1 1 1
 
 it computes A*B
 */
-bool MixColumn(uchar *message) {
+bool MixColumns(uchar *message) {
   uchar column = 0;
   uchar v, u, t = 0;
 
@@ -176,7 +171,7 @@ bool MixColumn(uchar *message) {
   return EXIT_SUCCESS;
 }
 
-bool IMixColumn(uchar *message) {
+bool IMixColumns(uchar *message) {
   uchar return_code = EXIT_FAILURE;
   uchar column = 0;
   uchar v, u = 0;
@@ -189,7 +184,7 @@ bool IMixColumn(uchar *message) {
     message[column + 8] = message[column + 8] ^ u;
     message[column + 12] = message[column + 12] ^ v;
   }
-  return_code = MixColumn(message);
+  return_code = MixColumns(message);
   return return_code;
 }
 
@@ -207,14 +202,14 @@ bool Encryption(uchar *plaintext, uchar **round_keys) {
   /**** Rounds starts ****/
   for (uchar i = 1; i < AES_ROUNDS; i++) {
     SubBytes(plaintext);
-    ShiftRow(plaintext);
-    MixColumn(plaintext);
+    ShiftRows(plaintext);
+    MixColumns(plaintext);
     AddRoundKey(plaintext, round_keys[i]);
   }
 
   /**** Last Round ****/
   SubBytes(plaintext);
-  ShiftRow(plaintext);
+  ShiftRows(plaintext);
   AddRoundKey(plaintext, round_keys[AES_ROUNDS]);
 
   return EXIT_SUCCESS;
@@ -223,13 +218,13 @@ bool Encryption(uchar *plaintext, uchar **round_keys) {
 bool Decryption(uchar *ciphertext, uchar **round_keys) {
   /* let's start with an AddRoundKey */
   AddRoundKey(ciphertext, round_keys[AES_ROUNDS]);
-  IShiftRow(ciphertext);
+  IShiftRows(ciphertext);
   ISubBytes(ciphertext);
 
   for (uchar i = AES_ROUNDS - 1; i > 0; i--) {
     AddRoundKey(ciphertext, round_keys[i]);
-    IMixColumn(ciphertext);
-    IShiftRow(ciphertext);
+    IMixColumns(ciphertext);
+    IShiftRows(ciphertext);
     ISubBytes(ciphertext);
   }
 
@@ -287,7 +282,7 @@ bool RollKey(uchar *key, uchar round) {
 /* function to rewind key_guess */
 bool RewindKey(uchar *key_guess, uchar round, bool verbose) {
   if (round > AES_ROUNDS) {
-    errx(1, "Error of round value");
+    errx(1, "RewindKey : Error of round value");
   }
   for (int i = round - 1; i >= 0; i--) {
     RollKey(key_guess, i);
@@ -378,7 +373,7 @@ bool InvATurn(uchar *ciphertext, uchar *current_key, int current_turn) {
   // last round
   if (AES_ROUNDS == current_turn) {
     AddRoundKey(ciphertext, current_key);
-    IShiftRow(ciphertext);
+    IShiftRows(ciphertext);
     ISubBytes(ciphertext);
     return EXIT_SUCCESS;
 
@@ -389,8 +384,8 @@ bool InvATurn(uchar *ciphertext, uchar *current_key, int current_turn) {
 
   } else {
     AddRoundKey(ciphertext, current_key);
-    IMixColumn(ciphertext);
-    IShiftRow(ciphertext);
+    IMixColumns(ciphertext);
+    IShiftRows(ciphertext);
     ISubBytes(ciphertext);
     return EXIT_SUCCESS;
   }
