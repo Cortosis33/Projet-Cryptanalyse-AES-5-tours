@@ -8,6 +8,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <err.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -141,6 +142,8 @@ static const unsigned char GF256_INVERSE[256] = {
 uchar PrintByteArray(uchar *message, uchar len, const uchar *name);
 //#endif /* DEBUG_LVL 1*/
 
+void ErrorEvent(const uchar *fct_name, const uchar *error_txt);
+
 bool SubBytes(uchar *message);
 bool ISubBytes(uchar *message);
 
@@ -160,6 +163,7 @@ bool Decryption(uchar *ciphertext, uchar **round_keys);
 
 bool UnrollKey(uchar *key, uchar round);
 bool RollKey(uchar *key, uchar round);
+bool RewindKey(uchar *key, uchar round, bool verbose);
 bool PrepareKey(uchar **round_keys, uchar *key);
 uchar **GenRoundkeys(uchar *key, bool verb);
 

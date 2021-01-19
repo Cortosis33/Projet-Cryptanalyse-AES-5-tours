@@ -6,6 +6,7 @@
 #if DEBUG_LVL > 0
 
 /* ON case */
+
 uchar PrintByteArray(uchar *message, uchar len, const uchar *name) {
   uchar return_code = EXIT_FAILURE;
   uchar i;
@@ -28,6 +29,11 @@ uchar PrintByteArray(uchar *message, uchar len, const uchar *name) {
 }
 
 #endif /* DEBUG_LVL*/
+
+void ErrorEvent(const uchar *fct_name, const uchar *error_txt) {
+  fprintf(stderr, "Error : %s : %s \n", fct_name, error_txt);
+  exit(-1);
+}
 
 /******************************************************************************/
 /***************************** AES MANAGMENT **********************************/
@@ -256,6 +262,7 @@ bool UnrollKey(uchar *key, uchar round) {
   return EXIT_SUCCESS;
 }
 
+/* reverse of UnrollKey */
 bool RollKey(uchar *key, uchar round) {
   uchar tmp = 0;
   int row, column = 0;
@@ -273,6 +280,21 @@ bool RollKey(uchar *key, uchar round) {
   key[8] = S_box[key[15]] ^ key[8];
   key[12] = S_box[tmp] ^ key[12];
 
+  return EXIT_SUCCESS;
+}
+
+/* function to rewind key_guess */
+bool RewindKey(uchar *key_guess, uchar round, bool verbose) {
+  if (round > AES_ROUNDS) {
+    errx(1, "Error of round value");
+  }
+  for (int i = round - 1; i >= 0; i--) {
+    RollKey(key_guess, i);
+    if (verbose) {
+      fprintf(stdout, "key : %d", i);
+      PrintByteArray(key_guess, CELLS, (const uchar *)" ");
+    }
+  }
   return EXIT_SUCCESS;
 }
 

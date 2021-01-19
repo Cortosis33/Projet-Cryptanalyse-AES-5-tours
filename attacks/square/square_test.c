@@ -103,11 +103,7 @@ int main() {
   /*       Attack on the last key        */
   /***************************************/
   PrintByteArray(key_guess, CELLS, (const uchar *)"key 4");
-  for (int i = 3; i >= 0; i--) {
-    RollKey(key_guess, i);
-    fprintf(stdout, "key : %d\n", i);
-    PrintByteArray(key_guess, CELLS, (const uchar *)" ");
-  }
+  RewindKey(key_guess, 4, 1);
 
   return 0;
 }
