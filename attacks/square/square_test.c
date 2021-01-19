@@ -93,6 +93,17 @@ int main() {
   ShiftRow(key_guess);
   PrintByteArray(key_guess, CELLS, (const uchar *)"key");
 
+  // maintenant qu'on a la cle, on peut remonter d'un tour :
+
+  // on applique le IShiftRow à l'avance sur les chiffrés
+  for (size_t i = 0; i < 256; i++) {
+    ShiftRow(pairs_1[i].ciphertext);
+    ShiftRow(pairs_2[i].ciphertext);
+  }
+
+  PrintByteArray(pairs_1[255].plaintext, CELLS, (const uchar *)"Plaintext");
+  PrintByteArray(pairs_1[255].ciphertext, CELLS, (const uchar *)"Encrypted");
+
   /* Test du premier octet non concluant
 uchar listfirstoctet1[255];
 uchar listfirstoctet2[255];

@@ -162,7 +162,7 @@ bool UnrollKey(uchar *key, uchar round);
 bool PrepareKey(uchar **round_keys, uchar *key);
 uchar **GenRoundkeys(uchar *key, bool verb);
 
-bool InvATurn(uchar *ciphertext, uchar **round_keys, int current_turn);
+bool InvATurn(uchar *ciphertext, uchar *current_key, int current_turn);
 
 unsigned hamdist(unsigned x, unsigned y);
 

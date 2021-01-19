@@ -325,24 +325,27 @@ unsigned hamdist(unsigned x, unsigned y) {
   return dist;
 }
 
-bool InvATurn(uchar *ciphertext, uchar **round_keys, int current_turn) {
+bool InvATurn(uchar *ciphertext, uchar *current_key, int current_turn) {
 
   if (current_turn > AES_ROUNDS) {
+    fprintf(stderr, "InvATurn : %d is too large\n", current_turn);
     return EXIT_FAILURE;
   }
 
+  // last round
   if (AES_ROUNDS == current_turn) {
-    AddRoundKey(ciphertext, round_keys[AES_ROUNDS]);
+    AddRoundKey(ciphertext, current_key);
     IShiftRow(ciphertext);
     ISubBytes(ciphertext);
     return EXIT_SUCCESS;
 
+    // first round
   } else if (current_turn == 0) {
-    AddRoundKey(ciphertext, round_keys[0]);
+    AddRoundKey(ciphertext, current_key);
     return EXIT_SUCCESS;
 
   } else {
-    AddRoundKey(ciphertext, round_keys[current_turn]);
+    AddRoundKey(ciphertext, current_key);
     IMixColumn(ciphertext);
     IShiftRow(ciphertext);
     ISubBytes(ciphertext);
