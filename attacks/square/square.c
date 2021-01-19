@@ -1,4 +1,4 @@
-#include "square.h"
+#include "../../include/square.h"
 
 #define NBR_PAIRS 256;
 

@@ -1,5 +1,5 @@
-#include "square.h"
-#include "utils.h"
+#include "../../include/square.h"
+#include "../../include/utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 
