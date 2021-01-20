@@ -11,6 +11,9 @@ uchar SIZE_KEY = 16;
 uchar KEY[16] = {0xd0, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
                  0xf9, 0x25, 0x0c, 0x0c, 0xa8, 0x89, 0xc8, 0xa6};
 
+// code inspired from StackOverflow at :
+// at
+// https://stackoverflow.com/questions/14539867/how-to-display-a-progress-indicator-in-pure-c-c-cout-printf/36315819#36315819
 void printProgress(double percentage) {
   int val = (int)(percentage * 100);
   int lpad = (int)(percentage * PBWIDTH);
@@ -183,9 +186,9 @@ int main() {
       printProgress(progress);
       /****************************************/
 
-      for (size_t key_2 = 0; key_2 < 256; key_2++) {
+      for (size_t key_2 = 0; key_2 < 1; key_2++) {
         key_guess_5[7] = key_2;
-        // key_guess_5[7] = 0x9d;
+        key_guess_5[7] = 0x9d;
 
         for (size_t key_3 = 0; key_3 < 1; key_3++) {
           // key_guess_5[10] = key_3;
