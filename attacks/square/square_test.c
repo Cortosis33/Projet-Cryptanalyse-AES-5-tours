@@ -3,10 +3,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define PBSTR "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
+#define PBWIDTH 60
+
 uchar SIZE_KEY = 16;
 
 uchar KEY[16] = {0xd0, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
                  0xf9, 0x25, 0x0c, 0x0c, 0xa8, 0x89, 0xc8, 0xa6};
+
+void printProgress(double percentage) {
+  int val = (int)(percentage * 100);
+  int lpad = (int)(percentage * PBWIDTH);
+  int rpad = PBWIDTH - lpad;
+  printf("\r%3d%% [%.*s%*s]", val, lpad, PBSTR, rpad, "");
+  fflush(stdout);
+}
 
 // key : d0c9e1b614ee3f63f9250c0ca889c8a6
 
@@ -20,6 +31,10 @@ int main() {
   uchar **round_keys = GenRoundkeys(KEY, 1);
 
   if (AES_ROUNDS == 4) {
+
+    /**************************************************************************/
+    /************************ ATTACK ON 4 ROUNDS AES **************************/
+    /**************************************************************************/
 
     /*******************************/
     /*         Encryption          */
@@ -110,6 +125,11 @@ int main() {
   }
 
   if (AES_ROUNDS == 5) {
+
+    /**************************************************************************/
+    /************************ ATTACK ON 5 ROUNDS AES **************************/
+    /**************************************************************************/
+
     fprintf(stdout, "plaintext/ciphertext generation...\n");
 
     plain_cipher pairs_1[NBR_PAIRS];
@@ -132,7 +152,7 @@ int main() {
     EncryptPlaintexts(pairs_4, round_keys);
     EncryptPlaintexts(pairs_5, round_keys);
 
-    fprintf(stdout, "plaintext/ciphertext generation OK\n");
+    fprintf(stdout, "plaintext/ciphertext generation OK\n\n");
 
     fprintf(stdout, "key_guess generation...\n");
     uchar key_guess_5[16];
@@ -141,7 +161,7 @@ int main() {
       key_guess_5[i] = 0;
       key_guess_4[i] = 0;
     }
-    fprintf(stdout, "key_guess generation OK\n");
+    fprintf(stdout, "key_guess generation OK\n\n");
     uchar b1 = 0;
     uchar b2 = 0;
     uchar b3 = 0;
@@ -149,32 +169,28 @@ int main() {
     uchar b5 = 0;
 
     // on construit la clé
-    for (size_t key_1 = 0; key_1 < 1; key_1++) {
+
+    /************** affichage ***************/
+    double progress = 0;
+    /****************************************/
+
+    for (size_t key_1 = 0; key_1 < 256; key_1++) {
       key_guess_5[0] = key_1;
-      key_guess_5[0] = 0xe4;
+      // key_guess_5[0] = 0xe4;
 
-      for (size_t key_2 = 0; key_2 < 1; key_2++) {
+      /************** affichage ***************/
+      progress = (double)(1.0 * key_1 / 256);
+      printProgress(progress);
+      /****************************************/
+
+      for (size_t key_2 = 0; key_2 < 256; key_2++) {
         key_guess_5[7] = key_2;
-        key_guess_5[7] = 0x9d;
+        // key_guess_5[7] = 0x9d;
 
-        /* affichage */
-        int progress = 0;
-        int new_progress = 0;
-        /*************/
+        for (size_t key_3 = 0; key_3 < 1; key_3++) {
+          // key_guess_5[10] = key_3;
 
-        for (size_t key_3 = 0; key_3 < 256; key_3++) {
-          key_guess_5[10] = key_3;
-
-          /* affichage */
-          new_progress = (int)(100 * key_3 / 256);
-          if (new_progress > progress) {
-            progress = new_progress;
-            fprintf(stdout, "  %d%%\r", progress);
-            fflush(stdout);
-          }
-          /*************/
-
-          // key_guess_5[10] = 0xd4;
+          key_guess_5[10] = 0xd4;
           for (size_t key_4 = 0; key_4 < 1; key_4++) {
             key_guess_5[13] = key_4;
             key_guess_5[13] = 0xc7;
@@ -218,7 +234,7 @@ int main() {
               // fprintf(stdout, "b1=%x, b2=%x, b3=%x, b4=%x\n", b1, b2, b3,
               // b4);
               if (!b1 && !b2 && !b3 && !b4 && !b5) {
-                printf("First 4 bytes found ! \n");
+                printf("\nFirst 4 bytes found ! \n");
                 PrintByteArray(key_guess_5, CELLS,
                                (const uchar *)"key_guess_5");
                 goto outloops1;
@@ -229,30 +245,24 @@ int main() {
       }
     }
   outloops1:
-    for (size_t key_1 = 0; key_1 < 1; key_1++) {
+    for (size_t key_1 = 0; key_1 < 256; key_1++) {
+
       key_guess_5[2] = key_1;
-      key_guess_5[2] = 0xeb;
+      // key_guess_5[2] = 0xeb;
+
+      /************** affichage ***************/
+      progress = (double)(1.0 * key_1 / 256);
+      printProgress(progress);
+      /****************************************/
 
       for (size_t key_2 = 0; key_2 < 1; key_2++) {
         key_guess_5[5] = key_2;
         key_guess_5[5] = 0x3d;
 
-        /* affichage */
-        int progress = 0;
-        int new_progress = 0;
-        /*************/
+        for (size_t key_3 = 0; key_3 < 1; key_3++) {
+          // key_guess_5[8] = key_3;
+          key_guess_5[8] = 0xbb;
 
-        for (size_t key_3 = 0; key_3 < 256; key_3++) {
-          key_guess_5[8] = key_3;
-
-          /* affichage */
-          new_progress = (int)(100 * key_3 / 256);
-          if (new_progress > progress) {
-            progress = new_progress;
-            fprintf(stdout, "  %d%%\r", progress);
-            fflush(stdout);
-          }
-          /***************************/
           for (size_t key_4 = 0; key_4 < 1; key_4++) {
             key_guess_5[15] = key_4;
             key_guess_5[15] = 0x59;
@@ -296,7 +306,7 @@ int main() {
               // fprintf(stdout, "b1=%x, b2=%x, b3=%x, b4=%x\n", b1, b2, b3,
               // b4);
               if (!b1 && !b2 && !b3 && !b4 && !b5) {
-                printf("Second 4 bytes found ! \n");
+                printf("\nSecond 4 bytes found ! \n");
                 PrintByteArray(key_guess_5, CELLS,
                                (const uchar *)"key_guess_5");
                 goto outloops2;
@@ -307,30 +317,23 @@ int main() {
       }
     }
   outloops2:
-    for (size_t key_1 = 0; key_1 < 1; key_1++) {
+    for (size_t key_1 = 0; key_1 < 256; key_1++) {
       key_guess_5[1] = key_1;
-      key_guess_5[1] = 0xAD;
+      // key_guess_5[1] = 0xAD;
+
+      /************** affichage ***************/
+      progress = (double)(1.0 * key_1 / 256);
+      printProgress(progress);
+      /****************************************/
 
       for (size_t key_2 = 0; key_2 < 1; key_2++) {
         key_guess_5[4] = key_2;
         key_guess_5[4] = 0x12;
 
-        /* affichage */
-        int progress = 0;
-        int new_progress = 0;
-        /*************/
+        for (size_t key_3 = 0; key_3 < 1; key_3++) {
+          // key_guess_5[11] = key_3;
+          key_guess_5[11] = 0xd3;
 
-        for (size_t key_3 = 0; key_3 < 256; key_3++) {
-          key_guess_5[11] = key_3;
-
-          /* affichage */
-          new_progress = (int)(100 * key_3 / 256);
-          if (new_progress > progress) {
-            progress = new_progress;
-            fprintf(stdout, "  %d%%\r", progress);
-            fflush(stdout);
-          }
-          /***************************/
           for (size_t key_4 = 0; key_4 < 1; key_4++) {
             key_guess_5[14] = key_4;
             key_guess_5[14] = 0x52;
@@ -374,7 +377,7 @@ int main() {
               // fprintf(stdout, "b1=%x, b2=%x, b3=%x, b4=%x\n", b1, b2, b3,
               // b4);
               if (!b1 && !b2 && !b3 && !b4 && !b5) {
-                printf("Third 4 bytes found ! \n");
+                printf("\nThird 4 bytes found ! \n");
                 PrintByteArray(key_guess_5, CELLS,
                                (const uchar *)"key_guess_5");
                 goto outloop3;
@@ -385,30 +388,23 @@ int main() {
       }
     }
   outloop3:
-    for (size_t key_1 = 0; key_1 < 1; key_1++) {
+    for (size_t key_1 = 0; key_1 < 256; key_1++) {
       key_guess_5[3] = key_1;
-      key_guess_5[3] = 0xB5;
+      // key_guess_5[3] = 0xB5;
+
+      /************** affichage ***************/
+      progress = (double)(1.0 * key_1 / 256);
+      printProgress(progress);
+      /****************************************/
 
       for (size_t key_2 = 0; key_2 < 1; key_2++) {
         key_guess_5[6] = key_2;
         key_guess_5[6] = 0x7E;
 
-        /* affichage */
-        int progress = 0;
-        int new_progress = 0;
-        /*************/
-
-        for (size_t key_3 = 0; key_3 < 256; key_3++) {
+        for (size_t key_3 = 0; key_3 < 1; key_3++) {
           key_guess_5[9] = key_3;
+          key_guess_5[9] = 0xe9;
 
-          /* affichage */
-          new_progress = (int)(100 * key_3 / 256);
-          if (new_progress > progress) {
-            progress = new_progress;
-            fprintf(stdout, "  %d%%\r", progress);
-            fflush(stdout);
-          }
-          /***************************/
           for (size_t key_4 = 0; key_4 < 1; key_4++) {
             key_guess_5[12] = key_4;
             key_guess_5[12] = 0x6E;
@@ -452,7 +448,7 @@ int main() {
               // fprintf(stdout, "b1=%x, b2=%x, b3=%x, b4=%x\n", b1, b2, b3,
               // b4);
               if (!b1 && !b2 && !b3 && !b4 && !b5) {
-                printf("Last 4 bytes found ! \n");
+                printf("\nLast 4 bytes found ! \n");
                 PrintByteArray(key_guess_5, CELLS,
                                (const uchar *)"key_guess_5");
                 goto outloops;
