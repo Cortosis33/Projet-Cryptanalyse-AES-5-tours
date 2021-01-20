@@ -152,6 +152,7 @@ int main() {
     for (size_t key_1 = 0; key_1 < 1; key_1++) {
       key_guess_5[0] = key_1;
       key_guess_5[0] = 0xe4;
+
       for (size_t key_2 = 0; key_2 < 1; key_2++) {
         key_guess_5[7] = key_2;
         key_guess_5[7] = 0x9d;
@@ -174,9 +175,9 @@ int main() {
           /*************/
 
           // key_guess_5[10] = 0xd4;
-          for (size_t key_4 = 0; key_4 < 256; key_4++) {
+          for (size_t key_4 = 0; key_4 < 1; key_4++) {
             key_guess_5[13] = key_4;
-            // key_guess_5[13] = 0xc7;
+            key_guess_5[13] = 0xc7;
             for (size_t key_0 = 0; key_0 < 256; key_0++) {
               key_guess_4[0] = key_0;
               b1 = 0;
@@ -217,6 +218,241 @@ int main() {
               // fprintf(stdout, "b1=%x, b2=%x, b3=%x, b4=%x\n", b1, b2, b3,
               // b4);
               if (!b1 && !b2 && !b3 && !b4 && !b5) {
+                printf("First 4 bytes found ! \n");
+                PrintByteArray(key_guess_5, CELLS,
+                               (const uchar *)"key_guess_5");
+                goto outloops1;
+              }
+            }
+          }
+        }
+      }
+    }
+  outloops1:
+    for (size_t key_1 = 0; key_1 < 1; key_1++) {
+      key_guess_5[2] = key_1;
+      key_guess_5[2] = 0xeb;
+
+      for (size_t key_2 = 0; key_2 < 1; key_2++) {
+        key_guess_5[5] = key_2;
+        key_guess_5[5] = 0x3d;
+
+        /* affichage */
+        int progress = 0;
+        int new_progress = 0;
+        /*************/
+
+        for (size_t key_3 = 0; key_3 < 256; key_3++) {
+          key_guess_5[8] = key_3;
+
+          /* affichage */
+          new_progress = (int)(100 * key_3 / 256);
+          if (new_progress > progress) {
+            progress = new_progress;
+            fprintf(stdout, "  %d%%\r", progress);
+            fflush(stdout);
+          }
+          /***************************/
+          for (size_t key_4 = 0; key_4 < 1; key_4++) {
+            key_guess_5[15] = key_4;
+            key_guess_5[15] = 0x59;
+            for (size_t key_0 = 0; key_0 < 256; key_0++) {
+              key_guess_4[2] = key_0;
+              b1 = 0;
+              b2 = 0;
+              b3 = 0;
+              b4 = 0;
+              b5 = 0;
+              for (size_t i = 0; i < NBR_PAIRS; i++) {
+                // on remonte le tour 5
+                InvATurn(pairs_1[i].ciphertext_tmp, key_guess_5, 5);
+                InvATurn(pairs_2[i].ciphertext_tmp, key_guess_5, 5);
+                InvATurn(pairs_3[i].ciphertext_tmp, key_guess_5, 5);
+                InvATurn(pairs_4[i].ciphertext_tmp, key_guess_5, 5);
+                InvATurn(pairs_5[i].ciphertext_tmp, key_guess_5, 5);
+
+                // on remonte le tour 4
+                InvATurn(pairs_1[i].ciphertext_tmp, key_guess_4, 4);
+                InvATurn(pairs_2[i].ciphertext_tmp, key_guess_4, 4);
+                InvATurn(pairs_3[i].ciphertext_tmp, key_guess_4, 4);
+                InvATurn(pairs_4[i].ciphertext_tmp, key_guess_4, 4);
+                InvATurn(pairs_5[i].ciphertext_tmp, key_guess_4, 4);
+
+                b1 = pairs_1[i].ciphertext_tmp[2] ^ b1;
+                b2 = pairs_2[i].ciphertext_tmp[2] ^ b2;
+                b3 = pairs_3[i].ciphertext_tmp[2] ^ b3;
+                b4 = pairs_4[i].ciphertext_tmp[2] ^ b4;
+                b5 = pairs_5[i].ciphertext_tmp[2] ^ b5;
+
+                // on reinitialise ciphertext_tmp par ciphertext
+                for (size_t j = 0; j < 16; j++) {
+                  pairs_1[i].ciphertext_tmp[j] = pairs_1[i].ciphertext[j];
+                  pairs_2[i].ciphertext_tmp[j] = pairs_2[i].ciphertext[j];
+                  pairs_3[i].ciphertext_tmp[j] = pairs_3[i].ciphertext[j];
+                  pairs_4[i].ciphertext_tmp[j] = pairs_4[i].ciphertext[j];
+                  pairs_5[i].ciphertext_tmp[j] = pairs_5[i].ciphertext[j];
+                }
+              }
+              // fprintf(stdout, "b1=%x, b2=%x, b3=%x, b4=%x\n", b1, b2, b3,
+              // b4);
+              if (!b1 && !b2 && !b3 && !b4 && !b5) {
+                printf("Second 4 bytes found ! \n");
+                PrintByteArray(key_guess_5, CELLS,
+                               (const uchar *)"key_guess_5");
+                goto outloops2;
+              }
+            }
+          }
+        }
+      }
+    }
+  outloops2:
+    for (size_t key_1 = 0; key_1 < 1; key_1++) {
+      key_guess_5[1] = key_1;
+      key_guess_5[1] = 0xAD;
+
+      for (size_t key_2 = 0; key_2 < 1; key_2++) {
+        key_guess_5[4] = key_2;
+        key_guess_5[4] = 0x12;
+
+        /* affichage */
+        int progress = 0;
+        int new_progress = 0;
+        /*************/
+
+        for (size_t key_3 = 0; key_3 < 256; key_3++) {
+          key_guess_5[11] = key_3;
+
+          /* affichage */
+          new_progress = (int)(100 * key_3 / 256);
+          if (new_progress > progress) {
+            progress = new_progress;
+            fprintf(stdout, "  %d%%\r", progress);
+            fflush(stdout);
+          }
+          /***************************/
+          for (size_t key_4 = 0; key_4 < 1; key_4++) {
+            key_guess_5[14] = key_4;
+            key_guess_5[14] = 0x52;
+            for (size_t key_0 = 0; key_0 < 256; key_0++) {
+              key_guess_4[1] = key_0;
+              b1 = 0;
+              b2 = 0;
+              b3 = 0;
+              b4 = 0;
+              b5 = 0;
+              for (size_t i = 0; i < NBR_PAIRS; i++) {
+                // on remonte le tour 5
+                InvATurn(pairs_1[i].ciphertext_tmp, key_guess_5, 5);
+                InvATurn(pairs_2[i].ciphertext_tmp, key_guess_5, 5);
+                InvATurn(pairs_3[i].ciphertext_tmp, key_guess_5, 5);
+                InvATurn(pairs_4[i].ciphertext_tmp, key_guess_5, 5);
+                InvATurn(pairs_5[i].ciphertext_tmp, key_guess_5, 5);
+
+                // on remonte le tour 4
+                InvATurn(pairs_1[i].ciphertext_tmp, key_guess_4, 4);
+                InvATurn(pairs_2[i].ciphertext_tmp, key_guess_4, 4);
+                InvATurn(pairs_3[i].ciphertext_tmp, key_guess_4, 4);
+                InvATurn(pairs_4[i].ciphertext_tmp, key_guess_4, 4);
+                InvATurn(pairs_5[i].ciphertext_tmp, key_guess_4, 4);
+
+                b1 = pairs_1[i].ciphertext_tmp[1] ^ b1;
+                b2 = pairs_2[i].ciphertext_tmp[1] ^ b2;
+                b3 = pairs_3[i].ciphertext_tmp[1] ^ b3;
+                b4 = pairs_4[i].ciphertext_tmp[1] ^ b4;
+                b5 = pairs_5[i].ciphertext_tmp[1] ^ b5;
+
+                // on reinitialise ciphertext_tmp par ciphertext
+                for (size_t j = 0; j < 16; j++) {
+                  pairs_1[i].ciphertext_tmp[j] = pairs_1[i].ciphertext[j];
+                  pairs_2[i].ciphertext_tmp[j] = pairs_2[i].ciphertext[j];
+                  pairs_3[i].ciphertext_tmp[j] = pairs_3[i].ciphertext[j];
+                  pairs_4[i].ciphertext_tmp[j] = pairs_4[i].ciphertext[j];
+                  pairs_5[i].ciphertext_tmp[j] = pairs_5[i].ciphertext[j];
+                }
+              }
+              // fprintf(stdout, "b1=%x, b2=%x, b3=%x, b4=%x\n", b1, b2, b3,
+              // b4);
+              if (!b1 && !b2 && !b3 && !b4 && !b5) {
+                printf("Third 4 bytes found ! \n");
+                PrintByteArray(key_guess_5, CELLS,
+                               (const uchar *)"key_guess_5");
+                goto outloop3;
+              }
+            }
+          }
+        }
+      }
+    }
+  outloop3:
+    for (size_t key_1 = 0; key_1 < 1; key_1++) {
+      key_guess_5[3] = key_1;
+      key_guess_5[3] = 0xB5;
+
+      for (size_t key_2 = 0; key_2 < 1; key_2++) {
+        key_guess_5[6] = key_2;
+        key_guess_5[6] = 0x7E;
+
+        /* affichage */
+        int progress = 0;
+        int new_progress = 0;
+        /*************/
+
+        for (size_t key_3 = 0; key_3 < 256; key_3++) {
+          key_guess_5[9] = key_3;
+
+          /* affichage */
+          new_progress = (int)(100 * key_3 / 256);
+          if (new_progress > progress) {
+            progress = new_progress;
+            fprintf(stdout, "  %d%%\r", progress);
+            fflush(stdout);
+          }
+          /***************************/
+          for (size_t key_4 = 0; key_4 < 1; key_4++) {
+            key_guess_5[12] = key_4;
+            key_guess_5[12] = 0x6E;
+            for (size_t key_0 = 0; key_0 < 256; key_0++) {
+              key_guess_4[3] = key_0;
+              b1 = 0;
+              b2 = 0;
+              b3 = 0;
+              b4 = 0;
+              b5 = 0;
+              for (size_t i = 0; i < NBR_PAIRS; i++) {
+                // on remonte le tour 5
+                InvATurn(pairs_1[i].ciphertext_tmp, key_guess_5, 5);
+                InvATurn(pairs_2[i].ciphertext_tmp, key_guess_5, 5);
+                InvATurn(pairs_3[i].ciphertext_tmp, key_guess_5, 5);
+                InvATurn(pairs_4[i].ciphertext_tmp, key_guess_5, 5);
+                InvATurn(pairs_5[i].ciphertext_tmp, key_guess_5, 5);
+
+                // on remonte le tour 4
+                InvATurn(pairs_1[i].ciphertext_tmp, key_guess_4, 4);
+                InvATurn(pairs_2[i].ciphertext_tmp, key_guess_4, 4);
+                InvATurn(pairs_3[i].ciphertext_tmp, key_guess_4, 4);
+                InvATurn(pairs_4[i].ciphertext_tmp, key_guess_4, 4);
+                InvATurn(pairs_5[i].ciphertext_tmp, key_guess_4, 4);
+
+                b1 = pairs_1[i].ciphertext_tmp[3] ^ b1;
+                b2 = pairs_2[i].ciphertext_tmp[3] ^ b2;
+                b3 = pairs_3[i].ciphertext_tmp[3] ^ b3;
+                b4 = pairs_4[i].ciphertext_tmp[3] ^ b4;
+                b5 = pairs_5[i].ciphertext_tmp[3] ^ b5;
+
+                // on reinitialise ciphertext_tmp par ciphertext
+                for (size_t j = 0; j < 16; j++) {
+                  pairs_1[i].ciphertext_tmp[j] = pairs_1[i].ciphertext[j];
+                  pairs_2[i].ciphertext_tmp[j] = pairs_2[i].ciphertext[j];
+                  pairs_3[i].ciphertext_tmp[j] = pairs_3[i].ciphertext[j];
+                  pairs_4[i].ciphertext_tmp[j] = pairs_4[i].ciphertext[j];
+                  pairs_5[i].ciphertext_tmp[j] = pairs_5[i].ciphertext[j];
+                }
+              }
+              // fprintf(stdout, "b1=%x, b2=%x, b3=%x, b4=%x\n", b1, b2, b3,
+              // b4);
+              if (!b1 && !b2 && !b3 && !b4 && !b5) {
+                printf("Last 4 bytes found ! \n");
                 PrintByteArray(key_guess_5, CELLS,
                                (const uchar *)"key_guess_5");
                 goto outloops;
@@ -226,7 +462,9 @@ int main() {
         }
       }
     }
+
   outloops:
+    printf("Let's find the key ! \n");
     RewindKey(key_guess_5, 5, 1);
   }
 
