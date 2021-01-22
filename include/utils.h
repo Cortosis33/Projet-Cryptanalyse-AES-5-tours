@@ -23,6 +23,8 @@
 
 #define EXIT_SUCCESS 0
 #define EXIT_FAILURE 1
+#define TRUE 1
+#define FALSE 0
 #define MAX_STRING_LEN 256
 
 #define DEBUG_LVL 1
