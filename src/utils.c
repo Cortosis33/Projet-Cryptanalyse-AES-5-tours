@@ -53,6 +53,7 @@ bool ISubBytes(uchar *message) {
 
 /*
 multiplication by x in GF(2^8)
+with 0x1b = 11011 = x^4+x^3+x+1 for replace x^8
 */
 uchar xtime(uchar byte_value) {
   return ((byte_value << 1) ^ (((byte_value >> 7) & 1) * 0x1b));

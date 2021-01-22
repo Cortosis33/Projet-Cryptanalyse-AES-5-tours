@@ -6,6 +6,10 @@
 #define PBSTR "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
 #define PBWIDTH 60
 
+#define VARIANT 0
+// to enable an attack
+#define ATTACK 1
+
 uchar SIZE_KEY = 16;
 
 uchar KEY[16] = {0xd0, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
@@ -13,7 +17,8 @@ uchar KEY[16] = {0xd0, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
 
 // code inspired from StackOverflow at :
 // at
-// https://stackoverflow.com/questions/14539867/how-to-display-a-progress-indicator-in-pure-c-c-cout-printf/36315819#36315819
+// https://stackoverflow.com/questions/14539867/how-to-display-a-progress-
+// indicator-in-pure-c-c-cout-printf/36315819#36315819
 void printProgress(double percentage) {
   int val = (int)(percentage * 100);
   int lpad = (int)(percentage * PBWIDTH);
@@ -30,10 +35,10 @@ int main() {
   /*        Keys creation        */
   /*******************************/
 
-  // to generate roundkeys
-  uchar **round_keys = GenRoundkeys(KEY, 1);
+  // to generate roundkeys with verbose = 0
+  uchar **round_keys = GenRoundkeys(KEY, 0);
 
-  if (AES_ROUNDS == 4) {
+  if (AES_ROUNDS == 4 && ATTACK) {
 
     /**************************************************************************/
     /************************ ATTACK ON 4 ROUNDS AES **************************/
@@ -127,13 +132,19 @@ int main() {
     RewindKey(key_guess, 4, 1);
   }
 
-  if (AES_ROUNDS == 5) {
+  if (AES_ROUNDS == 5 && ATTACK) {
 
     /**************************************************************************/
     /************************ ATTACK ON 5 ROUNDS AES **************************/
     /**************************************************************************/
 
     fprintf(stdout, "plaintext/ciphertext generation...\n");
+
+    plain_cipher **pairs_array = malloc(5 * sizeof(plain_cipher *));
+
+    for (size_t i = 0; i < 5; i++) {
+      pairs_array[i] = malloc(NBR_PAIRS * sizeof(plain_cipher));
+    }
 
     plain_cipher pairs_1[NBR_PAIRS];
     plain_cipher pairs_2[NBR_PAIRS];
@@ -142,6 +153,10 @@ int main() {
     plain_cipher pairs_5[NBR_PAIRS];
 
     // on genere les clairs
+    for (size_t i = 0; i < 5; i++) {
+      GenPlaintexts(pairs_array[i], i, 0xFF);
+    }
+
     GenPlaintexts(pairs_1, 0, 0xFF);
     GenPlaintexts(pairs_2, 1, 0xFF);
     GenPlaintexts(pairs_3, 2, 0xFF);
@@ -149,6 +164,11 @@ int main() {
     GenPlaintexts(pairs_5, 4, 0xFF);
 
     // on chiffre
+    for (size_t i = 0; i < 5; i++) {
+      EncryptPlaintexts(pairs_array[i], round_keys);
+    }
+    PrintByteArray((pairs_array[0])[0].ciphertext, CELLS,
+                   (const uchar *)"plaintext");
     EncryptPlaintexts(pairs_1, round_keys);
     EncryptPlaintexts(pairs_2, round_keys);
     EncryptPlaintexts(pairs_3, round_keys);
@@ -467,6 +487,35 @@ int main() {
     RewindKey(key_guess_5, 5, 1);
   }
 
-  /*  */
+  /* Testing code */
+  /*
+    plain_cipher pairs_1[NBR_PAIRS];
+
+    GenPlaintexts(pairs_1, 0, 0xFF);
+
+    EncryptPlaintexts(pairs_1, round_keys);
+
+    PrintByteArray(pairs_1[0].plaintext, CELLS, (const uchar *)"plain");
+    PrintByteArray(pairs_1[0].ciphertext, CELLS, (const uchar *)"cipher");
+
+    uchar b = 0;
+    for (size_t i = 0; i < NBR_PAIRS; i++) {
+      for (size_t j = 0; j < CELLS; j++) {
+        b = b ^ pairs_1[i].ciphertext[j];
+      }
+    }
+
+    fprintf(stdout, "%x\n", b);*/
+  uchar test[16];
+  for (size_t i = 0; i < CELLS; i++) {
+    test[i] = i;
+  }
+
+  PrintByteArray(test, CELLS, (const uchar *)"test");
+
+  IShiftRows(test);
+
+  PrintByteArray(test, CELLS, (const uchar *)"test");
+
   return 0;
 }
