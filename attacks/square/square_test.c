@@ -2,6 +2,7 @@
 #include "../../include/utils.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define PBSTR "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
 #define PBWIDTH 60
@@ -9,10 +10,11 @@
 #define VARIANT 0
 // to enable an attack
 #define ATTACK 1
+#define TEST 0
 
 uchar SIZE_KEY = 16;
 
-uchar KEY[16] = {0xd1, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
+uchar KEY[16] = {0xd0, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
                  0xf9, 0x25, 0x0c, 0x0c, 0xa8, 0x89, 0xc8, 0xa6};
 
 // code inspired from StackOverflow at :
@@ -30,6 +32,26 @@ void printProgress(double percentage) {
 bool AllZeroArray(uchar *array, size_t size) {
   for (size_t i = 0; i < size; i++) {
     if (array[i] != 0) {
+      return FALSE;
+    }
+  }
+  return TRUE;
+}
+
+// to return a random integer in [0,max-1]
+int RandInt(int max) {
+  static int first = 0;
+
+  if (first == 0) {
+    srand(time(NULL));
+    first = 1;
+  }
+  return (rand()) % max;
+}
+
+bool IsSameState(uchar *state1, uchar *state2) {
+  for (size_t i = 0; i < CELLS; i++) {
+    if (state1[i] != state2[i]) {
       return FALSE;
     }
   }
@@ -147,6 +169,32 @@ int main() {
     /************************ ATTACK ON 5 ROUNDS AES **************************/
     /**************************************************************************/
 
+    /* TESTS */
+    /*
+    Avec la clé : {0xd0, 0xc9, 0xe1, 0xb6,
+                   0x14, 0xee, 0x3f, 0x63,
+                   0xf9, 0x25, 0x0c, 0x0c,
+                   0xa8, 0x89, 0xc8, 0xa6};
+
+    OTF : octets à trouver par patie
+    N-L : nombre de lambd-set utilisé
+    S/E : Succes de l'attaque
+    T : temps de l'attaque en secondes
+          +-----------------------------------------+
+          |  OTF        N-L       S/E       T       |
+          |   2          2         S        5,67
+          |   2          3         S        8,56    |
+          |   2          4         S       11,39    |
+          |   2          5         S       14,26    |
+          |   3          5         S     3431,75    |
+
+                         Estimations
+          |   4          5         S   878336,0 ~ 10 jours
+          |   5          5         S     2560 jours ~ 7 ans
+
+    avec 3 octets par partie à trouver : 3431,75 secondes
+    */
+
     fprintf(stdout, "plaintext/ciphertext generation...\n");
     // on definit un nombre de lambda-set
     size_t nbr_lset = 2;
@@ -181,6 +229,9 @@ int main() {
     // on initialise le tableau de sommes
     uchar b[nbr_lset];
 
+    // on initilise un pointeur
+    uchar *ciphertext;
+
     // on construit la clé
     for (size_t key_1 = 0; key_1 < 256; key_1++) {
       key_guess_5[0] = key_1;
@@ -204,6 +255,7 @@ int main() {
 
             for (size_t key_0 = 0; key_0 < 256; key_0++) {
               key_guess_4[0] = key_0;
+              // key_guess_4[0] = (round_keys[4])[0];
 
               // on initialise le tableau de b
               for (size_t i = 0; i < nbr_lset; i++) {
@@ -216,21 +268,19 @@ int main() {
                 // Pour tout les chiffrés des lambd-sets
                 for (size_t i = 0; i < NBR_PAIRS; i++) {
 
+                  ciphertext = (pairs_array[i_pairs])[i].ciphertext_tmp;
+
                   // on remonte le tour 5
-                  InvATurn((pairs_array[i_pairs])[i].ciphertext_tmp,
-                           key_guess_5, 5);
+                  InvATurn(ciphertext, key_guess_5, 5);
 
                   // on remonte le tour 4
-                  InvATurn((pairs_array[i_pairs])[i].ciphertext_tmp,
-                           key_guess_4, 4);
+                  InvATurn(ciphertext, key_guess_4, 4);
 
                   // on somme les valeurs des tableaux et des chiffrés
-                  b[i_pairs] =
-                      (pairs_array[i_pairs])[i].ciphertext_tmp[0] ^ b[i_pairs];
+                  b[i_pairs] = ciphertext[0] ^ b[i_pairs];
 
                   // on replace les valeurs de ciphertext dans ciphertext_tmp
-                  CopyState((pairs_array[i_pairs])[i].ciphertext,
-                            (pairs_array[i_pairs])[i].ciphertext_tmp);
+                  CopyState((pairs_array[i_pairs])[i].ciphertext, ciphertext);
                 }
               }
               if (AllZeroArray(b, nbr_lset)) {
@@ -244,10 +294,10 @@ int main() {
         }
       }
     }
+    fprintf(stdout, "\nError\n");
   outloops1:
     for (size_t key_1 = 0; key_1 < 256; key_1++) {
       key_guess_5[2] = key_1;
-      // key_guess_5[2] = 0xeb;
 
       /************** affichage ***************/
       printProgress(1.0 * key_1 / 256);
@@ -267,6 +317,7 @@ int main() {
 
             for (size_t key_0 = 0; key_0 < 256; key_0++) {
               key_guess_4[2] = key_0;
+              // key_guess_4[2] = (round_keys[4])[2];
 
               // on initialise le tableau de b
               for (size_t i = 0; i < nbr_lset; i++) {
@@ -279,21 +330,19 @@ int main() {
                 // Pour tout les chiffrés des lambd-sets
                 for (size_t i = 0; i < NBR_PAIRS; i++) {
 
+                  ciphertext = (pairs_array[i_pairs])[i].ciphertext_tmp;
+
                   // on remonte le tour 5
-                  InvATurn((pairs_array[i_pairs])[i].ciphertext_tmp,
-                           key_guess_5, 5);
+                  InvATurn(ciphertext, key_guess_5, 5);
 
                   // on remonte le tour 4
-                  InvATurn((pairs_array[i_pairs])[i].ciphertext_tmp,
-                           key_guess_4, 4);
+                  InvATurn(ciphertext, key_guess_4, 4);
 
                   // on somme les valeurs des tableaux et des chiffrés
-                  b[i_pairs] =
-                      (pairs_array[i_pairs])[i].ciphertext_tmp[2] ^ b[i_pairs];
+                  b[i_pairs] = ciphertext[2] ^ b[i_pairs];
 
                   // on reinitialise ciphertext_tmp par ciphertext
-                  CopyState((pairs_array[i_pairs])[i].ciphertext,
-                            (pairs_array[i_pairs])[i].ciphertext_tmp);
+                  CopyState((pairs_array[i_pairs])[i].ciphertext, ciphertext);
                 }
               }
               if (AllZeroArray(b, nbr_lset)) {
@@ -342,21 +391,19 @@ int main() {
                 // Pour tout les chiffrés des lambd-sets
                 for (size_t i = 0; i < NBR_PAIRS; i++) {
 
+                  ciphertext = (pairs_array[i_pairs])[i].ciphertext_tmp;
+
                   // on remonte le tour 5
-                  InvATurn((pairs_array[i_pairs])[i].ciphertext_tmp,
-                           key_guess_5, 5);
+                  InvATurn(ciphertext, key_guess_5, 5);
 
                   // on remonte le tour 4
-                  InvATurn((pairs_array[i_pairs])[i].ciphertext_tmp,
-                           key_guess_4, 4);
+                  InvATurn(ciphertext, key_guess_4, 4);
 
                   // on somme les valeurs des tableaux et des chiffrés
-                  b[i_pairs] =
-                      (pairs_array[i_pairs])[i].ciphertext_tmp[1] ^ b[i_pairs];
+                  b[i_pairs] = ciphertext[1] ^ b[i_pairs];
 
                   // on reinitialise ciphertext_tmp par ciphertext
-                  CopyState((pairs_array[i_pairs])[i].ciphertext,
-                            (pairs_array[i_pairs])[i].ciphertext_tmp);
+                  CopyState((pairs_array[i_pairs])[i].ciphertext, ciphertext);
                 }
               }
               if (AllZeroArray(b, nbr_lset)) {
@@ -405,21 +452,19 @@ int main() {
                 // Pour tout les chiffrés des lambd-sets
                 for (size_t i = 0; i < NBR_PAIRS; i++) {
 
+                  ciphertext = (pairs_array[i_pairs])[i].ciphertext_tmp;
+
                   // on remonte le tour 5
-                  InvATurn((pairs_array[i_pairs])[i].ciphertext_tmp,
-                           key_guess_5, 5);
+                  InvATurn(ciphertext, key_guess_5, 5);
 
                   // on remonte le tour 4
-                  InvATurn((pairs_array[i_pairs])[i].ciphertext_tmp,
-                           key_guess_4, 4);
+                  InvATurn(ciphertext, key_guess_4, 4);
 
                   // on somme les valeurs des tableaux et des chiffrés
-                  b[i_pairs] =
-                      (pairs_array[i_pairs])[i].ciphertext_tmp[3] ^ b[i_pairs];
+                  b[i_pairs] = ciphertext[3] ^ b[i_pairs];
 
                   // on reinitialise ciphertext_tmp par ciphertext
-                  CopyState((pairs_array[i_pairs])[i].ciphertext,
-                            (pairs_array[i_pairs])[i].ciphertext_tmp);
+                  CopyState((pairs_array[i_pairs])[i].ciphertext, ciphertext);
                 }
               }
               // on verifie les valeurs du tableau b
@@ -437,10 +482,41 @@ int main() {
 
   outloops4:
     printf("Let's find the key ! \n");
-    RewindKey(key_guess_5, 5, 1);
+    RewindKey(key_guess_5, 5, 0);
+
+    if (IsSameState(key_guess_5, KEY)) {
+      fprintf(stdout, "SUCCESS\n");
+    }
   }
 
-  /* Testing code */
+  if (TEST) {
+    /* Testing code */
+    int cpt1 = 0;
+    int cpt2 = 0;
+    int rand = 0;
+    int max = 100;
+    uchar key[16];
+    for (int i = 0; i < max; i++) {
+
+      // on génère une clé :
+      for (size_t j = 0; j < CELLS; j++) {
+        key[j] = (uchar)RandInt(256);
+      }
+
+      for (size_t j = 0; j < AES_ROUNDS; j++) {
+        UnrollKey(key, j);
+      }
+
+      rand = key[15];
+      if (rand < 128) {
+        cpt1++;
+      } else {
+        cpt2++;
+      }
+    }
+    fprintf(stdout, "cpt1: %.2f, cpt2: %.2f\n", 100 * cpt1 * 1.0 / max,
+            100 * cpt2 * 1.0 / max);
+  }
 
   return 0;
 }
