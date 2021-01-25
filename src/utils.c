@@ -30,6 +30,18 @@ uchar PrintByteArray(uchar *message, uchar len, const uchar *name) {
 
 #endif /* DEBUG_LVL*/
 
+// code inspired from StackOverflow at :
+// at
+// https://stackoverflow.com/questions/14539867/how-to-display-a-progress-
+// indicator-in-pure-c-c-cout-printf/36315819#36315819
+void PrintProgress(double percentage) {
+  int val = (int)(percentage * 100);
+  int lpad = (int)(percentage * PBWIDTH);
+  int rpad = PBWIDTH - lpad;
+  printf("\r%3d%% [%.*s%*s]", val, lpad, PBSTR, rpad, "");
+  fflush(stdout);
+}
+
 /******************************************************************************/
 /***************************** AES MANAGMENT **********************************/
 /******************************************************************************/
@@ -351,7 +363,73 @@ uchar **GenRoundkeys(uchar *key, bool verb) {
   return round_keys;
 }
 
-/* compute hamming distance */
+/******************************************************************************/
+/*************************** OTHERS FUNCTIONS *********************************/
+/******************************************************************************/
+
+// to reverse an AES Round
+bool InvATurn(uchar *ciphertext, uchar *current_key, int current_turn) {
+
+  if (current_turn > AES_ROUNDS) {
+    errx(1, "InvATurn : %d is too large\n", current_turn);
+  }
+
+  if (AES_ROUNDS == current_turn) {
+    // last round
+    AddRoundKey(ciphertext, current_key);
+    IShiftRows(ciphertext);
+    ISubBytes(ciphertext);
+    return EXIT_SUCCESS;
+
+  } else if (current_turn == 0) {
+    // first round
+    AddRoundKey(ciphertext, current_key);
+    return EXIT_SUCCESS;
+
+  } else {
+    // others rounds
+    AddRoundKey(ciphertext, current_key);
+    IMixColumns(ciphertext);
+    IShiftRows(ciphertext);
+    ISubBytes(ciphertext);
+    return EXIT_SUCCESS;
+  }
+
+  return EXIT_FAILURE;
+}
+
+// to ckeck if all array's values are equals to zero
+bool AllZeroArray(uchar *array, size_t size) {
+  for (size_t i = 0; i < size; i++) {
+    if (array[i] != 0) {
+      return FALSE;
+    }
+  }
+  return TRUE;
+}
+
+// to return a random integer in [0,max-1]
+int RandInt(int max) {
+  static int first = 0;
+
+  if (first == 0) {
+    srand(time(NULL));
+    first = 1;
+  }
+  return (rand()) % max;
+}
+
+// to compare two state and returns TRUE if they are equals
+bool IsSameState(uchar *state1, uchar *state2) {
+  for (size_t i = 0; i < CELLS; i++) {
+    if (state1[i] != state2[i]) {
+      return FALSE;
+    }
+  }
+  return TRUE;
+}
+
+/* compute hamming distance btwn x and y */
 unsigned hamdist(unsigned x, unsigned y) {
   unsigned dist = 0, val = x ^ y; // XOR
 
@@ -362,33 +440,4 @@ unsigned hamdist(unsigned x, unsigned y) {
   }
 
   return dist;
-}
-
-bool InvATurn(uchar *ciphertext, uchar *current_key, int current_turn) {
-
-  if (current_turn > AES_ROUNDS) {
-    errx(1, "InvATurn : %d is too large\n", current_turn);
-  }
-
-  // last round
-  if (AES_ROUNDS == current_turn) {
-    AddRoundKey(ciphertext, current_key);
-    IShiftRows(ciphertext);
-    ISubBytes(ciphertext);
-    return EXIT_SUCCESS;
-
-    // first round
-  } else if (current_turn == 0) {
-    AddRoundKey(ciphertext, current_key);
-    return EXIT_SUCCESS;
-
-  } else {
-    AddRoundKey(ciphertext, current_key);
-    IMixColumns(ciphertext);
-    IShiftRows(ciphertext);
-    ISubBytes(ciphertext);
-    return EXIT_SUCCESS;
-  }
-
-  return EXIT_FAILURE;
 }

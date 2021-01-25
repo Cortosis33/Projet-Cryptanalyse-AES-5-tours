@@ -1,62 +1,13 @@
 #include "../../include/square.h"
 #include "../../include/utils.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
 
-#define PBSTR "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
-#define PBWIDTH 60
-
-#define VARIANT 0
-// to enable an attack
+// to enable attack
 #define ATTACK 1
+// to test some code in TestingCode zone
 #define TEST 0
-
-uchar SIZE_KEY = 16;
 
 uchar KEY[16] = {0xd0, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
                  0xf9, 0x25, 0x0c, 0x0c, 0xa8, 0x89, 0xc8, 0xa6};
-
-// code inspired from StackOverflow at :
-// at
-// https://stackoverflow.com/questions/14539867/how-to-display-a-progress-
-// indicator-in-pure-c-c-cout-printf/36315819#36315819
-void printProgress(double percentage) {
-  int val = (int)(percentage * 100);
-  int lpad = (int)(percentage * PBWIDTH);
-  int rpad = PBWIDTH - lpad;
-  printf("\r%3d%% [%.*s%*s]", val, lpad, PBSTR, rpad, "");
-  fflush(stdout);
-}
-
-bool AllZeroArray(uchar *array, size_t size) {
-  for (size_t i = 0; i < size; i++) {
-    if (array[i] != 0) {
-      return FALSE;
-    }
-  }
-  return TRUE;
-}
-
-// to return a random integer in [0,max-1]
-int RandInt(int max) {
-  static int first = 0;
-
-  if (first == 0) {
-    srand(time(NULL));
-    first = 1;
-  }
-  return (rand()) % max;
-}
-
-bool IsSameState(uchar *state1, uchar *state2) {
-  for (size_t i = 0; i < CELLS; i++) {
-    if (state1[i] != state2[i]) {
-      return FALSE;
-    }
-  }
-  return TRUE;
-}
 
 // key : d0c9e1b614ee3f63f9250c0ca889c8a6
 
@@ -238,7 +189,7 @@ int main() {
       // key_guess_5[0] = 0xe4;
 
       /************** affichage ***************/
-      printProgress(1.0 * key_1 / 256);
+      PrintProgress(1.0 * key_1 / 255);
       /****************************************/
 
       for (size_t key_2 = 0; key_2 < 1; key_2++) {
@@ -300,7 +251,7 @@ int main() {
       key_guess_5[2] = key_1;
 
       /************** affichage ***************/
-      printProgress(1.0 * key_1 / 256);
+      PrintProgress(1.0 * key_1 / 255);
       /****************************************/
 
       for (size_t key_2 = 0; key_2 < 1; key_2++) {
@@ -362,7 +313,7 @@ int main() {
       // key_guess_5[1] = 0xAD;
 
       /************** affichage ***************/
-      printProgress(1.0 * key_1 / 256);
+      PrintProgress(1.0 * key_1 / 255);
       /****************************************/
 
       for (size_t key_2 = 0; key_2 < 1; key_2++) {
@@ -423,7 +374,7 @@ int main() {
       // key_guess_5[3] = 0xB5;
 
       /************** affichage ***************/
-      printProgress(1.0 * key_1 / 256);
+      PrintProgress(1.0 * key_1 / 255);
       /****************************************/
 
       for (size_t key_2 = 0; key_2 < 1; key_2++) {

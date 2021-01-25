@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 /*
  * Define some useful values
@@ -38,6 +39,10 @@
 
 #define MESSAGE_ARRAY_LEN 20
 #define BYTE_VALUES 256
+
+// PrintProgress
+#define PBSTR "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
+#define PBWIDTH 60
 
 /* Sboxes and rcon and other tabs*/
 static const uchar hamming4[16] = {0, 1, 1, 2, 1, 2, 2, 3,
@@ -144,6 +149,8 @@ static const unsigned char GF256_INVERSE[256] = {
 uchar PrintByteArray(uchar *message, uchar len, const uchar *name);
 //#endif /* DEBUG_LVL 1*/
 
+void PrintProgress(double percentage);
+
 bool SubBytes(uchar *message);
 bool ISubBytes(uchar *message);
 
@@ -168,6 +175,10 @@ bool PrepareKey(uchar **round_keys, uchar *key);
 uchar **GenRoundkeys(uchar *key, bool verb);
 
 bool InvATurn(uchar *ciphertext, uchar *current_key, int current_turn);
+
+bool AllZeroArray(uchar *array, size_t size);
+int RandInt(int max);
+bool IsSameState(uchar *state1, uchar *state2);
 
 unsigned hamdist(unsigned x, unsigned y);
 

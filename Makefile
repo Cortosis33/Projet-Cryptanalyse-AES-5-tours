@@ -10,6 +10,7 @@ all: build
 build:
 	@cd src && $(MAKE)
 	@cd attacks/square && $(MAKE)
+	@cd attacks/yoyo && $(MAKE)
 	@cp -f src/$(EXE) ./
 	@cd src && make clean
 
