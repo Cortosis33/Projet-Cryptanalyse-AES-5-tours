@@ -520,7 +520,7 @@ int main() {
                 ciphertext = (pairs_array[i])[j].ciphertext;
                 AddRoundKey(ciphertext, key_guess_0);
                 Encryption(ciphertext, round_keys);
-                CopyState(ciphertext, (pairs_array[i])[j].ciphertext_tmp);
+                // CopyState(ciphertext, (pairs_array[i])[j].ciphertext_tmp);
               }
             }
 
@@ -535,13 +535,13 @@ int main() {
 
               for (size_t i = 0; i < nbr_lset; i++) {
                 for (size_t j = 0; j < NBR_PAIRS; j++) {
-                  ciphertext = (pairs_array[i])[j].ciphertext_tmp;
+                  ciphertext = (pairs_array[i])[j].ciphertext;
 
                   // on somme les valeurs des tableaux et des chiffrés
                   b[i] = IS_box[ciphertext[0] ^ key_guess_5[0]] ^ b[i];
 
                   // on reinitialise ciphertext_tmp par ciphertext
-                  CopyState((pairs_array[i])[j].ciphertext, ciphertext);
+                  // CopyState((pairs_array[i])[j].plaintext, ciphertext);
                 }
               }
               // on verifie les valeurs du tableau b
