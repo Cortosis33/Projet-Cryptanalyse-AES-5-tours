@@ -5,6 +5,7 @@
 #define ATTACK 1
 // to test some code in TestingCode zone
 #define TEST 0
+#define TYPE 2
 
 uchar KEY[16] = {0xd0, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
                  0xf9, 0x25, 0x0c, 0x0c, 0xa8, 0x89, 0xc8, 0xa6};
@@ -114,7 +115,7 @@ int main() {
     RewindKey(key_guess, 4, 1);
   }
 
-  if (AES_ROUNDS == 5 && ATTACK) {
+  if (AES_ROUNDS == 5 && ATTACK && TYPE == 1) {
 
     /**************************************************************************/
     /************************ ATTACK ON 5 ROUNDS AES **************************/
@@ -440,6 +441,128 @@ int main() {
     }
   }
 
+  if (AES_ROUNDS == 5 && ATTACK && TYPE == 2) {
+
+    fprintf(stdout, "Type 2 AES attack\n");
+
+    /*************************** Initialisation *******************************/
+
+    fprintf(stdout, "plaintext/ciphertext generation...\n");
+    // on definit un nombre de lambda-set
+    size_t nbr_lset = 4;
+
+    // on initilise le tableau des lambda-sets
+    plain_cipher **pairs_array = malloc(nbr_lset * sizeof(plain_cipher *));
+    for (size_t i = 0; i < nbr_lset; i++) {
+      pairs_array[i] = malloc(NBR_PAIRS * sizeof(plain_cipher));
+    }
+
+    // on genere les clairs avec les octet actifs sur la premiere colone
+    for (size_t i = 0; i < nbr_lset; i++) {
+      GenPlaintexts(pairs_array[i], i * 4, 0x00);
+    }
+
+    fprintf(stdout, "plaintext/ciphertext generation OK\n\n");
+
+    fprintf(stdout, "key_guess generation...\n");
+    // on initialise les clés recherchées
+    uchar key_guess_5[CELLS];
+    uchar key_guess_0[CELLS];
+    for (size_t i = 0; i < CELLS; i++) {
+      key_guess_5[i] = 0;
+      key_guess_0[i] = 0;
+    }
+    fprintf(stdout, "key_guess generation OK\n\n");
+
+    // on initialise le tableau de sommes
+    uchar b[nbr_lset];
+
+    // on initilise un pointeur
+    uchar *ciphertext;
+
+    // on applique les fonctions
+    // on chiffre plaintext pour conserver le premier etat du chiffré
+    // que l'on copie ensuite dans ciphertext
+    for (size_t i = 0; i < nbr_lset; i++) {
+      for (size_t j = 0; j < NBR_PAIRS; j++) {
+        ciphertext = (pairs_array[i])[j].plaintext;
+        IMixColumns(ciphertext);
+        IShiftRows(ciphertext);
+        ISubBytes(ciphertext);
+        CopyState(ciphertext, (pairs_array[i])[j].ciphertext);
+      }
+    }
+
+    for (size_t key_1 = 0; key_1 < 1; key_1++) {
+      // key_guess_0[0] = key_1;
+      key_guess_0[0] = 0xd0;
+
+      /************** affichage ***************/
+      PrintProgress(1.0 * key_guess_0[0] / 255);
+      /****************************************/
+      for (size_t key_2 = 0; key_2 < 1; key_2++) {
+        // key_guess_0[7] = key_2;
+        key_guess_0[7] = 0x63;
+        for (size_t key_3 = 0; key_3 < 1; key_3++) {
+          // key_guess_0[10] = key_3;
+          key_guess_0[10] = 0x0c;
+          for (size_t key_4 = 0; key_4 < 1; key_4++) {
+            // key_guess_0[13] = key_4;
+            key_guess_0[13] = 0x89;
+
+            // on chiffre
+            // on chiffre ciphertext pour conserver le deuxieme etat du chiffré
+            // que l'on copie ensuite dans ciphertext_tmp
+            for (size_t i = 0; i < nbr_lset; i++) {
+              for (size_t j = 0; j < NBR_PAIRS; j++) {
+                ciphertext = (pairs_array[i])[j].ciphertext;
+                AddRoundKey(ciphertext, key_guess_0);
+                Encryption(ciphertext, round_keys);
+                CopyState(ciphertext, (pairs_array[i])[j].ciphertext_tmp);
+              }
+            }
+
+            for (size_t key_0 = 0; key_0 < 256; key_0++) {
+              key_guess_5[0] = key_0;
+
+              for (size_t i = 0; i < nbr_lset; i++) {
+                for (size_t j = 0; j < NBR_PAIRS; j++) {
+                  ciphertext = (pairs_array[i])[j].ciphertext_tmp;
+
+                  // on somme les valeurs des tableaux et des chiffrés
+                  b[i] = IS_box[ciphertext[0] ^ key_guess_5[0]] ^ b[i];
+
+                  // on reinitialise ciphertext_tmp par ciphertext
+                  CopyState((pairs_array[i])[j].ciphertext, ciphertext);
+                }
+              }
+              // on verifie les valeurs du tableau b
+              if (AllZeroArray(b, nbr_lset)) {
+                printf("\nFirst 4 bytes found ! \n");
+                PrintByteArray(key_guess_5, CELLS,
+                               (const uchar *)"key_guess_5");
+                goto outloops1_test;
+              }
+            }
+
+            // Si on a trouvé aucune bonnes valeurs de key_0
+            // on retourne au premier etat etat conservé dans plaintext
+            // que l'on copie ensuite dans ciphertext_tmp
+            for (size_t i = 0; i < nbr_lset; i++) {
+              for (size_t j = 0; j < NBR_PAIRS; j++) {
+                ciphertext = (pairs_array[i])[j].ciphertext;
+                // on reinitialise ciphertext par plaintext
+                CopyState((pairs_array[i])[j].plaintext, ciphertext);
+              }
+            }
+          }
+        }
+      }
+    }
+  outloops1_test:
+    printf("Let's find the key ! \n");
+  }
+
   if (TEST) {
     /* Testing code */
     int cpt1 = 0;
@@ -468,6 +591,57 @@ int main() {
     fprintf(stdout, "cpt1: %.2f, cpt2: %.2f\n", 100 * cpt1 * 1.0 / max,
             100 * cpt2 * 1.0 / max);
   }
+  /*
+  I0=[0,7,10,13]
+  I1=[1,4,11,14]
+  I2=[2,5,8,15]
+  I3=[3,6,9,12]
+
+  J=[0,2,1,3]
+
+  On crée une clé K5 avec tous les octets à 0
+
+  pour toutes les valeurs possibles de K5 aux indices I0:
+    Pour toutes les valeurs possibles de K4 à l'indices J_0:
+    b<-0
+      pour tous les lambda-sets:
+        pour tous les chiffrés Ci:
+          on remonte le tour 5 de Ci avec la clé K5
+          on remonte le tour 4 de Ci avec la clé K4
+          b= b + Ci[J_0]
+        Si b=0:
+          alors on a trouvé les bonnes valeurs de K5 aux indices I0
+
+  On réitère les opérations en générant avec I1 et J_1, I2 et J_2, I3 et J_3
+
+
+
+
+  I0=[0,7,10,13]
+  I1=[1,4,11,14]
+  I2=[2,5,8,15]
+  I3=[3,6,9,12]
+
+  J=[0,2,1,3]
+
+  On crée une clé K5 avec tous les octets à 0
+
+  pour n \in [0,1,2,3]
+  pour toutes les valeurs possibles de K5 aux indices In:
+    Pour toutes les valeurs possibles de K4 à l'indices J_n:
+    b<-0
+      pour tous les lambda-sets:
+        pour tous les chiffrés Ci:
+          on remonte le tour 5 de Ci avec la clé K5
+          on remonte le tour 4 de Ci avec la clé K4
+          b= b + Ci[J_n]
+        Si b=0:
+          alors on a trouvé les bonnes valeurs de K5 aux indices In
+
+  *A cette etape, on a toutes les valeurs de K5*
+  On remonte la clé K5 avec G^-1
+
+  */
 
   return 0;
 }
