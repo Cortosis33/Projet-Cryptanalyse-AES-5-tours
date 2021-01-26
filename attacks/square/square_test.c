@@ -510,6 +510,8 @@ int main() {
             // key_guess_0[13] = key_4;
             key_guess_0[13] = 0x89;
 
+            PrintByteArray(key_guess_0, CELLS, (const uchar *)"key_guess_0");
+
             // on chiffre
             // on chiffre ciphertext pour conserver le deuxieme etat du chiffré
             // que l'on copie ensuite dans ciphertext_tmp
@@ -522,8 +524,9 @@ int main() {
               }
             }
 
-            for (size_t key_0 = 0; key_0 < 256; key_0++) {
-              key_guess_5[0] = key_0;
+            for (size_t key_0 = 0; key_0 < 1; key_0++) {
+              // key_guess_5[0] = key_0;
+              key_guess_5[0] = 0xe4;
 
               for (size_t i = 0; i < nbr_lset; i++) {
                 for (size_t j = 0; j < NBR_PAIRS; j++) {
@@ -537,29 +540,19 @@ int main() {
                 }
               }
               // on verifie les valeurs du tableau b
+              fprintf(stdout, "\n%x, %x, %x, %x\n", b[0], b[1], b[2], b[3]);
               if (AllZeroArray(b, nbr_lset)) {
                 printf("\nFirst 4 bytes found ! \n");
                 PrintByteArray(key_guess_5, CELLS,
                                (const uchar *)"key_guess_5");
-                goto outloops1_test;
-              }
-            }
-
-            // Si on a trouvé aucune bonnes valeurs de key_0
-            // on retourne au premier etat etat conservé dans plaintext
-            // que l'on copie ensuite dans ciphertext_tmp
-            for (size_t i = 0; i < nbr_lset; i++) {
-              for (size_t j = 0; j < NBR_PAIRS; j++) {
-                ciphertext = (pairs_array[i])[j].ciphertext;
-                // on reinitialise ciphertext par plaintext
-                CopyState((pairs_array[i])[j].plaintext, ciphertext);
+                // goto outloops1_test;
               }
             }
           }
         }
       }
     }
-  outloops1_test:
+    // outloops1_test:
     printf("Let's find the key ! \n");
   }
 
