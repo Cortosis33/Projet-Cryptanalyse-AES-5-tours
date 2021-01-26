@@ -528,6 +528,11 @@ int main() {
               // key_guess_5[0] = key_0;
               key_guess_5[0] = 0xe4;
 
+              // on initilise le tableau b
+              for (size_t i = 0; i < nbr_lset; i++) {
+                b[i] = 0;
+              }
+
               for (size_t i = 0; i < nbr_lset; i++) {
                 for (size_t j = 0; j < NBR_PAIRS; j++) {
                   ciphertext = (pairs_array[i])[j].ciphertext_tmp;
