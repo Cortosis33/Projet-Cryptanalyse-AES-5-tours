@@ -10,6 +10,9 @@
 uchar KEY[16] = {0xd0, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
                  0xf9, 0x25, 0x0c, 0x0c, 0xa8, 0x89, 0xc8, 0xa6};
 
+// uchar KEY[16] = {0xd1, 0xa9, 0xe2, 0xc6, 0x15, 0xfe, 0x2f, 0x13,
+//                  0xa9, 0x15, 0x1c, 0xcc, 0x48, 0xc9, 0xf8, 0xf6};
+
 // key : d0c9e1b614ee3f63f9250c0ca889c8a6
 
 int main() {
@@ -469,7 +472,7 @@ int main() {
 
     /*************************** Initialisation *******************************/
 
-    fprintf(stdout, "plaintext/ciphertext generation...\n");
+    /************ plaintext/ciphertext generation *************/
     // on definit un nombre de lambda-set
     size_t nbr_lset = 4;
 
@@ -484,9 +487,7 @@ int main() {
       GenPlaintexts(pairs_array[i], i * 4, 0x00);
     }
 
-    fprintf(stdout, "plaintext/ciphertext generation OK\n\n");
-
-    fprintf(stdout, "key_guess generation...\n");
+    /************ key_guess generation *************/
     // on initialise les clés recherchées
     uchar key_guess_5[CELLS];
     uchar key_guess_0[CELLS];
@@ -494,11 +495,10 @@ int main() {
       key_guess_5[i] = 0;
       key_guess_0[i] = 0;
     }
-    fprintf(stdout, "key_guess generation OK\n\n");
 
+    /************ values init *************/
     // on initialise le tableau de sommes
     uchar b[nbr_lset];
-
     // on initilise un pointeur
     uchar *ciphertext;
 
@@ -514,6 +514,7 @@ int main() {
       }
     }
 
+    // on genere les octets de la clé K0
     for (size_t key_1 = 0; key_1 < 256; key_1++) {
       // key_guess_0[0] = 0xd0;
       key_guess_0[0] = key_1;
@@ -522,14 +523,14 @@ int main() {
       PrintProgress(1.0 * key_1 / 255);
       /****************************************/
 
-      for (size_t key_2 = 0; key_2 < 1; key_2++) {
-        key_guess_0[5] = 0xee;
-        // key_guess_0[5] = key_2;
+      for (size_t key_2 = 0; key_2 < 255; key_2++) {
+        // key_guess_0[5] = (round_keys[0])[5];
+        key_guess_0[5] = key_2;
         for (size_t key_3 = 0; key_3 < 1; key_3++) {
-          key_guess_0[10] = 0x0c;
+          key_guess_0[10] = (round_keys[0])[10];
           // key_guess_0[10] = key_3;
           for (size_t key_4 = 0; key_4 < 1; key_4++) {
-            key_guess_0[15] = 0xa6;
+            key_guess_0[15] = (round_keys[0])[15];
 
             // on chiffre
             // que l'on copie ensuite dans ciphertext_tmp
@@ -542,7 +543,7 @@ int main() {
               }
             }
 
-            // on genere le premier octet de la cle 5
+            // on genere le premier octet de la cle K5
             for (size_t key_0 = 0; key_0 < 256; key_0++) {
               // key_guess_5[0] = 0xe4;
               key_guess_5[0] = key_0;
@@ -561,7 +562,7 @@ int main() {
                 }
               }
 
-              // fprintf(stdout, "\n%x, %x, %x, %x\n", b[0], b[1], b[2], b[3]);
+              // on verifie si les sommes sont nulles
               if (AllZeroArray(b, nbr_lset)) {
                 printf("\nFirst 4 bytes found ! \n");
                 PrintByteArray(key_guess_5, CELLS,
@@ -572,7 +573,7 @@ int main() {
               }
             }
 
-            // on fois l'echec de la clé key_guess_0, on replace le plaintext
+            // on fois l'echec de la clé K0, on replace le plaintext
             // dans ciphertext
             for (size_t i = 0; i < nbr_lset; i++) {
               for (size_t j = 0; j < NBR_PAIRS; j++) {
@@ -587,7 +588,7 @@ int main() {
 
   outloops1_type2:
     // on determine tous les octets de K5 :
-    for (size_t key_5 = 1; key_5 < CELLS; key_5++) {
+    for (size_t index_key_5 = 1; index_key_5 < CELLS; index_key_5++) {
 
       for (size_t i = 0; i < nbr_lset; i++) {
         for (size_t j = 0; j < NBR_PAIRS; j++) {
@@ -607,9 +608,9 @@ int main() {
       }
 
       // on genere le premier octet de la cle 5
-      for (size_t key_0 = 0; key_0 < 256; key_0++) {
+      for (size_t key_0 = index_key_5; key_0 < 256; key_0++) {
         // key_guess_5[0] = 0xe4;
-        key_guess_5[key_5] = key_0;
+        key_guess_5[index_key_5] = key_0;
 
         // on initilise le tableau b
         for (size_t i = 0; i < nbr_lset; i++) {
@@ -621,7 +622,7 @@ int main() {
             ciphertext = (pairs_array[i])[j].ciphertext_tmp;
 
             // on somme les valeurs des tableaux et des chiffrés
-            b[i] = IS_box[ciphertext[key_5] ^ key_guess_5[key_5]] ^ b[i];
+            b[i] = IS_box[ciphertext[index_key_5] ^ key_guess_5[index_key_5]] ^ b[i];
           }
         }
 
@@ -635,7 +636,7 @@ int main() {
 
     outloops2_type2:
       /************** affichage ***************/
-      PrintProgress(1.0 * key_5 / 15);
+      PrintProgress(1.0 * index_key_5 / 15);
       /****************************************/
     }
     PrintByteArray(key_guess_5, CELLS, (const uchar *)"\nkey_guess_5");
