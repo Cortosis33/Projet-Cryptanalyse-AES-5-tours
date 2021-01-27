@@ -455,7 +455,7 @@ int main() {
                    0xf9, 0x25, 0x0c, 0x0c,
                    0xa8, 0x89, 0xc8, 0xa6};
 
-    OTF : octets à trouver
+    OTF : octets à brute-force
     N-L : nombre de lambd-set utilisé
     S/E : Succes de l'attaque
     T : temps de l'attaque en secondes
@@ -523,9 +523,9 @@ int main() {
       PrintProgress(1.0 * key_1 / 255);
       /****************************************/
 
-      for (size_t key_2 = 0; key_2 < 255; key_2++) {
-        // key_guess_0[5] = (round_keys[0])[5];
-        key_guess_0[5] = key_2;
+      for (size_t key_2 = 0; key_2 < 1; key_2++) {
+        key_guess_0[5] = (round_keys[0])[5];
+        // key_guess_0[5] = key_2;
         for (size_t key_3 = 0; key_3 < 1; key_3++) {
           key_guess_0[10] = (round_keys[0])[10];
           // key_guess_0[10] = key_3;
@@ -539,7 +539,7 @@ int main() {
                 ciphertext = (pairs_array[i])[j].ciphertext;
                 AddRoundKey(ciphertext, key_guess_0);
                 Encryption(ciphertext, round_keys);
-                CopyState(ciphertext, (pairs_array[i])[j].ciphertext_tmp);
+                // CopyState(ciphertext, (pairs_array[i])[j].ciphertext_tmp);
               }
             }
 
@@ -555,7 +555,7 @@ int main() {
 
               for (size_t i = 0; i < nbr_lset; i++) {
                 for (size_t j = 0; j < NBR_PAIRS; j++) {
-                  ciphertext = (pairs_array[i])[j].ciphertext_tmp;
+                  ciphertext = (pairs_array[i])[j].ciphertext;
 
                   // on somme les valeurs des tableaux et des chiffrés
                   b[i] = IS_box[ciphertext[0] ^ key_guess_5[0]] ^ b[i];
@@ -590,23 +590,6 @@ int main() {
     // on determine tous les octets de K5 :
     for (size_t index_key_5 = 1; index_key_5 < CELLS; index_key_5++) {
 
-      for (size_t i = 0; i < nbr_lset; i++) {
-        for (size_t j = 0; j < NBR_PAIRS; j++) {
-          ciphertext = (pairs_array[i])[j].plaintext;
-          CopyState(ciphertext, (pairs_array[i])[j].ciphertext);
-        }
-      }
-      // on chiffre
-      // que l'on copie ensuite dans ciphertext_tmp
-      for (size_t i = 0; i < nbr_lset; i++) {
-        for (size_t j = 0; j < NBR_PAIRS; j++) {
-          ciphertext = (pairs_array[i])[j].ciphertext;
-          AddRoundKey(ciphertext, key_guess_0);
-          Encryption(ciphertext, round_keys);
-          CopyState(ciphertext, (pairs_array[i])[j].ciphertext_tmp);
-        }
-      }
-
       // on genere le premier octet de la cle 5
       for (size_t key_0 = index_key_5; key_0 < 256; key_0++) {
         // key_guess_5[0] = 0xe4;
@@ -619,10 +602,11 @@ int main() {
 
         for (size_t i = 0; i < nbr_lset; i++) {
           for (size_t j = 0; j < NBR_PAIRS; j++) {
-            ciphertext = (pairs_array[i])[j].ciphertext_tmp;
+            ciphertext = (pairs_array[i])[j].ciphertext;
 
             // on somme les valeurs des tableaux et des chiffrés
-            b[i] = IS_box[ciphertext[index_key_5] ^ key_guess_5[index_key_5]] ^ b[i];
+            b[i] = IS_box[ciphertext[index_key_5] ^ key_guess_5[index_key_5]] ^
+                   b[i];
           }
         }
 
