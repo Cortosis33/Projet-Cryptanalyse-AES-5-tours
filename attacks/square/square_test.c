@@ -458,12 +458,11 @@ int main() {
     T : temps de l'attaque en secondes
           +-----------------------------------------+
           |  OTF        N-L       S/E       T       |
-          |   2          4         S        0,06
+          |   2          4         S        0,06    |
           |   3          4         S       13,18    |
-
+          |   4          4         S     3434,0 ~ 1h|
                          Estimations
-          |   4          4         S     3326,0 ~ 55min
-          |   5          5         S     14080min ~ 234h ~ 9j
+          |   5          5         S     256h ~ 10j
 
     avec 3 octets par partie à trouver : 3431,75 secondes
     */
@@ -523,12 +522,12 @@ int main() {
       PrintProgress(1.0 * key_1 / 255);
       /****************************************/
 
-      for (size_t key_2 = 0; key_2 < 256; key_2++) {
-        // key_guess_0[5] = 0xee;
-        key_guess_0[5] = key_2;
-        for (size_t key_3 = 0; key_3 < 256; key_3++) {
-          // key_guess_0[10] = 0x0c;
-          key_guess_0[10] = key_3;
+      for (size_t key_2 = 0; key_2 < 1; key_2++) {
+        key_guess_0[5] = 0xee;
+        // key_guess_0[5] = key_2;
+        for (size_t key_3 = 0; key_3 < 1; key_3++) {
+          key_guess_0[10] = 0x0c;
+          // key_guess_0[10] = key_3;
           for (size_t key_4 = 0; key_4 < 1; key_4++) {
             key_guess_0[15] = 0xa6;
 
