@@ -523,9 +523,9 @@ int main() {
       PrintProgress(1.0 * key_1 / 255);
       /****************************************/
 
-      for (size_t key_2 = 0; key_2 < 1; key_2++) {
-        key_guess_0[5] = (round_keys[0])[5];
-        // key_guess_0[5] = key_2;
+      for (size_t key_2 = 0; key_2 < 256; key_2++) {
+        // key_guess_0[5] = (round_keys[0])[5];
+        key_guess_0[5] = key_2;
         for (size_t key_3 = 0; key_3 < 1; key_3++) {
           key_guess_0[10] = (round_keys[0])[10];
           // key_guess_0[10] = key_3;
@@ -592,7 +592,7 @@ int main() {
 
       // on genere le premier octet de la cle 5
       for (size_t key_0 = index_key_5; key_0 < 256; key_0++) {
-        // key_guess_5[0] = 0xe4;
+
         key_guess_5[index_key_5] = key_0;
 
         // on initilise le tableau b
@@ -610,10 +610,7 @@ int main() {
           }
         }
 
-        // fprintf(stdout, "\n%x, %x, %x, %x\n", b[0], b[1], b[2], b[3]);
         if (AllZeroArray(b, nbr_lset)) {
-          // printf("\nFirst 4 bytes found ! \n");
-          // PrintByteArray(key_guess_5, CELLS, (const uchar *)"key_guess_5");
           goto outloops2_type2;
         }
       }
