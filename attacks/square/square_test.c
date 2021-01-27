@@ -445,6 +445,29 @@ int main() {
 
     fprintf(stdout, "Type 2 AES attack\n");
 
+    /* TESTS */
+    /*
+    Avec la clé : {0xd0, 0xc9, 0xe1, 0xb6,
+                   0x14, 0xee, 0x3f, 0x63,
+                   0xf9, 0x25, 0x0c, 0x0c,
+                   0xa8, 0x89, 0xc8, 0xa6};
+
+    OTF : octets à trouver
+    N-L : nombre de lambd-set utilisé
+    S/E : Succes de l'attaque
+    T : temps de l'attaque en secondes
+          +-----------------------------------------+
+          |  OTF        N-L       S/E       T       |
+          |   2          4         S        0,06
+          |   3          4         S       13,18    |
+
+                         Estimations
+          |   4          4         S     3326,0 ~ 55min
+          |   5          5         S     14080min ~ 234h ~ 9j
+
+    avec 3 octets par partie à trouver : 3431,75 secondes
+    */
+
     /*************************** Initialisation *******************************/
 
     fprintf(stdout, "plaintext/ciphertext generation...\n");
@@ -457,7 +480,7 @@ int main() {
       pairs_array[i] = malloc(NBR_PAIRS * sizeof(plain_cipher));
     }
 
-    // on genere les clairs avec les octet actifs sur la premiere colone
+    // on genere les clairs avec les octet actifs sur la premiere colonne
     for (size_t i = 0; i < nbr_lset; i++) {
       GenPlaintexts(pairs_array[i], i * 4, 0x00);
     }
@@ -480,8 +503,7 @@ int main() {
     // on initilise un pointeur
     uchar *ciphertext;
 
-    // on applique les fonctions
-    // on chiffre plaintext pour conserver le premier etat du chiffré
+    // on applique les fonctions au plaintext
     // que l'on copie ensuite dans ciphertext
     for (size_t i = 0; i < nbr_lset; i++) {
       for (size_t j = 0; j < NBR_PAIRS; j++) {
@@ -493,40 +515,38 @@ int main() {
       }
     }
 
-    for (size_t key_1 = 0; key_1 < 1; key_1++) {
-      // key_guess_0[0] = key_1;
-      key_guess_0[0] = 0xd0;
+    for (size_t key_1 = 0; key_1 < 256; key_1++) {
+      // key_guess_0[0] = 0xd0;
+      key_guess_0[0] = key_1;
 
       /************** affichage ***************/
-      PrintProgress(1.0 * key_guess_0[0] / 255);
+      PrintProgress(1.0 * key_1 / 255);
       /****************************************/
-      for (size_t key_2 = 0; key_2 < 1; key_2++) {
-        // key_guess_0[7] = key_2;
-        key_guess_0[7] = 0x63;
-        for (size_t key_3 = 0; key_3 < 1; key_3++) {
-          // key_guess_0[10] = key_3;
-          key_guess_0[10] = 0x0c;
-          for (size_t key_4 = 0; key_4 < 1; key_4++) {
-            // key_guess_0[13] = key_4;
-            key_guess_0[13] = 0x89;
 
-            PrintByteArray(key_guess_0, CELLS, (const uchar *)"key_guess_0");
+      for (size_t key_2 = 0; key_2 < 256; key_2++) {
+        // key_guess_0[5] = 0xee;
+        key_guess_0[5] = key_2;
+        for (size_t key_3 = 0; key_3 < 256; key_3++) {
+          // key_guess_0[10] = 0x0c;
+          key_guess_0[10] = key_3;
+          for (size_t key_4 = 0; key_4 < 1; key_4++) {
+            key_guess_0[15] = 0xa6;
 
             // on chiffre
-            // on chiffre ciphertext pour conserver le deuxieme etat du chiffré
             // que l'on copie ensuite dans ciphertext_tmp
             for (size_t i = 0; i < nbr_lset; i++) {
               for (size_t j = 0; j < NBR_PAIRS; j++) {
                 ciphertext = (pairs_array[i])[j].ciphertext;
                 AddRoundKey(ciphertext, key_guess_0);
                 Encryption(ciphertext, round_keys);
-                // CopyState(ciphertext, (pairs_array[i])[j].ciphertext_tmp);
+                CopyState(ciphertext, (pairs_array[i])[j].ciphertext_tmp);
               }
             }
 
-            for (size_t key_0 = 0; key_0 < 1; key_0++) {
-              // key_guess_5[0] = key_0;
-              key_guess_5[0] = 0xe4;
+            // on genere le premier octet de la cle 5
+            for (size_t key_0 = 0; key_0 < 256; key_0++) {
+              // key_guess_5[0] = 0xe4;
+              key_guess_5[0] = key_0;
 
               // on initilise le tableau b
               for (size_t i = 0; i < nbr_lset; i++) {
@@ -535,30 +555,99 @@ int main() {
 
               for (size_t i = 0; i < nbr_lset; i++) {
                 for (size_t j = 0; j < NBR_PAIRS; j++) {
-                  ciphertext = (pairs_array[i])[j].ciphertext;
+                  ciphertext = (pairs_array[i])[j].ciphertext_tmp;
 
                   // on somme les valeurs des tableaux et des chiffrés
                   b[i] = IS_box[ciphertext[0] ^ key_guess_5[0]] ^ b[i];
-
-                  // on reinitialise ciphertext_tmp par ciphertext
-                  // CopyState((pairs_array[i])[j].plaintext, ciphertext);
                 }
               }
-              // on verifie les valeurs du tableau b
-              fprintf(stdout, "\n%x, %x, %x, %x\n", b[0], b[1], b[2], b[3]);
+
+              // fprintf(stdout, "\n%x, %x, %x, %x\n", b[0], b[1], b[2], b[3]);
               if (AllZeroArray(b, nbr_lset)) {
                 printf("\nFirst 4 bytes found ! \n");
                 PrintByteArray(key_guess_5, CELLS,
                                (const uchar *)"key_guess_5");
-                // goto outloops1_test;
+                PrintByteArray(key_guess_0, CELLS,
+                               (const uchar *)"key_guess_0");
+                goto outloops1_type2;
+              }
+            }
+
+            // on fois l'echec de la clé key_guess_0, on replace le plaintext
+            // dans ciphertext
+            for (size_t i = 0; i < nbr_lset; i++) {
+              for (size_t j = 0; j < NBR_PAIRS; j++) {
+                ciphertext = (pairs_array[i])[j].plaintext;
+                CopyState(ciphertext, (pairs_array[i])[j].ciphertext);
               }
             }
           }
         }
       }
     }
-    // outloops1_test:
-    printf("Let's find the key ! \n");
+
+  outloops1_type2:
+    // on determine tous les octets de K5 :
+    for (size_t key_5 = 1; key_5 < CELLS; key_5++) {
+
+      for (size_t i = 0; i < nbr_lset; i++) {
+        for (size_t j = 0; j < NBR_PAIRS; j++) {
+          ciphertext = (pairs_array[i])[j].plaintext;
+          CopyState(ciphertext, (pairs_array[i])[j].ciphertext);
+        }
+      }
+      // on chiffre
+      // que l'on copie ensuite dans ciphertext_tmp
+      for (size_t i = 0; i < nbr_lset; i++) {
+        for (size_t j = 0; j < NBR_PAIRS; j++) {
+          ciphertext = (pairs_array[i])[j].ciphertext;
+          AddRoundKey(ciphertext, key_guess_0);
+          Encryption(ciphertext, round_keys);
+          CopyState(ciphertext, (pairs_array[i])[j].ciphertext_tmp);
+        }
+      }
+
+      // on genere le premier octet de la cle 5
+      for (size_t key_0 = 0; key_0 < 256; key_0++) {
+        // key_guess_5[0] = 0xe4;
+        key_guess_5[key_5] = key_0;
+
+        // on initilise le tableau b
+        for (size_t i = 0; i < nbr_lset; i++) {
+          b[i] = 0;
+        }
+
+        for (size_t i = 0; i < nbr_lset; i++) {
+          for (size_t j = 0; j < NBR_PAIRS; j++) {
+            ciphertext = (pairs_array[i])[j].ciphertext_tmp;
+
+            // on somme les valeurs des tableaux et des chiffrés
+            b[i] = IS_box[ciphertext[key_5] ^ key_guess_5[key_5]] ^ b[i];
+          }
+        }
+
+        // fprintf(stdout, "\n%x, %x, %x, %x\n", b[0], b[1], b[2], b[3]);
+        if (AllZeroArray(b, nbr_lset)) {
+          // printf("\nFirst 4 bytes found ! \n");
+          // PrintByteArray(key_guess_5, CELLS, (const uchar *)"key_guess_5");
+          goto outloops2_type2;
+        }
+      }
+
+    outloops2_type2:
+      /************** affichage ***************/
+      PrintProgress(1.0 * key_5 / 15);
+      /****************************************/
+    }
+    PrintByteArray(key_guess_5, CELLS, (const uchar *)"\nkey_guess_5");
+    printf("\nLet's find the key ! \n");
+
+    RewindKey(key_guess_5, 5, 0);
+    PrintByteArray(key_guess_5, CELLS, (const uchar *)"key_guess_0");
+
+    if (IsSameState(key_guess_5, KEY)) {
+      fprintf(stdout, "SUCCESS\n");
+    }
   }
 
   if (TEST) {
@@ -638,6 +727,76 @@ int main() {
 
   *A cette etape, on a toutes les valeurs de K5*
   On remonte la clé K5 avec G^-1
+
+  - On applique les fonctions inverse et AddRoundKey avec K0GUESS
+                                         K0GUESS
+  OO __ __ __                          XX __ __ __       AA __ __ __
+  __ OO __ __                          __ XX __ __       __ AA __ __
+  __ __ OO __   <====================  __ __ XX __   +   __ __ AA __  <===
+  __ __ __ OO                          __ __ __ XX       __ __ __ AA      |
+                                                                          |
+                                                                          |
+   -----------------------------------------------------------------------
+  |
+  |
+  AA __ __ __           BB __ __ __           BB __ __ __
+  __ AA __ __  ISByte   __ BB __ __  ISRows   BB __ __ __   IMixC
+  __ __ AA __   <===    __ __ BB __   <===    BB __ __ __   <=============
+  __ __ __ AA           __ __ __ BB           BB __ __ __                 |
+                                                                          |
+                                                                          |
+   -----------------------------------------------------------------------
+  |
+  |
+  PLAINTEXT
+  CC __ __ __
+  CC __ __ __
+  CC __ __ __
+  CC __ __ __
+
+
+  - On applique le chiffrement
+
+                      K0
+  OO __ __ __     __ __ __ __                           AA __ __ __
+  __ __ __ OO     __ __ __ __                           __ __ __ AA
+  __ __ OO __  +  __ __ __ __   ====================>   __ __ AA __  ===>
+  __ OO __ __     __ __ __ __                           __ AA __ __       |
+                                                                          |
+                                                                          |
+  -----------------------------------------------------------------------
+  |
+  |
+  AA __ __ __           BB __ __ __           BB __ __ __          CC __ CC __
+  __ __ __ AA   SByte   __ __ __ BB   SRows   __ __ BB __   MixC   CC __ CC __
+  __ __ AA __   ===>    __ __ BB __   ===>    BB __ __ __  ======> CC __ CC __
+  __ AA __ __           __ BB __ __           __ __ BB __          CC __ CC __
+                                                                        |
+                                                                      AddRKey
+                                                                        |
+                                                                   DD __ DD __
+                                                                   DD __ DD __
+                                                                   DD __ DD __
+                                                                   DD __ DD __
+  -----------------------------------------------------------------------
+  |
+  |
+  DD __ DD __           EE __ EE __           EE __ EE __          FF FF FF __
+  DD __ DD __   SByte   EE __ EE __   SRows   __ EE __ EE   MixC   CC __ CC __
+  DD __ DD __   ===>    EE __ EE __   ===>    EE __ EE __  ======> CC __ CC __
+  DD __ DD __           EE __ EE __           __ EE __ EE          CC __ CC __
+                                                                        |
+                                                                      AddRKey
+                                                                        |
+                                                                   DD __ DD __
+                                                                   DD __ DD __
+                                                                   DD __ DD __
+                                                                   DD __ DD __
+
+
+
+
+
 
   */
 
