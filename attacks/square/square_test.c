@@ -513,7 +513,7 @@ int main() {
         CopyState(ciphertext, (pairs_array[i])[j].ciphertext);
       }
     }
-
+    fprintf(stdout, "K0 finding...\n");
     // on genere les octets de la clé K0
     for (size_t key_1 = 0; key_1 < 256; key_1++) {
       // key_guess_0[0] = 0xd0;
@@ -547,13 +547,9 @@ int main() {
               key_guess_5[0] = key_0;
 
               // on initilise le tableau b
-              // for (size_t i = 0; i < nbr_lset; i++) {
-              //   b[i] = 0;
-              // }
-              b[0] = 0;
-              b[1] = 0;
-              b[2] = 0;
-              b[3] = 0;
+              for (size_t i = 0; i < nbr_lset; i++) {
+                b[i] = 0;
+              }
 
               for (size_t i = 0; i < nbr_lset; i++) {
                 for (size_t j = 0; j < NBR_PAIRS; j++) {

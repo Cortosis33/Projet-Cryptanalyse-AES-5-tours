@@ -329,17 +329,15 @@ bool PrepareKey(uchar **round_keys, uchar *key) {
 /*****************/
 
 uchar **GenRoundkeys(uchar *key, bool verb) {
-  fprintf(stdout, "%d Rounds AES\n", AES_ROUNDS);
-
+  fprintf(stdout,
+          "############################################################\n"
+          "####################### %d Rounds AES #######################\n"
+          "############################################################\n",
+          AES_ROUNDS);
   /* init dynamic key */
   uchar tmp_key[16];
   for (uchar i = 0; i < 16; i++)
     tmp_key[i] = key[i];
-
-  /* key printing */
-  if (verb) {
-    PrintByteArray(tmp_key, CELLS, (const uchar *)"Original Key");
-  }
 
   /* array keys allocation (round +1 keys) */
   // uchar *round_keys[AES_ROUNDS + 1];
@@ -352,9 +350,10 @@ uchar **GenRoundkeys(uchar *key, bool verb) {
 
   PrepareKey(round_keys, tmp_key);
 
+  /* key printing */
   if (verb) {
     for (size_t i = 0; i < AES_ROUNDS + 1; i++) {
-      fprintf(stdout, "key %zu:\n", i);
+      fprintf(stdout, "Key %zu", i);
       PrintByteArray(round_keys[i], CELLS, (const uchar *)"");
     }
   }
