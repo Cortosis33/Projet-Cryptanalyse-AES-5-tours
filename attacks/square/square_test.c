@@ -533,13 +533,11 @@ int main() {
             key_guess_0[15] = (round_keys[0])[15];
 
             // on chiffre
-            // que l'on copie ensuite dans ciphertext_tmp
             for (size_t i = 0; i < nbr_lset; i++) {
               for (size_t j = 0; j < NBR_PAIRS; j++) {
                 ciphertext = (pairs_array[i])[j].ciphertext;
                 AddRoundKey(ciphertext, key_guess_0);
                 Encryption(ciphertext, round_keys);
-                // CopyState(ciphertext, (pairs_array[i])[j].ciphertext_tmp);
               }
             }
 
@@ -549,9 +547,13 @@ int main() {
               key_guess_5[0] = key_0;
 
               // on initilise le tableau b
-              for (size_t i = 0; i < nbr_lset; i++) {
-                b[i] = 0;
-              }
+              // for (size_t i = 0; i < nbr_lset; i++) {
+              //   b[i] = 0;
+              // }
+              b[0] = 0;
+              b[1] = 0;
+              b[2] = 0;
+              b[3] = 0;
 
               for (size_t i = 0; i < nbr_lset; i++) {
                 for (size_t j = 0; j < NBR_PAIRS; j++) {
@@ -587,6 +589,8 @@ int main() {
     }
 
   outloops1_type2:
+    // on n'utilise que 2 lambda-set
+    nbr_lset = 2;
     // on determine tous les octets de K5 :
     for (size_t index_key_5 = 1; index_key_5 < CELLS; index_key_5++) {
 
