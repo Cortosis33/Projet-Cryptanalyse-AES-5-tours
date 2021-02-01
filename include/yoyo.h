@@ -9,8 +9,12 @@ typedef struct {
 } plain_cipher;
 
 typedef struct {
+  // Le vecteur différence
   uchar *VecDif;
+  // A quel point ils sont éloignés
   int degres;
+  // Nombres de cases identiques
+  int nbrcom;
 } Distance;
 
 // Retourne des informations sur la distances entre deux textes.
