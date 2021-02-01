@@ -25,7 +25,6 @@ int main() {
   uchar **round_keys = GenRoundkeys(KEY, 1);
 
   if (testdist) {
-
     printf("Test différence KEY,KEY \n");
     Distance dista;
     dista = InfoDist(dista, KEY, KEY);
