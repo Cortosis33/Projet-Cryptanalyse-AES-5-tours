@@ -8,5 +8,10 @@ typedef struct {
   uchar ciphertext_tmp[CELLS];
 } plain_cipher;
 
-// Retourne la valeur absolue de la différence entre deux texte.
-uchar *VecDist(uchar *text1, uchar *text2);
+typedef struct {
+  uchar *VecDif;
+  int degres;
+} Distance;
+
+// Retourne des informations sur la distances entre deux textes.
+Distance InfoDist(Distance distance, uchar *text1, uchar *text2);

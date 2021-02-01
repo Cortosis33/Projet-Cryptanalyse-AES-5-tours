@@ -1,10 +1,11 @@
 #include "../../include/yoyo.h"
 
-// Retourne la valeur absolue de la différence entre deux texte.
 uchar dist[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-uchar *VecDist(uchar *text1, uchar *text2) {
+// Retourne la valeur absolue de la différence entre deux texte.
+Distance InfoDist(Distance distance, uchar *text1, uchar *text2) {
+  int deg = 0;
   for (int i = 0; i < 16; i++) {
     if (text1[i] < text2[i]) {
       dist[i] = text2[i] - text1[i];
@@ -13,6 +14,9 @@ uchar *VecDist(uchar *text1, uchar *text2) {
     } else {
       dist[i] = 0x00;
     }
+    deg += dist[i];
   }
-  return dist;
+  distance.degres = deg;
+  distance.VecDif = dist;
+  return distance;
 }
