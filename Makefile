@@ -17,6 +17,7 @@ build:
 clean:
 	@cd src && $(MAKE) clean
 	@cd attacks/square && $(MAKE) clean
+	@cd attacks/yoyo && $(MAKE) clean
 #	@cd test && $(MAKE) clean
 	@rm -f $(EXE)
 
