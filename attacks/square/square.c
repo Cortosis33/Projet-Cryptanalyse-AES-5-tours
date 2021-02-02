@@ -3,23 +3,24 @@
 /*
 fonction permettant de creer le tableau des plaintexts
 */
-uchar GenPlaintexts(plain_cipher *pairs, uchar fix_byte, uchar others_value) {
+uchar GenPlaintexts(plain_cipher *pairs, uchar active_byte_index,
+                    uchar others_value_content) {
 
-  if (fix_byte >= CELLS) {
-    errx(1, "GenPlaintexts : fix_byte is too large\n");
+  if (active_byte_index >= CELLS) {
+    errx(1, "GenPlaintexts : active_byte_index is too large\n");
   }
 
   for (size_t i = 0; i < NBR_PAIRS; i++) {
     // on remplie de plaintext de 0
     for (size_t j = 0; j < CELLS; j++) {
-      pairs[i].plaintext[j] = others_value;
+      pairs[i].plaintext[j] = others_value_content;
       // on initilise aussi le text chiffré avec le text clair
-      pairs[i].ciphertext[j] = others_value;
+      pairs[i].ciphertext[j] = others_value_content;
     }
 
-    // on fait varier l'octet identifié par fix_byte
-    pairs[i].plaintext[fix_byte] = i;
-    pairs[i].ciphertext[fix_byte] = i;
+    // on fait varier l'octet identifié par active_byte_index
+    pairs[i].plaintext[active_byte_index] = i;
+    pairs[i].ciphertext[active_byte_index] = i;
   }
   return EXIT_SUCCESS;
 }
