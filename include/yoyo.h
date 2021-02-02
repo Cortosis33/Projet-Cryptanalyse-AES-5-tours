@@ -11,7 +11,9 @@ typedef struct plain_cipher {
 typedef struct Distance {
   // Le vecteur différence
   uchar *VecDif;
-  // A quel point ils sont éloignés
+  // Vecteur Hamming bizarre
+  uchar *VectHam;
+  // A quel point sont ils éloignés
   int degres;
   // Nombres de cases identiques
   int nbrcom;

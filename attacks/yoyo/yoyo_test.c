@@ -30,6 +30,8 @@ int main() {
     dista = InfoDist(dista, KEY, KEY);
     PrintByteArray(dista.VecDif, 16,
                    (const uchar *)"Dif entre Key et key (expect 0)");
+    PrintByteArray(dista.VectHam, 16,
+                   (const uchar *)"HAM vect Dif entre Key et key (expect 1)");
     printf("degrès de distance : %i\n", dista.degres);
     printf("Nombre de cases en commun : %i\n\n", dista.nbrcom);
 
@@ -39,6 +41,8 @@ int main() {
 
     dista = InfoDist(dista, KEY, KEY2);
     PrintByteArray(dista.VecDif, 16, (const uchar *)"Dif entre KEY et KEY2");
+    PrintByteArray(dista.VectHam, 16,
+                   (const uchar *)"HAM vect Dif entre Key et key2");
     printf("degrès de distance %i\n", dista.degres);
     printf("Nombre de cases en commun : %i\n\n", dista.nbrcom);
   }

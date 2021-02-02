@@ -155,7 +155,7 @@ int main() {
 
     fprintf(stdout, "plaintext/ciphertext generation...\n");
     // on definit un nombre de lambda-set
-    size_t nbr_lset = 2;
+    size_t nbr_lset = 5;
 
     // on initilise le tableau des lambda-sets
     plain_cipher **pairs_array = malloc(nbr_lset * sizeof(plain_cipher *));
