@@ -38,6 +38,16 @@ uchar EncryptPlaintexts(plain_cipher *pairs, uchar **round_keys) {
   return EXIT_SUCCESS;
 }
 
+/* root-me functions */
+void StateToChar(uchar *state) {
+  uchar i;
+  uchar state_char[32];
+  for (i = 0; i < CELLS; i++) {
+    printf("%.02x", state[i]);
+  }
+  printf("\n");
+}
+
 void PrintAllPairs(plain_cipher *pairs) {
   for (size_t i = 0; i < NBR_PAIRS; i++) {
     fprintf(stdout, "%zu\n", i);

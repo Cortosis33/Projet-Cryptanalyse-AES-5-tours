@@ -33,7 +33,7 @@
 #define COLS 4
 #define CELLS 16
 
-#define AES_ROUNDS 5
+#define AES_ROUNDS 10
 #define AES_KEYS 11
 #define AES_KEYSTR_LEN 48
 
@@ -42,6 +42,8 @@
 
 // PrintProgress
 #define PBSTR "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
+//#define PBSTR "████████████████████████████████████████████████████████████"
+//#define PBSTR "############################################################"
 #define PBWIDTH 60
 
 /* Sboxes and rcon and other tabs*/
@@ -49,8 +51,8 @@ static const uchar hamming4[16] = {0, 1, 1, 2, 1, 2, 2, 3,
                                    1, 2, 2, 3, 2, 3, 3, 4};
 
 /* The key schedule produces the needed round keys from the initial key */
-static const uchar rcon[10] = {0x01, 0x02, 0x04, 0x08, 0x10,
-                               0x20, 0x40, 0x80, 0x1b, 0x36};
+static const uchar rcon[15] = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80,
+                               0x1b, 0x36, 0x6c, 0xd8, 0xab, 0x4d, 0x9a};
 
 static const uchar S_box[256] = {
     99,  124, 119, 123, 242, 107, 111, 197, 48,  1,   103, 43,  254, 215, 171,

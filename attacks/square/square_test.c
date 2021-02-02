@@ -2,13 +2,16 @@
 #include "../../include/utils.h"
 
 // to enable attack
-#define ATTACK 1
+#define ATTACK 0
 // to test some code in TestingCode zone
-#define TEST 0
+#define TEST 1
 #define TYPE 2
 
-uchar KEY[16] = {0xd0, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
-                 0xf9, 0x25, 0x0c, 0x0c, 0xa8, 0x89, 0xc8, 0xa6};
+// uchar KEY[16] = {0xd0, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
+//                  0xf9, 0x25, 0x0c, 0x0c, 0xa8, 0x89, 0xc8, 0xa6};
+
+uchar KEY[16] = {0x54, 0x73, 0x20, 0x67, 0x68, 0x20, 0x4b, 0x20,
+                 0x61, 0x6d, 0x75, 0x46, 0x74, 0x79, 0x6e, 0x75};
 
 // uchar KEY[16] = {0xd1, 0xa9, 0xe2, 0xc6, 0x15, 0xfe, 0x2f, 0x13,
 //                  0xa9, 0x15, 0x1c, 0xcc, 0x48, 0xc9, 0xf8, 0xf6};
@@ -513,7 +516,7 @@ int main() {
         CopyState(ciphertext, (pairs_array[i])[j].ciphertext);
       }
     }
-    fprintf(stdout, "K0 finding...\n");
+    fprintf(stdout, "\n### K0 diagonal finding... ###\n");
     // on genere les octets de la clé K0
     for (size_t key_1 = 0; key_1 < 256; key_1++) {
       // key_guess_0[0] = 0xd0;
@@ -562,11 +565,11 @@ int main() {
 
               // on verifie si les sommes sont nulles
               if (AllZeroArray(b, nbr_lset)) {
-                printf("\nFirst 4 bytes found ! \n");
-                PrintByteArray(key_guess_5, CELLS,
-                               (const uchar *)"key_guess_5");
+                printf("\nFirst bytes found ! \n");
                 PrintByteArray(key_guess_0, CELLS,
                                (const uchar *)"key_guess_0");
+                PrintByteArray(key_guess_5, CELLS,
+                               (const uchar *)"key_guess_5");
                 goto outloops1_type2;
               }
             }
@@ -585,6 +588,7 @@ int main() {
     }
 
   outloops1_type2:
+    fprintf(stdout, "\n### K5 finding... ###\n");
     // on n'utilise que 2 lambda-set
     nbr_lset = 2;
     // on determine tous les octets de K5 :
@@ -632,32 +636,15 @@ int main() {
   }
 
   if (TEST) {
-    /* Testing code */
-    int cpt1 = 0;
-    int cpt2 = 0;
-    int rand = 0;
-    int max = 100;
-    uchar key[16];
-    for (int i = 0; i < max; i++) {
 
-      // on génère une clé :
-      for (size_t j = 0; j < CELLS; j++) {
-        key[j] = (uchar)RandInt(256);
-      }
+    uchar test[16] = {0x54, 0x4f, 0x4e, 0x20, 0x77, 0x6e, 0x69, 0x54,
+                      0x6f, 0x65, 0x6e, 0x77, 0x20, 0x20, 0x65, 0x6f};
 
-      for (size_t j = 0; j < AES_ROUNDS; j++) {
-        UnrollKey(key, j);
-      }
+    PrintByteArray(test, CELLS, (const uchar *)"test");
 
-      rand = key[15];
-      if (rand < 128) {
-        cpt1++;
-      } else {
-        cpt2++;
-      }
-    }
-    fprintf(stdout, "cpt1: %.2f, cpt2: %.2f\n", 100 * cpt1 * 1.0 / max,
-            100 * cpt2 * 1.0 / max);
+    Encryption(test, round_keys);
+
+    PrintByteArray(test, CELLS, (const uchar *)"ciphertext");
   }
   /*
   I0=[0,7,10,13]
