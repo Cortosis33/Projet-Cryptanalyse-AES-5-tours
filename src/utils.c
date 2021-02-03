@@ -191,21 +191,25 @@ bool MixColumns(uchar *message) {
   return EXIT_SUCCESS;
 }
 
-bool IMixColumns(uchar *message) {
-  uchar return_code = EXIT_FAILURE;
-  uchar column = 0;
-  uchar v, u = 0;
+bool IMixColumns(uchar *state) {
+  int i;
+  uchar a, b, c, d;
+  for (i = 0; i < 4; ++i) {
+    a = state[i];
+    b = state[i + 4];
+    c = state[i + 8];
+    d = state[i + 12];
 
-  for (column = 0; column < 4; column++) {
-    u = xtime(xtime(message[column + 0] ^ message[column + 8]));
-    v = xtime(xtime(message[column + 4] ^ message[column + 12]));
-    message[column + 0] = message[column + 0] ^ u;
-    message[column + 4] = message[column + 4] ^ v;
-    message[column + 8] = message[column + 8] ^ u;
-    message[column + 12] = message[column + 12] ^ v;
+    state[i] = Multiply(a, 0x0e) ^ Multiply(b, 0x0b) ^ Multiply(c, 0x0d) ^
+               Multiply(d, 0x09);
+    state[i + 4] = Multiply(a, 0x09) ^ Multiply(b, 0x0e) ^ Multiply(c, 0x0b) ^
+                   Multiply(d, 0x0d);
+    state[i + 8] = Multiply(a, 0x0d) ^ Multiply(b, 0x09) ^ Multiply(c, 0x0e) ^
+                   Multiply(d, 0x0b);
+    state[i + 12] = Multiply(a, 0x0b) ^ Multiply(b, 0x0d) ^ Multiply(c, 0x09) ^
+                    Multiply(d, 0x0e);
   }
-  return_code = MixColumns(message);
-  return return_code;
+  return EXIT_SUCCESS;
 }
 
 bool AddRoundKey(uchar *message, uchar *key) {

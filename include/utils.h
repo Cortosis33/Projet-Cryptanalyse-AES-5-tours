@@ -33,7 +33,7 @@
 #define COLS 4
 #define CELLS 16
 
-#define AES_ROUNDS 10
+#define AES_ROUNDS 5
 #define AES_KEYS 11
 #define AES_KEYSTR_LEN 48
 
@@ -161,7 +161,7 @@ uchar FieldMul(uchar byte_value, uchar coeff);
 uchar Multiply(uchar x, uchar y);
 
 bool MixColumns(uchar *message);
-bool IMixColumns(uchar *message);
+bool IMixColumns(uchar *state);
 
 bool ShiftRows(uchar *message);
 bool IShiftRows(uchar *message);
