@@ -89,6 +89,13 @@ uchar FieldMul(uchar byte_value, uchar coeff) {
   return result;
 }
 
+uchar Multiply(uchar x, uchar y) {
+  return (((y & 1) * x) ^ ((y >> 1 & 1) * xtime(x)) ^
+          ((y >> 2 & 1) * xtime(xtime(x))) ^
+          ((y >> 3 & 1) * xtime(xtime(xtime(x)))) ^
+          ((y >> 4 & 1) * xtime(xtime(xtime(xtime(x))))));
+}
+
 bool ShiftRows(uchar *message) {
   uchar tmp = 0;
 

@@ -158,6 +158,7 @@ bool ISubBytes(uchar *message);
 
 uchar xtime(uchar byte_value);
 uchar FieldMul(uchar byte_value, uchar coeff);
+uchar Multiply(uchar x, uchar y);
 
 bool MixColumns(uchar *message);
 bool IMixColumns(uchar *message);
