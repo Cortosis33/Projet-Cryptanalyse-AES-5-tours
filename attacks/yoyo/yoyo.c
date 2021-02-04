@@ -91,7 +91,18 @@ uchar *SimpleSwap(uchar *text1, uchar *text2) {
   return tmp;
 }
 
-// Return True si
-// Return False sinon
+// Retourne le texte 2 avec le premier mot différent du texte 1 sur la colone
+// active (Les textes font 16 octets)
 
-bool Distinguisher5();
+uchar *SimpleSwapCol(uchar *text1, uchar *text2, int colone) {
+  for (int i = 0; i < 16; i++) {
+    dist[i] = text2[i];
+  }
+  for (int j = 0; j < 4; j++) {
+    if (text2[4 * j + colone] != text1[4 * j + colone]) {
+      dist[4 * j + colone] = text1[4 * j + colone];
+      break;
+    }
+  }
+  return dist;
+}

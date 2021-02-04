@@ -27,7 +27,11 @@ Distance InfoDist(Distance distance, uchar *text1, uchar *text2);
 uchar *SimpleSwap(uchar *text1, uchar *text2);
 
 // Avoir seulement le nu d'un objet (Le zero différence pattern)
-uchar *Nu(uchar *text, int taillevecteur);
+uchar *Nu(uchar *text);
 
-// Additionne 2 vecteur et retourne la somme
-uchar *ADD(uchar *text1, uchar *text2, int taillevecteur);
+// compare 2 vecteur et retourne la différence en V.A
+uchar *CMP(uchar *text1, uchar *text2);
+
+// Retourne le texte 2 avec le premier mot différent du texte 1 sur la colone
+// active (Les textes font 16 octets)
+uchar *SimpleSwapCol(uchar *text1, uchar *text2, int colone);

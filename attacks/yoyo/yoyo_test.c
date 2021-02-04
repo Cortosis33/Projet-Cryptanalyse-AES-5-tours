@@ -65,6 +65,21 @@ int main() {
     PrintByteArray(text5, 4, (const uchar *)"text5 ");
     printf("SimpleSwap devrais être 0xDE 0xAD 0xBE 0xEF : \n");
     PrintByteArray(text6, 4, (const uchar *)"Résultat ");
+    uchar t[16] = {0xDE, 0xDE, 0xDE, 0xDE, 0xAD, 0xAD, 0xAD, 0xAD,
+                   0xBE, 0xBE, 0xBE, 0xBE, 0xEF, 0xEF, 0xEF, 0xEF};
+
+    uchar t2[16] = {0xDE, 0xDE, 0xAA, 0xDE, 0xAA, 0xAD, 0xAD, 0xAD,
+                    0xBE, 0xAA, 0xBE, 0xBE, 0xEF, 0xEF, 0xEF, 0xAA};
+    PrintByteArray(t, 16, (const uchar *)"t");
+    PrintByteArray(t2, 16, (const uchar *)"t2 ");
+    uchar *res = SimpleSwapCol(t, t2, 0);
+    PrintByteArray(res, 16, (const uchar *)"Résultat pour colone 0");
+    uchar *res1 = SimpleSwapCol(t, t2, 1);
+    PrintByteArray(res1, 16, (const uchar *)"Résultat pour colone 1");
+    uchar *res2 = SimpleSwapCol(t, t2, 2);
+    PrintByteArray(res2, 16, (const uchar *)"Résultat pour colone 2");
+    uchar *res3 = SimpleSwapCol(t, t2, 3);
+    PrintByteArray(res3, 16, (const uchar *)"Résultat pour colone 3");
   }
 
   if (ATTACK) {
