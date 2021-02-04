@@ -6,8 +6,15 @@ uchar dist[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 uchar ham[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-// Retourne la valeur absolue de la différence entre deux texte.
+uchar Zero[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+// Retourne la valeur absolue de la différence entre deux texte et d'autres
+// informations.
 Distance InfoDist(Distance distance, uchar *text1, uchar *text2) {
+  if (text2 == NULL) {
+    text2 = Zero;
+  }
   int deg = 0;
   int nbr = 0;
   for (int i = 0; i < 16; i++) {
@@ -31,8 +38,34 @@ Distance InfoDist(Distance distance, uchar *text1, uchar *text2) {
   return distance;
 }
 
-// Retourne le texte 2 avec le premier mot différent du texte 1 (Les textes font
-// 4 octets)
+// Avoir seulement le nu d'un objet (Le zero différence pattern)
+uchar *Nu(uchar *text, int taillevecteur) {
+  for (int i = 0; i < taillevecteur; i++) {
+    if (text[i] == 0) {
+      dist[i] = 1;
+    } else {
+      dist[i] = 0;
+    }
+  }
+  return dist;
+}
+
+// Additionne 2 vecteur et retourne la somme en V.A
+uchar *ADD(uchar *text1, uchar *text2, int taillevecteur) {
+  for (int i = 0; i < taillevecteur; i++) {
+    if (text1[i] < text2[i]) {
+      dist[i] = text2[i] - text1[i];
+    } else if (text1[i] > text2[i]) {
+      dist[i] = text1[i] - text2[i];
+    } else {
+      dist[i] = 0x00;
+    }
+  }
+  return dist;
+}
+
+// Retourne le texte 2 avec le premier mot différent du texte 1 (Les textes
+// font 4 octets)
 uchar tmp[4] = {0x00, 0x00, 0x00, 0x00};
 
 uchar *SimpleSwap(uchar *text1, uchar *text2) {
@@ -58,4 +91,7 @@ uchar *SimpleSwap(uchar *text1, uchar *text2) {
   return tmp;
 }
 
+// Return True si
+// Return False sinon
 
+bool Distinguisher5()
