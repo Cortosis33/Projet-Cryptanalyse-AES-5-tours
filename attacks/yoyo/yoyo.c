@@ -39,8 +39,8 @@ Distance InfoDist(Distance distance, uchar *text1, uchar *text2) {
 }
 
 // Avoir seulement le nu d'un objet (Le zero différence pattern)
-uchar *Nu(uchar *text, int taillevecteur) {
-  for (int i = 0; i < taillevecteur; i++) {
+uchar *Nu(uchar *text) {
+  for (int i = 0; i < 16; i++) {
     if (text[i] == 0) {
       dist[i] = 1;
     } else {
@@ -50,9 +50,9 @@ uchar *Nu(uchar *text, int taillevecteur) {
   return dist;
 }
 
-// Additionne 2 vecteur et retourne la somme en V.A
-uchar *ADD(uchar *text1, uchar *text2, int taillevecteur) {
-  for (int i = 0; i < taillevecteur; i++) {
+// compare 2 vecteur et retourne la différence en V.A
+uchar *CMP(uchar *text1, uchar *text2) {
+  for (int i = 0; i < 16; i++) {
     if (text1[i] < text2[i]) {
       dist[i] = text2[i] - text1[i];
     } else if (text1[i] > text2[i]) {
