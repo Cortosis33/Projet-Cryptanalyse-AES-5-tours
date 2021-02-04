@@ -21,3 +21,7 @@ typedef struct Distance {
 
 // Retourne des informations sur la distances entre deux textes.
 Distance InfoDist(Distance distance, uchar *text1, uchar *text2);
+
+// Retourne le texte 2 avec le premier mot différent du texte 1 (Les textes font
+// 4 octets)
+uchar *SimpleSwap(uchar *text1, uchar *text2);

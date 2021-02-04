@@ -12,6 +12,7 @@ uchar KEY2[16] = {0x50, 0xc9, 0xe1, 0x30, 0x14, 0xee, 0xff, 0x63,
                   0xde, 0xad, 0xbe, 0xef, 0xf9, 0x89, 0xc8, 0xa6};
 
 static bool testdist = TRUE;
+static bool testsimpleswap = TRUE;
 
 // key : d0c9e1b614ee3f63f9250c0ca889c8a6
 
@@ -45,6 +46,25 @@ int main() {
                    (const uchar *)"HAM vect Dif entre Key et key2");
     printf("degrès de distance %i\n", dista.degres);
     printf("Nombre de cases en commun : %i\n\n", dista.nbrcom);
+  }
+
+  if (testsimpleswap) {
+    uchar text1[4] = {0xDE, 0xAD, 0x12, 0xBF};
+    uchar text2[4] = {0xDE, 0x56, 0xBE, 0xEF};
+    uchar *text3 = SimpleSwap(text1, text2);
+    printf("Test simpleSwap avec : \n");
+    PrintByteArray(text1, 4, (const uchar *)"text1 ");
+    PrintByteArray(text2, 4, (const uchar *)"text2 ");
+    printf("SimpleSwap devrais être 0xDE 0xAD 0xBE 0xEF : \n");
+    PrintByteArray(text3, 4, (const uchar *)"Résultat ");
+    uchar text4[4] = {0xDE, 0xAD, 0xBE, 0xEF};
+    uchar text5[4] = {0xDE, 0xAD, 0xBE, 0xBA};
+    uchar *text6 = SimpleSwap(text4, text5);
+    printf("Test simpleSwap avec : \n");
+    PrintByteArray(text4, 4, (const uchar *)"text4 ");
+    PrintByteArray(text5, 4, (const uchar *)"text5 ");
+    printf("SimpleSwap devrais être 0xDE 0xAD 0xBE 0xEF : \n");
+    PrintByteArray(text6, 4, (const uchar *)"Résultat ");
   }
 
   if (ATTACK) {
