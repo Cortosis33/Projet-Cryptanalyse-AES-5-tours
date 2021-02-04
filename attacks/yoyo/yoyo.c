@@ -94,4 +94,4 @@ uchar *SimpleSwap(uchar *text1, uchar *text2) {
 // Return True si
 // Return False sinon
 
-bool Distinguisher5()
+bool Distinguisher5();
