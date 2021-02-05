@@ -64,45 +64,26 @@ uchar *CMP(uchar *text1, uchar *text2) {
   return dist;
 }
 
-// Retourne le texte 2 avec le premier mot différent du texte 1 (Les textes
-// font 4 octets)
-uchar tmp[4] = {0x00, 0x00, 0x00, 0x00};
-
-uchar *SimpleSwap(uchar *text1, uchar *text2) {
-  int jtmp = 0;
-
-  for (int i = 0; i < 4; i++) {
-    jtmp = i;
-    if (text2[i] == text1[i]) {
-      tmp[i] = text2[i];
-    } else {
-      tmp[i] = text1[i];
-      jtmp++;
-      break;
-    }
-  }
-  if (jtmp >= 3) {
-    return tmp;
-  } else {
-    for (int j = jtmp; j < 4; j++) {
-      tmp[j] = text2[j];
-    }
-  }
-  return tmp;
-}
-
 // Retourne le texte 2 avec le premier mot différent du texte 1 sur la colone
 // active (Les textes font 16 octets)
 
-uchar *SimpleSwapCol(uchar *text1, uchar *text2, int colone) {
+bool SimpleSwapCol(uchar *text1, uchar *text2, uchar *Swaptmp,
+                   uchar *Swaptmp2) {
   for (int i = 0; i < 16; i++) {
-    dist[i] = text2[i];
+    Swaptmp[i] = text1[i];
+    Swaptmp2[i] = text2[i];
   }
-  for (int j = 0; j < 4; j++) {
-    if (text2[4 * j + colone] != text1[4 * j + colone]) {
-      dist[4 * j + colone] = text1[4 * j + colone];
-      break;
+
+  for (int column = 0; column < 4; column++) {
+    for (int j = 0; j < 4; j++) {
+      if (text2[4 * j + column] != text1[4 * j + column]) {
+        for (int k = 0; k < 4; k++) {
+          Swaptmp[4 * k + column] = text2[4 * k + column];
+          Swaptmp2[4 * k + column] = text1[4 * k + column];
+          return TRUE;
+        }
+      }
     }
   }
-  return dist;
+  return TRUE;
 }

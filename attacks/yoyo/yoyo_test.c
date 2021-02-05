@@ -11,7 +11,7 @@ uchar KEY[16] = {0xd0, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
 uchar KEY2[16] = {0x50, 0xc9, 0xe1, 0x30, 0x14, 0xee, 0xff, 0x63,
                   0xde, 0xad, 0xbe, 0xef, 0xf9, 0x89, 0xc8, 0xa6};
 
-static bool testdist = TRUE;
+static bool testdist = FALSE;
 static bool testsimpleswap = TRUE;
 
 // key : d0c9e1b614ee3f63f9250c0ca889c8a6
@@ -49,37 +49,21 @@ int main() {
   }
 
   if (testsimpleswap) {
-    uchar text1[4] = {0xDE, 0xAD, 0x12, 0xBF};
-    uchar text2[4] = {0xDE, 0x56, 0xBE, 0xEF};
-    uchar *text3 = SimpleSwap(text1, text2);
-    printf("Test simpleSwap avec : \n");
-    PrintByteArray(text1, 4, (const uchar *)"text1 ");
-    PrintByteArray(text2, 4, (const uchar *)"text2 ");
-    printf("SimpleSwap devrais être 0xDE 0xAD 0xBE 0xEF : \n");
-    PrintByteArray(text3, 4, (const uchar *)"Résultat ");
-    uchar text4[4] = {0xDE, 0xAD, 0xBE, 0xEF};
-    uchar text5[4] = {0xDE, 0xAD, 0xBE, 0xBA};
-    uchar *text6 = SimpleSwap(text4, text5);
-    printf("Test simpleSwap avec : \n");
-    PrintByteArray(text4, 4, (const uchar *)"text4 ");
-    PrintByteArray(text5, 4, (const uchar *)"text5 ");
-    printf("SimpleSwap devrais être 0xDE 0xAD 0xBE 0xEF : \n");
-    PrintByteArray(text6, 4, (const uchar *)"Résultat ");
-    uchar t[16] = {0xDE, 0xDE, 0xDE, 0xDE, 0xAD, 0xAD, 0xAD, 0xAD,
-                   0xBE, 0xBE, 0xBE, 0xBE, 0xEF, 0xEF, 0xEF, 0xEF};
+    uchar t[16] = {0xDE, 0xDE, 0xAA, 0xAA, 0xAD, 0xAD, 0xAA, 0xAA,
+                   0xBE, 0xBE, 0xBB, 0xBB, 0xEF, 0xEF, 0xCC, 0xCC};
 
-    uchar t2[16] = {0xDE, 0xDE, 0xAA, 0xDE, 0xAA, 0xAD, 0xAD, 0xAD,
-                    0xBE, 0xAA, 0xBE, 0xBE, 0xEF, 0xEF, 0xEF, 0xAA};
+    uchar t2[16] = {0xDE, 0xDE, 0xDE, 0xDE, 0xAD, 0xAD, 0xAD, 0xAD,
+                    0xBE, 0xDE, 0xBE, 0xBE, 0xEF, 0xEF, 0xEF, 0xEF};
+    uchar Swaptmp[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    uchar Swaptmp2[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     PrintByteArray(t, 16, (const uchar *)"t");
     PrintByteArray(t2, 16, (const uchar *)"t2 ");
-    uchar *res = SimpleSwapCol(t, t2, 0);
-    PrintByteArray(res, 16, (const uchar *)"Résultat pour colone 0");
-    uchar *res1 = SimpleSwapCol(t, t2, 1);
-    PrintByteArray(res1, 16, (const uchar *)"Résultat pour colone 1");
-    uchar *res2 = SimpleSwapCol(t, t2, 2);
-    PrintByteArray(res2, 16, (const uchar *)"Résultat pour colone 2");
-    uchar *res3 = SimpleSwapCol(t, t2, 3);
-    PrintByteArray(res3, 16, (const uchar *)"Résultat pour colone 3");
+    printf("Test de SimpleSwapCol\n");
+    SimpleSwapCol(t, t2, Swaptmp, Swaptmp2);
+    PrintByteArray(Swaptmp, 16, (const uchar *)"Swaptmp ");
+    PrintByteArray(Swaptmp2, 16, (const uchar *)"Swaptmp2 ");
   }
 
   if (ATTACK) {
