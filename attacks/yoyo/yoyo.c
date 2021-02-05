@@ -80,8 +80,8 @@ bool SimpleSwapCol(uchar *text1, uchar *text2, uchar *Swaptmp,
         for (int k = 0; k < 4; k++) {
           Swaptmp[4 * k + column] = text2[4 * k + column];
           Swaptmp2[4 * k + column] = text1[4 * k + column];
-          return TRUE;
         }
+        return TRUE;
       }
     }
   }
