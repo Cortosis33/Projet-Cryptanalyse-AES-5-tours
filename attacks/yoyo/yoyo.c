@@ -67,19 +67,19 @@ uchar *CMP(uchar *text1, uchar *text2) {
 // Retourne le texte 2 avec le premier mot différent du texte 1 sur la colone
 // active (Les textes font 16 octets)
 
-bool SimpleSwapCol(uchar *text1, uchar *text2, uchar *Swaptmp,
-                   uchar *Swaptmp2) {
+bool SimpleSwapCol(uchar *state1, uchar *state2, uchar *swaptmp,
+                   uchar *swaptmp2) {
   for (int i = 0; i < 16; i++) {
-    Swaptmp[i] = text1[i];
-    Swaptmp2[i] = text2[i];
+    swaptmp[i] = state1[i];
+    swaptmp2[i] = state2[i];
   }
 
   for (int column = 0; column < 4; column++) {
     for (int j = 0; j < 4; j++) {
-      if (text2[4 * j + column] != text1[4 * j + column]) {
+      if (state2[4 * j + column] != state1[4 * j + column]) {
         for (int k = 0; k < 4; k++) {
-          Swaptmp[4 * k + column] = text2[4 * k + column];
-          Swaptmp2[4 * k + column] = text1[4 * k + column];
+          swaptmp[4 * k + column] = state2[4 * k + column];
+          swaptmp2[4 * k + column] = state1[4 * k + column];
         }
         return TRUE;
       }
