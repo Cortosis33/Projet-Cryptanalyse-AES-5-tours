@@ -1,3 +1,5 @@
 .DS_Store
 *.o
 AES_TEST
+square_test
+yoyo_test
