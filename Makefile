@@ -11,6 +11,7 @@ build:
 	@cd src && $(MAKE)
 	@cd attacks/square && $(MAKE)
 	@cd attacks/yoyo && $(MAKE)
+	@cd attacks/yoyo_bis && $(MAKE)
 	@cp -f src/$(EXE) ./
 	@cd src && make clean
 
@@ -18,6 +19,7 @@ clean:
 	@cd src && $(MAKE) clean
 	@cd attacks/square && $(MAKE) clean
 	@cd attacks/yoyo && $(MAKE) clean
+	@cd attacks/yoyo_bis && $(MAKE) clean
 #	@cd test && $(MAKE) clean
 	@rm -f $(EXE)
 

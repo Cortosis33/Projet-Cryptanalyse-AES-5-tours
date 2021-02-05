@@ -1,5 +1,5 @@
 #include "../../include/utils.h"
-#include "../../include/yoyo.h"
+#include "../../include/yoyo_bis.h"
 
 // to enable an attack
 #define ATTACK 0
@@ -12,7 +12,8 @@ uchar KEY2[16] = {0x50, 0xc9, 0xe1, 0x30, 0x14, 0xee, 0xff, 0x63,
                   0xde, 0xad, 0xbe, 0xef, 0xf9, 0x89, 0xc8, 0xa6};
 
 static bool testdist = 0;
-static bool testsimpleswap = 1;
+static bool testsimpleswap = 0;
+static bool testIsCoupleInS = 0;
 
 // key : d0c9e1b614ee3f63f9250c0ca889c8a6
 
@@ -66,6 +67,29 @@ int main() {
     SimpleSwapCol(t, t2, Swaptmp, Swaptmp2);
     PrintByteArray(Swaptmp, 16, (const uchar *)"Swaptmp ");
     PrintByteArray(Swaptmp2, 16, (const uchar *)"Swaptmp2 ");
+  }
+
+  if (testIsCoupleInS) {
+    uchar t[16] = {0xDE, 0xDE, 0xAA, 0xAA, 0xAD, 0xAD, 0xAA, 0xAA,
+                   0xBE, 0xBE, 0xBB, 0xBB, 0xEF, 0xEF, 0xCC, 0xCC};
+
+    uchar t2[16] = {0xDE, 0xDE, 0xDE, 0xDE, 0xAD, 0xAD, 0xAD, 0xAD,
+                    0xBE, 0xDE, 0xBE, 0xBE, 0xEF, 0xEF, 0xEF, 0xEF};
+
+    S List;
+    List = CreateS(List);
+    PrintS(List);
+    List.len = 2;
+    for (int i = 0; i < 16; i++) {
+      List.P0[i] = t[i] ^ t2[i] ^ 42;
+      List.P1[i] = t[i];
+      List.P2[i] = t2[i];
+      List.P3[i] = t[i] ^ t2[i];
+    }
+    PrintS(List);
+    printf("Expect TRUE ou 1 : %d\n", IsCoupleInS(t, t2, List));
+    printf("Expect FALSE ou 0 : %d\n", IsCoupleInS(KEY2, KEY, List));
+    printf("Expect FALSE ou 0 : %d\n", IsCoupleInS(t, KEY, List));
   }
 
   if (ATTACK) {

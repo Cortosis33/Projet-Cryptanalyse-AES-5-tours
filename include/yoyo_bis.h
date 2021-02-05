@@ -31,3 +31,33 @@ uchar *CMP(uchar *text1, uchar *text2);
 // Retourne le texte 2 avec le premier mot différent du texte 1 sur la colone
 // active (Les textes font 16 octets)
 bool SimpleSwapCol(uchar *text1, uchar *text2, uchar *Swaptmp, uchar *Swaptmp2);
+
+typedef struct S {
+  // Les texts
+  uchar P0[16];
+  uchar P1[16];
+  uchar P2[16];
+  uchar P3[16];
+  uchar P4[16];
+  uchar P5[16];
+  uchar P6[16];
+  uchar P7[16];
+  uchar P8[16];
+  uchar P9[16];
+
+  // La taille
+  int len;
+
+} S;
+
+// Regarde si P0 et P1 vérifie la condition
+bool Testducouple(uchar *p0, uchar *p1, uchar *k0);
+
+// Retoune True si le couple est dans la liste et false sinon
+bool IsCoupleInS(uchar *p0, uchar *p1, S list);
+
+// Print la structure S
+void PrintS(S List);
+
+// Initialise la structure
+S CreateS(S List);

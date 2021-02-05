@@ -1,4 +1,4 @@
-#include "../../include/yoyo.h"
+#include "../../include/yoyo_bis.h"
 
 uchar dist[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
@@ -86,4 +86,116 @@ bool SimpleSwapCol(uchar *state1, uchar *state2, uchar *swaptmp,
     }
   }
   return TRUE;
+}
+
+// Regarde si P0 et P1 vérifie la condition
+bool Testducouple(uchar *p0, uchar *p1, uchar *k0) {
+  // Ajout de K0
+  for (int i = 0; i < 16; i++) {
+    p0[i] ^= k0[i];
+    p1[i] ^= k0[i];
+  }
+
+  SubBytes(p0);
+  SubBytes(p1);
+
+  if (p0[12] == p1[12]) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+// Retoune True si le couple est dans la liste et false sinon
+bool IsCoupleInS(uchar *p0, uchar *p1, S list) {
+  if (list.len == 0) {
+    return FALSE;
+  }
+
+  if (list.len == 1) {
+    for (int i = 0; i < 16; i++) {
+      if ((p0[i] != (list.P0[i]) && p0[i] != (list.P1[i])) ||
+          (p1[i] != (list.P0[i]) && p1[i] != (list.P1[i]))) {
+        return FALSE;
+      }
+    }
+    return TRUE;
+  }
+
+  if (list.len == 2) {
+    for (int i = 0; i < 16; i++) {
+      if ((p0[i] != (list.P0[i]) && p0[i] != (list.P1[i]) &&
+           p0[i] != (list.P2[i]) && p0[i] != (list.P3[i])) ||
+          (p1[i] != (list.P0[i]) && p1[i] != (list.P1[i]) &&
+           p1[i] != (list.P2[i]) && p1[i] != (list.P3[i]))) {
+        return FALSE;
+      }
+    }
+    return TRUE;
+  }
+
+  if (list.len == 3) {
+    for (int i = 0; i < 16; i++) {
+      if ((p0[i] != (list.P0[i]) && p0[i] != (list.P1[i]) &&
+           p0[i] != (list.P2[i]) && p0[i] != (list.P3[i]) &&
+           p0[i] != (list.P4[i]) && p0[i] != (list.P5[i])) ||
+          (p1[i] != (list.P0[i]) && p1[i] != (list.P1[i]) &&
+           p1[i] != (list.P2[i]) && p1[i] != (list.P3[i]) &&
+           p1[i] != (list.P4[i]) && p1[i] != (list.P5[i]))) {
+        return FALSE;
+      }
+    }
+    return TRUE;
+  }
+
+  if (list.len == 4) {
+    for (int i = 0; i < 16; i++) {
+      if ((p0[i] != (list.P0[i]) && p0[i] != (list.P1[i]) &&
+           p0[i] != (list.P2[i]) && p0[i] != (list.P3[i]) &&
+           p0[i] != (list.P4[i]) && p0[i] != (list.P5[i]) &&
+           p0[i] != (list.P6[i]) && p0[i] != (list.P7[i])) ||
+          (p1[i] != (list.P0[i]) && p1[i] != (list.P1[i]) &&
+           p1[i] != (list.P2[i]) && p1[i] != (list.P3[i]) &&
+           p1[i] != (list.P4[i]) && p1[i] != (list.P5[i]) &&
+           p1[i] != (list.P6[i]) && p1[i] != (list.P7[i]))) {
+        return FALSE;
+      }
+    }
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+// Print la structure S
+void PrintS(S List) {
+  printf("Etat de S :\n");
+  PrintByteArray(List.P0, 16, (const uchar *)"P0 ");
+  PrintByteArray(List.P1, 16, (const uchar *)"P1 ");
+  PrintByteArray(List.P2, 16, (const uchar *)"P2 ");
+  PrintByteArray(List.P3, 16, (const uchar *)"P3 ");
+  PrintByteArray(List.P4, 16, (const uchar *)"P4 ");
+  PrintByteArray(List.P5, 16, (const uchar *)"P5 ");
+  PrintByteArray(List.P6, 16, (const uchar *)"P6 ");
+  PrintByteArray(List.P7, 16, (const uchar *)"P7 ");
+  PrintByteArray(List.P8, 16, (const uchar *)"P8 ");
+  PrintByteArray(List.P9, 16, (const uchar *)"P9 ");
+  printf("Len = %d\n\n", List.len);
+}
+
+// Initialise la structure
+S CreateS(S List) {
+  for (int i = 0; i < 16; i++) {
+    List.P1[i] = 0;
+    List.P2[i] = 0;
+    List.P3[i] = 0;
+    List.P4[i] = 0;
+    List.P5[i] = 0;
+    List.P6[i] = 0;
+    List.P7[i] = 0;
+    List.P8[i] = 0;
+    List.P9[i] = 0;
+  }
+  List.len = 0;
+  return List;
 }
