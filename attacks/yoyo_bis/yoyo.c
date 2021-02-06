@@ -199,3 +199,18 @@ S CreateS(S List) {
   List.len = 0;
   return List;
 }
+
+
+bool ModEncryption(uchar *plaintext, uchar **round_keys) {
+  IShiftRows(plaintext);
+  Encryption(plaintext,round_keys);
+  IShiftRows(plaintext);
+  return EXIT_SUCCESS;
+}
+
+bool ModDecryption(uchar *plaintext, uchar **round_keys) {
+  ShiftRows(plaintext);
+  Decryption(plaintext,round_keys);
+  ShiftRows(plaintext);
+  return EXIT_SUCCESS;
+}

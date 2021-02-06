@@ -61,3 +61,7 @@ void PrintS(S List);
 
 // Initialise la structure
 S CreateS(S List);
+
+// chiffrement et déchiffrement modifié avec les Shiftrows
+bool ModEncryption(uchar *plaintext, uchar **round_keys);
+bool ModDecryption(uchar *plaintext, uchar **round_keys);
