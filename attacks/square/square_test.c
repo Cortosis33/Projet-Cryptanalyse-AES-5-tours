@@ -43,6 +43,10 @@ int main() {
 
     // on genere les clairs du premier lambda-set avec que des bits 0 à la suite
     GenPlaintexts(pairs_1, 0, 0xFF);
+
+    // on genere les clairs du plain_cipher pairs_2[NBR_PAIRS];premier
+    // lambda-set avec que des bits 0 à la suite
+    GenPlaintexts(pairs_1, 0, 0xFF);
     /* Exemple :
           01 FF FF FF
           FF FF FF FF

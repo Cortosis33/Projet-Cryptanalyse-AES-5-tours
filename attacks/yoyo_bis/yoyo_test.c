@@ -2,7 +2,7 @@
 #include "../../include/yoyo_bis.h"
 
 // to enable an attack
-#define ATTACK 0
+#define ATTACK 1
 #define TEST 1
 
 uchar KEY[16] = {0xd0, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
@@ -10,6 +10,11 @@ uchar KEY[16] = {0xd0, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
 
 uchar KEY2[16] = {0x50, 0xc9, 0xe1, 0x30, 0x14, 0xee, 0xff, 0x63,
                   0xde, 0xad, 0xbe, 0xef, 0xf9, 0x89, 0xc8, 0xa6};
+
+uchar Swaptmp[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+uchar Swaptmp2[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 static bool testdist = 0;
 static bool testsimpleswap = 0;
@@ -56,11 +61,6 @@ int main() {
     uchar t2[16] = {0xDE, 0xDE, 0xDE, 0xDE, 0xAD, 0xAD, 0xAD, 0xAD,
                     0xBE, 0xDE, 0xBE, 0xBE, 0xEF, 0xEF, 0xEF, 0xEF};
 
-    uchar Swaptmp[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-    uchar Swaptmp2[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-
     PrintByteArray(t, 16, (const uchar *)"t");
     PrintByteArray(t2, 16, (const uchar *)"t2 ");
     printf("Test de SimpleSwapCol\n");
@@ -94,11 +94,81 @@ int main() {
 
   if (ATTACK) {
     fprintf(stdout, "ATTACK\n");
+
+    // on genere les clairs du premier "lambda-set" avec que des bits 0 à la
+    // suite
+    plain pairs[256];
+    ModGenPlaintexts(pairs);
+
+    S List;
+    List = CreateS(List);
+
+    // Les 2**28 clés
+    listcle allkey[268435456];
+
+    for (int i = 0; i < 256; i++) {
+      List = CreateS(List);
+      AddList(List, pairs[i].plaintext0, pairs[i].plaintext1);
+      while (List.len < 5) {
+        // On chiffre
+        ModEncryption(pairs[i].plaintext0, round_keys);
+        ModEncryption(pairs[i].plaintext1, round_keys);
+
+        // On swap
+        SimpleSwapCol(pairs[i].plaintext0, pairs[i].plaintext1, Swaptmp,
+                      Swaptmp2);
+
+        // On met le résultat dans pairs[i].plaintext
+        Copy1to0(Swaptmp, pairs[i].plaintext0);
+        Copy1to0(Swaptmp2, pairs[i].plaintext1);
+
+        // On déchiffre
+        ModDecryption(pairs[i].plaintext0, round_keys);
+        ModDecryption(pairs[i].plaintext1, round_keys);
+
+        // On swap
+        SimpleSwapCol(pairs[i].plaintext0, pairs[i].plaintext1, Swaptmp,
+                      Swaptmp2);
+
+        if (!IsCoupleInS(Swaptmp, Swaptmp2, List)) {
+          AddList(List, Swaptmp, Swaptmp2);
+        }
+      }
+      // On crée les clés restantes
+      CreateRemkeys(allkey);
+      // On les teste
+      for (int remkey; remkey < 268435456; remkey++) {
+        if (Testducouple(List.P0, List.P1, allkey[remkey].key) &&
+            Testducouple(List.P2, List.P3, allkey[remkey].key) &&
+            Testducouple(List.P4, List.P5, allkey[remkey].key) &&
+            Testducouple(List.P6, List.P7, allkey[remkey].key) &&
+            Testducouple(List.P8, List.P9, allkey[remkey].key)) {
+          // We have the key
+          PrintByteArray(allkey[remkey].key, 16, (const uchar *)"La clé est ");
+          return 0;
+        }
+      }
+    }
   }
 
   if (TEST) {
     /* Testing code */
     fprintf(stdout, "TestCode\n");
+    plain pairs[256];
+    ModGenPlaintexts(pairs);
+
+    PrintByteArray(pairs[0].plaintext0, 16,
+                   (const uchar *)"pairs[0].plaintext0\n");
+    PrintByteArray(pairs[5].plaintext0, 16,
+                   (const uchar *)"pairs[5].plaintext0\n");
+    PrintByteArray(pairs[255].plaintext0, 16,
+                   (const uchar *)"pairs[255].plaintext0\n");
+    PrintByteArray(pairs[0].plaintext1, 16,
+                   (const uchar *)"pairs[0].plaintext0\n");
+    PrintByteArray(pairs[5].plaintext1, 16,
+                   (const uchar *)"pairs[5].plaintext0\n");
+    PrintByteArray(pairs[255].plaintext1, 16,
+                   (const uchar *)"pairs[255].plaintext0\n");
   }
 
   for (size_t i = 0; i < 100; i++) {

@@ -65,3 +65,25 @@ S CreateS(S List);
 // chiffrement et déchiffrement modifié avec les Shiftrows
 bool ModEncryption(uchar *plaintext, uchar **round_keys);
 bool ModDecryption(uchar *plaintext, uchar **round_keys);
+
+typedef struct plain {
+  uchar plaintext0[CELLS];
+  uchar plaintext1[CELLS];
+  uchar text_tmp[CELLS];
+} plain;
+
+// Génère les textes
+bool ModGenPlaintexts(plain *pairs);
+
+// Ajoute une paire à la liste
+bool AddList(S List, uchar *text1, uchar *text2);
+
+// Remplace la liste 2 par le 1
+bool Copy1to0(uchar *text1, uchar *text2);
+
+typedef struct listcle {
+  uchar key[16];
+} listcle;
+
+// On crée les clés restantes
+bool CreateRemkeys(listcle *allkey);
