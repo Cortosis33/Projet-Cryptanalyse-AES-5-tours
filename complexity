@@ -1,0 +1,22 @@
+algo type 1
+
+On va compter le nombre d'opérations elementaires
+
+GenPlaintexts :
+On parcourt un lambda-set pour y definir les plaintexts
+
+Entrée : lambda-set, active_byte_index, others_value_content
+=> Pour i de 0 à 256
+  => Pour j de 0 à 16
+    lambd-set[i]
+    on affecte l'octet du ciphertext par others_value_content
+  on affecte l'octet à l'indice active_byte_index du plaintext par others_value_content
+  on affecte l'octet du ciphertext par others_value_content
+
+- initialisation du tableau des lambds-set
+=> 5x
+  => malloc
+
+- generation des clairs
+=> 5x
+  => GenPlaintexts
