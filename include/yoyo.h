@@ -1,12 +1,5 @@
+#include "common.h"
 #include "utils.h"
-
-#define NBR_PAIRS 256
-
-typedef struct plain_cipher {
-  uchar plaintext[CELLS];
-  uchar ciphertext[CELLS];
-  uchar ciphertext_tmp[CELLS];
-} plain_cipher;
 
 typedef struct Distance {
   // Le vecteur différence
@@ -20,8 +13,8 @@ typedef struct Distance {
 } Distance;
 
 typedef struct {
-  uchar p1[CELLS];
-  uchar p2[CELLS];
+  uchar p0[16];
+  uchar p1[16];
 } plain_couple;
 
 typedef struct {
@@ -45,3 +38,7 @@ bool SimpleSwapCol(uchar *text1, uchar *text2, uchar *Swaptmp, uchar *Swaptmp2);
 // TESTS
 bool EncryptionExp(uchar *plaintext, uchar **round_keys);
 bool DecryptionExp(uchar *ciphertext, uchar **round_keys);
+
+uchar GenPlaintexts_yoyo(plain_cipher *pairs1, plain_cipher *pairs2);
+void AddList(couple_array *S, uchar *p0, uchar *p1);
+void PrintSContent(couple_array S);

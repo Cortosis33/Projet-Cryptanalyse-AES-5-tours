@@ -1,4 +1,3 @@
-#include "../../include/utils.h"
 #include "../../include/yoyo.h"
 
 // to enable an attack
@@ -24,6 +23,15 @@ int main() {
 
   if (ATTACK) {
     fprintf(stdout, "ATTACK\n");
+
+    // on crée les deux lambd-set avec un tableau de couple (clair, chiffré)
+    plain_cipher pairs_1[NBR_PAIRS];
+    plain_cipher pairs_2[NBR_PAIRS];
+
+    // on genere les clairs
+    GenPlaintexts_yoyo(pairs_1, pairs_2);
+
+    PrintByteArray(pairs_1[1].plaintext, CELLS, (uchar *)"1");
   }
 
   if (TEST) {
@@ -36,15 +44,30 @@ int main() {
     uchar p1[16] = {0xa1, 0xc9, 0xe2, 0x56, 0x14, 0xe3, 0x1f, 0xa0,
                     0x19, 0x35, 0x03, 0x1c, 0x08, 0x02, 0x18, 0xac};
 
-    // on crée les deux lambd-set avec un tableau de couple (clair, chiffré)
-    plain_cipher pairs_1[NBR_PAIRS];
-    plain_cipher pairs_2[NBR_PAIRS];
+    // on initialise les pointeurs des chiffrées
+    uchar c0tmp[CELLS];
+    uchar c1tmp[CELLS];
 
-    // on genere les clairs du quatrième lambda-set avec que des bits 0 à la
-    // suite
-    // GenPlaintexts(pairs_1, 4, 0);
+    // on initialise la liste S
+    couple_array S;
+    S.len = 0;
 
-    PrintByteArray(pairs_1[0].plaintext, CELLS, (uchar *)"1");
+    for (size_t i = 0; i < 5; i++) {
+      // on chiffre
+      EncryptionExp(p0, round_keys);
+      EncryptionExp(p1, round_keys);
+      // on swap
+      SimpleSwapCol(p0, p1, c0tmp, c1tmp);
+      // ondechiffre
+      DecryptionExp(c0tmp, round_keys);
+      DecryptionExp(c1tmp, round_keys);
+      // on re-swap
+      SimpleSwapCol(c0tmp, c1tmp, p0, p1);
+      // on ajoute p0 et p1 dans S
+      AddList(&S, p0, p1);
+    }
+
+    PrintSContent(S);
   }
 
   return 0;
