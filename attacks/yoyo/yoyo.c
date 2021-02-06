@@ -87,3 +87,50 @@ bool SimpleSwapCol(uchar *state1, uchar *state2, uchar *swaptmp,
   }
   return TRUE;
 }
+
+// chiffrement experimental sans le premier ShiftRows et les derniers
+// ShiftRows°MixColumns
+bool EncryptionExp(uchar *plaintext, uchar **round_keys) {
+  IShiftRows(plaintext);
+  Encryption(plaintext, round_keys);
+  // IMixColumns(plaintext);
+  IShiftRows(plaintext);
+  return EXIT_SUCCESS;
+}
+
+// chiffrement modifié
+bool Encryption_bis(uchar *plaintext, uchar **round_keys) {
+  /* let's start with an AddRoundKey */
+  AddRoundKey(plaintext, round_keys[0]);
+
+  // round 1
+  SubBytes(plaintext);
+  // ShiftRows(plaintext);
+  MixColumns(plaintext);
+  AddRoundKey(plaintext, round_keys[1]);
+
+  // round 2
+  SubBytes(plaintext);
+  ShiftRows(plaintext);
+  MixColumns(plaintext);
+  AddRoundKey(plaintext, round_keys[2]);
+
+  // round 3
+  SubBytes(plaintext);
+  ShiftRows(plaintext);
+  MixColumns(plaintext);
+  AddRoundKey(plaintext, round_keys[3]);
+
+  // round 4
+  SubBytes(plaintext);
+  ShiftRows(plaintext);
+  MixColumns(plaintext);
+  AddRoundKey(plaintext, round_keys[4]);
+
+  /**** Last Round ****/
+  SubBytes(plaintext);
+  // ShiftRows(plaintext);
+  AddRoundKey(plaintext, round_keys[AES_ROUNDS]);
+
+  return EXIT_SUCCESS;
+}
