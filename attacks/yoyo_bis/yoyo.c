@@ -183,7 +183,7 @@ void PrintS(S List) {
   printf("Len = %d\n\n", List.len);
 }
 
-// Initialise la structure
+// Initialise la structure et ou nétoie S.
 S CreateS(S List) {
   for (int i = 0; i < 16; i++) {
     List.P1[i] = 0;
@@ -199,3 +199,98 @@ S CreateS(S List) {
   List.len = 0;
   return List;
 }
+
+bool ModEncryption(uchar *plaintext, uchar **round_keys) {
+  IShiftRows(plaintext);
+  Encryption(plaintext, round_keys);
+  IShiftRows(plaintext);
+  return EXIT_SUCCESS;
+}
+
+bool ModDecryption(uchar *plaintext, uchar **round_keys) {
+  ShiftRows(plaintext);
+  Decryption(plaintext, round_keys);
+  IShiftRows(plaintext);
+  return EXIT_SUCCESS;
+}
+
+bool ModGenPlaintexts(plain *pairs) {
+
+  for (size_t i = 0; i < NBR_PAIRS; i++) {
+    // on remplie de plaintext de 0
+    for (size_t j = 0; j < CELLS; j++) {
+      pairs[i].plaintext0[j] = 0;
+      pairs[i].plaintext1[j] = 0;
+    }
+    // on fait varier l'octet identifié par active_byte_index
+    pairs[i].plaintext0[4] = i;
+    pairs[i].plaintext1[4] = i + 1;
+    pairs[i].plaintext1[0] = 1;
+  }
+  return TRUE;
+}
+
+bool AddList(S List, uchar *text1, uchar *text2) {
+  int indice = List.len;
+  if (indice > 4) {
+    return FALSE;
+  }
+
+  if (indice == 0) {
+    for (int i = 0; i < 16; i++) {
+      List.P0[i] = text1[i];
+      List.P1[i] = text2[i];
+    }
+    List.len += 1;
+    return TRUE;
+  }
+
+  if (indice == 1) {
+    for (int i = 0; i < 16; i++) {
+      List.P2[i] = text1[i];
+      List.P3[i] = text2[i];
+    }
+    List.len += 1;
+    return TRUE;
+  }
+
+  if (indice == 2) {
+    for (int i = 0; i < 16; i++) {
+      List.P4[i] = text1[i];
+      List.P5[i] = text2[i];
+    }
+    List.len += 1;
+    return TRUE;
+  }
+
+  if (indice == 3) {
+    for (int i = 0; i < 16; i++) {
+      List.P6[i] = text1[i];
+      List.P7[i] = text2[i];
+    }
+    List.len += 1;
+    return TRUE;
+  }
+
+  if (indice == 4) {
+    for (int i = 0; i < 16; i++) {
+      List.P8[i] = text1[i];
+      List.P9[i] = text2[i];
+    }
+    List.len += 1;
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+// Remplace la liste 2 par le 1
+bool Copy1to0(uchar *text1, uchar *text2) {
+  for (int i = 0; i < 16; i++) {
+    text2[i] = text1[i];
+  }
+  return TRUE;
+}
+
+// On crée les clés restantes
+bool CreateRemkeys(listcle *allkey) { return 0; }
