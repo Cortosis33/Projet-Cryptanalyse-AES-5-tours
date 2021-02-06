@@ -1,5 +1,4 @@
 #include "../../include/square.h"
-#include "../../include/utils.h"
 
 // to enable attack
 #define ATTACK 1

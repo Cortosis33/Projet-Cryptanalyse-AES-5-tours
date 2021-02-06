@@ -36,35 +36,15 @@ int main() {
     uchar p1[16] = {0xa1, 0xc9, 0xe2, 0x56, 0x14, 0xe3, 0x1f, 0xa0,
                     0x19, 0x35, 0x03, 0x1c, 0x08, 0x02, 0x18, 0xac};
 
-    // on affiche les plaintexts
-    PrintByteArray(p0, CELLS, (uchar *)"p0");
-    PrintByteArray(p1, CELLS, (uchar *)"p1");
+    // on crée les deux lambd-set avec un tableau de couple (clair, chiffré)
+    plain_cipher pairs_1[NBR_PAIRS];
+    plain_cipher pairs_2[NBR_PAIRS];
 
-    // on chiffre les plaintexts
-    EncryptionExp(p0, round_keys);
-    EncryptionExp(p1, round_keys);
+    // on genere les clairs du quatrième lambda-set avec que des bits 0 à la
+    // suite
+    // GenPlaintexts(pairs_1, 4, 0);
 
-    // on affiche les chiffrés
-    PrintByteArray(p0, CELLS, (uchar *)"c1");
-    PrintByteArray(p1, CELLS, (uchar *)"c2");
-
-    // on definit les pointeurs temporaires pour les swaps
-    uchar ctmp1[CELLS];
-    uchar ctmp2[CELLS];
-
-    // on swap
-    SimpleSwapCol(p0, p1, ctmp1, ctmp2);
-
-    // on dechiffre
-    DecryptionExp(ctmp1, round_keys);
-    DecryptionExp(ctmp2, round_keys);
-
-    // on re-swap
-    SimpleSwapCol(ctmp1, ctmp2, p0, p1);
-
-    // on affiche les chiffrés
-    PrintByteArray(p0, CELLS, (uchar *)"p0");
-    PrintByteArray(p1, CELLS, (uchar *)"p1");
+    PrintByteArray(pairs_1[0].plaintext, CELLS, (uchar *)"1");
   }
 
   return 0;

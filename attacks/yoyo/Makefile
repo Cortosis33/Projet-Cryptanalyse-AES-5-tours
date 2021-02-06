@@ -11,11 +11,14 @@ CPPFLAGS = -I../../include -DDEBUG
 # Rules and targets
 all: yoyo_test
 
-yoyo_test: utils.o yoyo.o yoyo_test.o
+yoyo_test: utils.o yoyo.o yoyo_test.o common.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 	@rm -f *.o
 
 utils.o: ../../src/utils.c ../../include/utils.h
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
+
+common.o: ../../src/common.c ../../include/common.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
 
 yoyo.o: yoyo.c ../../include/yoyo.h

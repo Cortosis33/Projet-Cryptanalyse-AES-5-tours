@@ -11,11 +11,14 @@ CPPFLAGS = -I../../include -DDEBUG
 # Rules and targets
 all: square_test
 
-square_test: utils.o square.o square_test.o
+square_test: utils.o common.o square.o square_test.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 	@rm -f *.o
 
 utils.o: ../../src/utils.c ../../include/utils.h
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
+
+common.o: ../../src/common.c ../../include/common.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
 
 square.o: square.c ../../include/square.h

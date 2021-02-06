@@ -25,7 +25,7 @@ typedef struct {
 } plain_couple;
 
 typedef struct {
-  uchar S[5];
+  plain_couple array[5];
   size_t len;
 } couple_array;
 

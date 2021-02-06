@@ -66,7 +66,6 @@ uchar *CMP(uchar *text1, uchar *text2) {
 
 // Retourne le texte 2 avec le premier mot différent du texte 1 sur la colone
 // active (Les textes font 16 octets)
-
 bool SimpleSwapCol(uchar *state1, uchar *state2, uchar *swaptmp,
                    uchar *swaptmp2) {
   for (int i = 0; i < 16; i++) {
@@ -96,9 +95,10 @@ bool EncryptionExp(uchar *plaintext, uchar **round_keys) {
   return EXIT_SUCCESS;
 }
 
+// dechiffrement experimental
 bool DecryptionExp(uchar *ciphertext, uchar **round_keys) {
   ShiftRows(ciphertext);
   Decryption(ciphertext, round_keys);
-  IShiftRows(ciphertext);
+  ShiftRows(ciphertext);
   return EXIT_SUCCESS;
 }
