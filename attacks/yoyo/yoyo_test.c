@@ -1,7 +1,7 @@
 #include "../../include/yoyo.h"
 
 // to enable an attack
-#define ATTACK 0
+#define ATTACK 1
 #define TEST 1
 
 uchar KEY[16] = {0xd0, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
@@ -31,7 +31,8 @@ int main() {
     // on genere les clairs
     GenPlaintexts_yoyo(pairs_1, pairs_2);
 
-    PrintByteArray(pairs_1[1].plaintext, CELLS, (uchar *)"1");
+    PrintByteArray(pairs_1[3].plaintext, CELLS, (uchar *)"3");
+    PrintByteArray(pairs_2[3].plaintext, CELLS, (uchar *)"3");
   }
 
   if (TEST) {
@@ -39,10 +40,10 @@ int main() {
     fprintf(stdout, "TestCode\n");
 
     // on cree 2 plaintexts
-    uchar p0[16] = {0x01, 0xc9, 0xe2, 0xb6, 0x14, 0xe3, 0x3f, 0x61,
-                    0xf9, 0x25, 0x0c, 0x0c, 0xa8, 0x89, 0xc8, 0xa6};
-    uchar p1[16] = {0xa1, 0xc9, 0xe2, 0x56, 0x14, 0xe3, 0x1f, 0xa0,
-                    0x19, 0x35, 0x03, 0x1c, 0x08, 0x02, 0x18, 0xac};
+    uchar p0[16] = {0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00,
+                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    uchar p1[16] = {0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00,
+                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
     // on initialise les pointeurs des chiffrées
     uchar c0tmp[CELLS];
@@ -68,6 +69,23 @@ int main() {
     }
 
     PrintSContent(S);
+
+    // on parcourt S
+    for (size_t i = 0; i < 5; i++) {
+      uchar *tmp1 = (S.array[i]).p0;
+      AddRoundKey(tmp1, KEY);
+      SubBytes(tmp1);
+      MixColumns(tmp1);
+
+      uchar *tmp2 = (S.array[i]).p1;
+      AddRoundKey(tmp2, KEY);
+      SubBytes(tmp2);
+      MixColumns(tmp2);
+
+      AddRoundKey(tmp1, tmp2);
+
+      PrintByteArray(tmp1, CELLS, (uchar *)"==");
+    }
   }
 
   return 0;

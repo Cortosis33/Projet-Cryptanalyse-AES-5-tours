@@ -121,10 +121,10 @@ uchar GenPlaintexts_yoyo(plain_cipher *pairs1, plain_cipher *pairs2) {
     pairs1[i].plaintext[4] = i;
     pairs1[i].ciphertext[4] = i;
 
-    pairs1[i].plaintext[0] = 1;
-    pairs1[i].ciphertext[0] = 1;
-    pairs1[i].plaintext[4] = i ^ 1;
-    pairs1[i].ciphertext[4] = i ^ 1;
+    pairs2[i].plaintext[0] = 1;
+    pairs2[i].ciphertext[0] = 1;
+    pairs2[i].plaintext[4] = i ^ 1;
+    pairs2[i].ciphertext[4] = i ^ 1;
   }
   return EXIT_SUCCESS;
 }
