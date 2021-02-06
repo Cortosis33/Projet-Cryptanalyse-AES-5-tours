@@ -182,6 +182,7 @@ bool InvATurn(uchar *ciphertext, uchar *current_key, int current_turn);
 bool AllZeroArray(uchar *array, size_t size);
 int RandInt(int max);
 bool IsSameState(uchar *state1, uchar *state2);
+bool CopyState(uchar *state, uchar *copy);
 
 unsigned hamdist(unsigned x, unsigned y);
 

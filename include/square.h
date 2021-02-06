@@ -14,7 +14,5 @@ uchar EncryptPlaintexts(plain_cipher *pairs, uchar **round_keys);
 
 void PrintAllPairs(plain_cipher *pairs);
 
-bool CopyState(uchar *state, uchar *copy);
-
 /* root-me functions */
 void StateToChar(uchar *state);

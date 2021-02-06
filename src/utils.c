@@ -439,6 +439,13 @@ bool IsSameState(uchar *state1, uchar *state2) {
   return TRUE;
 }
 
+bool CopyState(uchar *state, uchar *copy) {
+  for (size_t i = 0; i < CELLS; i++) {
+    copy[i] = state[i];
+  }
+  return EXIT_SUCCESS;
+}
+
 /* compute hamming distance btwn x and y */
 unsigned hamdist(unsigned x, unsigned y) {
   unsigned dist = 0, val = x ^ y; // XOR

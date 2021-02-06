@@ -55,10 +55,3 @@ void PrintAllPairs(plain_cipher *pairs) {
     PrintByteArray(pairs[i].ciphertext, CELLS, (const uchar *)"CipherText");
   }
 }
-
-bool CopyState(uchar *state, uchar *copy) {
-  for (size_t i = 0; i < CELLS; i++) {
-    copy[i] = state[i];
-  }
-  return EXIT_SUCCESS;
-}
