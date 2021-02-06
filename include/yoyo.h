@@ -19,6 +19,16 @@ typedef struct Distance {
   int nbrcom;
 } Distance;
 
+typedef struct {
+  uchar p1[CELLS];
+  uchar p2[CELLS];
+} plain_couple;
+
+typedef struct {
+  uchar S[5];
+  size_t len;
+} couple_array;
+
 // Retourne des informations sur la distances entre deux textes.
 Distance InfoDist(Distance distance, uchar *text1, uchar *text2);
 
@@ -34,4 +44,4 @@ bool SimpleSwapCol(uchar *text1, uchar *text2, uchar *Swaptmp, uchar *Swaptmp2);
 
 // TESTS
 bool EncryptionExp(uchar *plaintext, uchar **round_keys);
-bool Encryption_bis(uchar *plaintext, uchar **round_keys);
+bool DecryptionExp(uchar *ciphertext, uchar **round_keys);
