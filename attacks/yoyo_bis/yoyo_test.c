@@ -2,7 +2,7 @@
 #include "../../include/yoyo_bis.h"
 
 // to enable an attack
-#define ATTACK 0
+#define ATTACK 1
 #define TEST 0
 
 uchar KEY[16] = {0xd0, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
@@ -18,7 +18,7 @@ uchar Swaptmp2[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 
 static bool testdist = 0;
 static bool testsimpleswap = 0;
-static bool testIsCoupleInS = 1;
+static bool testIsCoupleInS = 0;
 
 // key : d0c9e1b614ee3f63f9250c0ca889c8a6
 
@@ -67,6 +67,12 @@ int main() {
     SimpleSwapCol(t, t2, Swaptmp, Swaptmp2);
     PrintByteArray(Swaptmp, 16, (const uchar *)"Swaptmp ");
     PrintByteArray(Swaptmp2, 16, (const uchar *)"Swaptmp2 ");
+    printf("Autre test :\n");
+    PrintByteArray(KEY, 16, (const uchar *)"KEY");
+    PrintByteArray(KEY2, 16, (const uchar *)"KEY2 ");
+    Copy1to0(KEY, KEY2);
+    printf("Text Copy KEY->KEY2\n");
+    PrintByteArray(KEY2, 16, (const uchar *)"KEY2");
   }
 
   if (testIsCoupleInS) {
@@ -78,7 +84,7 @@ int main() {
 
     S List;
     List = CreateS(List);
-    PrintS(List);
+    // PrintS(List);
     List.len = 2;
     for (int i = 0; i < 16; i++) {
       List.P0[i] = t[i] ^ t2[i] ^ 42;
@@ -89,10 +95,7 @@ int main() {
     PrintS(List);
     printf("Expect TRUE ou 1 : %d\n", IsCoupleInS(t, t2, List));
     printf("Expect FALSE ou 0 : %d\n", IsCoupleInS(KEY2, KEY, List));
-    List = AddList(List, Swaptmp, Swaptmp2);
-    // PrintS(List);
-    printf("Expect FALSE ou 0 : %d\n", IsCoupleInS(t, KEY, List));
-    List = AddList(List, Swaptmp, Swaptmp2);
+    List = AddList(List, KEY2, KEY);
     PrintS(List);
   }
 
@@ -112,7 +115,7 @@ int main() {
 
     for (int i = 0; i < 256; i++) {
       List = CreateS(List);
-      AddList(List, pairs[i].plaintext0, pairs[i].plaintext1);
+      List = AddList(List, pairs[i].plaintext0, pairs[i].plaintext1);
       while (List.len < 5) {
         // On chiffre
         ModEncryption(pairs[i].plaintext0, round_keys);
@@ -135,7 +138,7 @@ int main() {
                       Swaptmp2);
 
         if (!IsCoupleInS(Swaptmp, Swaptmp2, List)) {
-          AddList(List, Swaptmp, Swaptmp2);
+          List = AddList(List, Swaptmp, Swaptmp2);
         }
       }
       // On crée les clés restantes

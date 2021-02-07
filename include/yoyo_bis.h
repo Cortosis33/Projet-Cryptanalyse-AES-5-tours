@@ -75,11 +75,11 @@ typedef struct plain {
 // Génère les textes
 bool ModGenPlaintexts(plain *pairs);
 
-// Ajoute une paire à la liste
-S AddList(S List, uchar *text1, uchar *text2);
-
 // Remplace la liste 2 par le 1
 bool Copy1to0(uchar *text1, uchar *text2);
+
+// Ajoute une paire à la liste
+S AddList(S List, uchar *text1, uchar *text2);
 
 typedef struct listcle {
   uchar key[16];
