@@ -230,10 +230,10 @@ bool ModGenPlaintexts(plain *pairs) {
   return TRUE;
 }
 
-bool AddList(S List, uchar *text1, uchar *text2) {
+S AddList(S List, uchar *text1, uchar *text2) {
   int indice = List.len;
   if (indice > 4) {
-    return FALSE;
+    return List;
   }
 
   if (indice == 0) {
@@ -242,7 +242,7 @@ bool AddList(S List, uchar *text1, uchar *text2) {
       List.P1[i] = text2[i];
     }
     List.len += 1;
-    return TRUE;
+    return List;
   }
 
   if (indice == 1) {
@@ -251,7 +251,7 @@ bool AddList(S List, uchar *text1, uchar *text2) {
       List.P3[i] = text2[i];
     }
     List.len += 1;
-    return TRUE;
+    return List;
   }
 
   if (indice == 2) {
@@ -260,7 +260,7 @@ bool AddList(S List, uchar *text1, uchar *text2) {
       List.P5[i] = text2[i];
     }
     List.len += 1;
-    return TRUE;
+    return List;
   }
 
   if (indice == 3) {
@@ -269,7 +269,7 @@ bool AddList(S List, uchar *text1, uchar *text2) {
       List.P7[i] = text2[i];
     }
     List.len += 1;
-    return TRUE;
+    return List;
   }
 
   if (indice == 4) {
@@ -278,10 +278,10 @@ bool AddList(S List, uchar *text1, uchar *text2) {
       List.P9[i] = text2[i];
     }
     List.len += 1;
-    return TRUE;
+    return List;
   }
 
-  return FALSE;
+  return List;
 }
 
 // Remplace la liste 2 par le 1

@@ -76,7 +76,7 @@ typedef struct plain {
 bool ModGenPlaintexts(plain *pairs);
 
 // Ajoute une paire à la liste
-bool AddList(S List, uchar *text1, uchar *text2);
+S AddList(S List, uchar *text1, uchar *text2);
 
 // Remplace la liste 2 par le 1
 bool Copy1to0(uchar *text1, uchar *text2);

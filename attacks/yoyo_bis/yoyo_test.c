@@ -2,8 +2,8 @@
 #include "../../include/yoyo_bis.h"
 
 // to enable an attack
-#define ATTACK 1
-#define TEST 1
+#define ATTACK 0
+#define TEST 0
 
 uchar KEY[16] = {0xd0, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
                  0xf9, 0x25, 0x0c, 0x0c, 0xa8, 0x89, 0xc8, 0xa6};
@@ -18,7 +18,7 @@ uchar Swaptmp2[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 
 static bool testdist = 0;
 static bool testsimpleswap = 0;
-static bool testIsCoupleInS = 0;
+static bool testIsCoupleInS = 1;
 
 // key : d0c9e1b614ee3f63f9250c0ca889c8a6
 
@@ -89,7 +89,11 @@ int main() {
     PrintS(List);
     printf("Expect TRUE ou 1 : %d\n", IsCoupleInS(t, t2, List));
     printf("Expect FALSE ou 0 : %d\n", IsCoupleInS(KEY2, KEY, List));
+    List = AddList(List, Swaptmp, Swaptmp2);
+    // PrintS(List);
     printf("Expect FALSE ou 0 : %d\n", IsCoupleInS(t, KEY, List));
+    List = AddList(List, Swaptmp, Swaptmp2);
+    PrintS(List);
   }
 
   if (ATTACK) {
