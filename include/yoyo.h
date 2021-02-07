@@ -43,3 +43,5 @@ bool DecryptionExp(uchar *ciphertext, uchar **round_keys);
 uchar GenPlaintexts_yoyo(plain_cipher *pairs1, plain_cipher *pairs2);
 void AddList(couple_array *S, uchar *p0, uchar *p1);
 void PrintSContent(couple_array S);
+uchar MixColOneByte(uchar *state);
+uchar ComputeVerif(uchar *state, uchar *key_guess);

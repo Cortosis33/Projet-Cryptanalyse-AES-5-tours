@@ -171,3 +171,21 @@ void PrintSContent(couple_array S) {
     PrintByteArray((S.array[i]).p1, CELLS, (uchar *)"P1");
   }
 }
+
+// retourne la valeur du byte à la position 8 apres
+// MixColumns(state)
+uchar MixColOneByte(uchar *state) {
+  return state[0] ^ state[4] ^ Multiply(state[8], 2) ^ Multiply(state[12], 3);
+}
+
+// retourne la valeur du byte à la position 8 apres
+// AddRoundKey(state, key_guess)
+// SubBytes(state)
+// MixColumns(state)
+uchar ComputeVerif(uchar *state, uchar *key_guess) {
+  uchar a = S_box[state[0] ^ key_guess[0]];
+  uchar b = S_box[state[4] ^ key_guess[4]];
+  uchar c = S_box[state[8] ^ key_guess[8]];
+  uchar d = S_box[state[12] ^ key_guess[12]];
+  return a ^ b ^ Multiply(c, 2) ^ Multiply(d, 3);
+}
