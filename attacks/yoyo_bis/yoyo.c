@@ -99,7 +99,7 @@ bool Testducouple(uchar *p0, uchar *p1, uchar *k0) {
   SubBytes(p0);
   SubBytes(p1);
 
-  if (p0[12] == p1[12]) {
+  if (p0[8] == p1[8]) {
     return TRUE;
   }
 
@@ -230,6 +230,14 @@ bool ModGenPlaintexts(plain *pairs) {
   return TRUE;
 }
 
+// Remplace la liste 2 par le 1
+bool Copy1to0(uchar *text1, uchar *text2) {
+  for (int i = 0; i < 16; i++) {
+    text2[i] = text1[i];
+  }
+  return TRUE;
+}
+
 S AddList(S List, uchar *text1, uchar *text2) {
   int indice = List.len;
   if (indice > 4) {
@@ -282,14 +290,6 @@ S AddList(S List, uchar *text1, uchar *text2) {
   }
 
   return List;
-}
-
-// Remplace la liste 2 par le 1
-bool Copy1to0(uchar *text1, uchar *text2) {
-  for (int i = 0; i < 16; i++) {
-    text2[i] = text1[i];
-  }
-  return TRUE;
 }
 
 // On crée les clés restantes
