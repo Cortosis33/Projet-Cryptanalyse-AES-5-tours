@@ -46,7 +46,7 @@ int main() {
       couple_array S;
       S.len = 0;
 
-      for (size_t j = 0; j < 5; j++) {
+      for (size_t j = 0; j < 4; j++) {
         // on chiffre
         EncryptionExp(p0, round_keys);
         EncryptionExp(p1, round_keys);
@@ -85,7 +85,7 @@ int main() {
             key_guess[15] = 0xA6;
 
             size_t j = 0;
-            for (j = 0; j < 5; j++) {
+            for (j = 0; j < 4; j++) {
 
               uchar tmpkey[16];
               uchar tmp1[16];
@@ -111,7 +111,7 @@ int main() {
               }
             }
             // si j = 5 alors on a bien 5 couples ok
-            if (j == 5) {
+            if (j == 4) {
               fprintf(stdout, "pour i = %zu\n", i);
               PrintByteArray(key_guess, CELLS, (uchar *)"key_guess");
               // PrintByteArray(tmp1, CELLS, (uchar *)"==");
