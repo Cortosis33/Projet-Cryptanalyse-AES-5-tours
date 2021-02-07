@@ -34,7 +34,12 @@ int main() {
     uchar *p0;
     uchar *p1;
     // pour tous les clairs
-    for (size_t i = 60; i < 64; i += 2) {
+    for (size_t i = 0; i < 256; i += 2) {
+
+      /************** affichage ***************/
+      PrintProgress(1.0 * i / 255);
+      /****************************************/
+
       p0 = pairs_1[i].plaintext;
       p1 = pairs_2[i].plaintext;
 
@@ -66,60 +71,75 @@ int main() {
         AddList(&S, p0, p1);
       }
 
+      // on definit la clé finale
       uchar key_guess[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
       //{0xd0, 0x00, 0x00, 0x00, 0x00, 0xee, 0x00, 0x00,
       // 0x00, 0x00, 0x0c, 0x00, 0x00, 0x00, 0x00, 0xa6};
 
-      // uchar key_guess_tmp[16];
       // on parcourt S
 
       for (size_t key_guess_0 = 0; key_guess_0 < 256; key_guess_0++) {
+        // on alloue dans la clé
         key_guess[0] = key_guess_0;
         key_guess[5] = key_guess_0 ^ i;
 
-        for (size_t key_guess_2 = 0; key_guess_2 < 1; key_guess_2++) {
-          key_guess[10] = 0x0C;
+        for (size_t key_guess_2 = 0; key_guess_2 < 256; key_guess_2++) {
+          // key_guess[10] = 0x0C;
+          key_guess[10] = key_guess_2;
 
-          for (size_t key_guess_3 = 0; key_guess_3 < 1; key_guess_3++) {
-            key_guess[15] = 0xA6;
+          for (size_t key_guess_3 = 0; key_guess_3 < 256; key_guess_3++) {
+            // key_guess[15] = 0xA6;
+            key_guess[15] = key_guess_3;
 
             size_t j = 0;
             for (j = 0; j < 4; j++) {
 
-              uchar tmpkey[16];
+              uchar tmpkey0[16];
+              uchar tmpkey1[16];
+
+              uchar tmp0[16];
               uchar tmp1[16];
-              CopyState((S.array[j]).p0, tmp1);
-              CopyState(key_guess, tmpkey);
-              ShiftRows(tmpkey);
-              AddRoundKey(tmp1, tmpkey);
+
+              // on copie les etats p0 et la clé
+              for (size_t cels = 0; cels < CELLS; cels++) {
+                tmp0[cels] = (S.array[j]).p0[cels];
+                tmpkey0[cels] = key_guess[cels];
+                tmp1[cels] = (S.array[j]).p1[cels];
+                tmpkey1[cels] = key_guess[cels];
+              }
+
+              ShiftRows(tmpkey0);
+              AddRoundKey(tmp0, tmpkey0);
+              SubBytes(tmp0);
+              MixColumns(tmp0);
+
+              ShiftRows(tmpkey1);
+              AddRoundKey(tmp1, tmpkey1);
               SubBytes(tmp1);
               MixColumns(tmp1);
 
-              uchar tmp2[16];
-              CopyState((S.array[j]).p1, tmp2);
-              CopyState(key_guess, tmpkey);
-              ShiftRows(tmpkey);
-              AddRoundKey(tmp2, tmpkey);
-              SubBytes(tmp2);
-              MixColumns(tmp2);
+              AddRoundKey(tmp0, tmp1);
 
-              AddRoundKey(tmp1, tmp2);
-
-              if (tmp1[8] != 0) {
+              // on verifie la valeur du 3 ieme octet de la premiere colonne
+              if (tmp0[8] != 0) {
                 break;
               }
             }
-            // si j = 5 alors on a bien 5 couples ok
+            // si j = 4 alors on a bien 4 bons couples
             if (j == 4) {
               fprintf(stdout, "pour i = %zu\n", i);
               PrintByteArray(key_guess, CELLS, (uchar *)"key_guess");
-              // PrintByteArray(tmp1, CELLS, (uchar *)"==");
+              // on sort
+              goto outloops;
             }
           }
         }
       }
     }
+  outloops:
+    fprintf(stdout, "OK\n");
   }
 
   if (TEST) {
