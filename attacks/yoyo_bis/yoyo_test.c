@@ -147,12 +147,12 @@ int main() {
 
         key_guess[0] = key_guess_0;
         key_guess[5] = key_guess_0 ^ i;
-        for (size_t key_guess_2 = 0; key_guess_2 < 1; key_guess_2++) {
-          key_guess[10] = KEY2[10];
-          // key_guess[10] = key_guess_2;
-          for (size_t key_guess_3 = 0; key_guess_3 < 1; key_guess_3++) {
-            key_guess[15] = KEY2[15];
-            // key_guess[15] = key_guess_3;
+        for (size_t key_guess_2 = 0; key_guess_2 < 256; key_guess_2++) {
+          // key_guess[10] = KEY2[10];
+          key_guess[10] = key_guess_2;
+          for (size_t key_guess_3 = 0; key_guess_3 < 256; key_guess_3++) {
+            // key_guess[15] = KEY2[15];
+            key_guess[15] = key_guess_3;
             uchar key_tmp[16];
             Copy1to0(key_guess, key_tmp);
             ShiftRows(key_tmp);
