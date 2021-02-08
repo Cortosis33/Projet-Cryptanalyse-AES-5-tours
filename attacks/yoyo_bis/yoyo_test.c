@@ -14,6 +14,14 @@ uchar KEY2[16] = {0x50, 0xc9, 0xe1, 0x30, 0x14, 0xee, 0xff, 0x63,
 uchar KEY3[16] = {0x23, 0xc9, 0xff, 0x30, 0xDD, 0xee, 0xff, 0x63,
                   0xCC, 0x00, 0xbe, 0xef, 0xf9, 0x14, 0xc8, 0x99};
 
+uchar KEY4[16] = {0x04, 0xc9, 0xff, 0xaa, 0xDD, 0xfe, 0xff, 0xBB,
+                  0xCC, 0x77, 0xbe, 0xef, 0x67, 0x14, 0xc8, 0x45};
+
+uchar KEY5[16] = {0x1A, 0x66, 0x1C, 0xFF, 0xD0, 0x9B, 0xFE, 0xE5,
+                  0xDA, 0x78, 0xA7, 0xE9, 0x38, 0x14, 0x7A, 0x23};
+
+// Marche pour KEY, KEY2 et KEY4 mais pas pour KEY3 et KEY5
+
 uchar Swaptmp[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 uchar Swaptmp2[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -33,7 +41,7 @@ int main() {
 
   // to generate roundkeys with verbose = 1
 
-  uchar **round_keys = GenRoundkeys(KEY2, 1);
+  uchar **round_keys = GenRoundkeys(KEY4, 1);
 
   if (testdist) {
     printf("Test différence KEY,KEY \n");
@@ -154,9 +162,9 @@ int main() {
         for (size_t key_guess_2 = 0; key_guess_2 < 256; key_guess_2++) {
           // key_guess[10] = KEY[10];
           key_guess[10] = key_guess_2;
-          for (size_t key_guess_3 = 0; key_guess_3 < 256; key_guess_3++) {
-            // key_guess[15] = KEY[15];
-            key_guess[15] = key_guess_3;
+          for (size_t key_guess_3 = 0; key_guess_3 < 1; key_guess_3++) {
+            key_guess[15] = KEY4[15];
+            // key_guess[15] = key_guess_3;
             uchar key_tmp[16];
             Copy1to0(key_guess, key_tmp);
             ShiftRows(key_tmp);
