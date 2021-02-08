@@ -91,15 +91,24 @@ bool SimpleSwapCol(uchar *state1, uchar *state2, uchar *swaptmp,
 // Regarde si P0 et P1 vérifie la condition
 bool Testducouple(uchar *p0, uchar *p1, uchar *k0) {
   // Ajout de K0
+
+  uchar p0_tmp[16];
+  uchar p1_tmp[16];
+
+  memcpy(p0_tmp, p0, CELLS);
+  memcpy(p1_tmp, p1, CELLS);
+
   for (int i = 0; i < 16; i++) {
-    p0[i] ^= k0[i];
-    p1[i] ^= k0[i];
+    p0_tmp[i] ^= k0[i];
+    p1_tmp[i] ^= k0[i];
   }
 
-  SubBytes(p0);
-  SubBytes(p1);
+  SubBytes(p0_tmp);
+  SubBytes(p1_tmp);
+  MixColumns(p0_tmp);
+  MixColumns(p1_tmp);
 
-  if (p0[8] == p1[8]) {
+  if (p0_tmp[8] == p1_tmp[8]) {
     return TRUE;
   }
 
@@ -210,7 +219,7 @@ bool ModEncryption(uchar *plaintext, uchar **round_keys) {
 bool ModDecryption(uchar *plaintext, uchar **round_keys) {
   ShiftRows(plaintext);
   Decryption(plaintext, round_keys);
-  IShiftRows(plaintext);
+  ShiftRows(plaintext);
   return EXIT_SUCCESS;
 }
 
@@ -291,6 +300,3 @@ S AddList(S List, uchar *text1, uchar *text2) {
 
   return List;
 }
-
-// On crée les clés restantes
-bool CreateRemkeys(listcle *allkey) { return 0; }

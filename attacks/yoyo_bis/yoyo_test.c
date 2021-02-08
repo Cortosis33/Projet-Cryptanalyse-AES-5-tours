@@ -29,6 +29,7 @@ int main() {
   /*******************************/
 
   // to generate roundkeys with verbose = 1
+
   uchar **round_keys = GenRoundkeys(KEY, 1);
 
   if (testdist) {
@@ -105,54 +106,68 @@ int main() {
     // on genere les clairs du premier "lambda-set" avec que des bits 0 à la
     // suite
     plain pairs[256];
+
     ModGenPlaintexts(pairs);
 
     S List;
     List = CreateS(List);
 
-    // Les 2**28 clés
-    listcle allkey[268435456];
-
     for (int i = 0; i < 256; i++) {
+      PrintProgress(1.0 * i / 256);
       List = CreateS(List);
       List = AddList(List, pairs[i].plaintext0, pairs[i].plaintext1);
-      while (List.len < 5) {
-        // On chiffre
+
+      for (size_t j = 0; j < 4; j++) {
+        // on chiffre
         ModEncryption(pairs[i].plaintext0, round_keys);
         ModEncryption(pairs[i].plaintext1, round_keys);
-
-        // On swap
+        // on swap
         SimpleSwapCol(pairs[i].plaintext0, pairs[i].plaintext1, Swaptmp,
                       Swaptmp2);
 
-        // On met le résultat dans pairs[i].plaintext
-        Copy1to0(Swaptmp, pairs[i].plaintext0);
-        Copy1to0(Swaptmp2, pairs[i].plaintext1);
+        // Copy1to0(Swaptmp, pairs[i].plaintext0);
+        // Copy1to0(Swaptmp2, pairs[i].plaintext1);
 
-        // On déchiffre
-        ModDecryption(pairs[i].plaintext0, round_keys);
-        ModDecryption(pairs[i].plaintext1, round_keys);
-
-        // On swap
-        SimpleSwapCol(pairs[i].plaintext0, pairs[i].plaintext1, Swaptmp,
-                      Swaptmp2);
-
-        if (!IsCoupleInS(Swaptmp, Swaptmp2, List)) {
-          List = AddList(List, Swaptmp, Swaptmp2);
-        }
+        // on dechiffre
+        ModDecryption(Swaptmp, round_keys);
+        ModDecryption(Swaptmp2, round_keys);
+        // on re-swap
+        SimpleSwapCol(Swaptmp, Swaptmp2, pairs[i].plaintext0,
+                      pairs[i].plaintext1);
+        // on ajoute p0 et p1 dans S
+        List = AddList(List, pairs[i].plaintext0, pairs[i].plaintext1);
       }
       // On crée les clés restantes
-      CreateRemkeys(allkey);
+      uchar key_guess[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
       // On les teste
-      for (int remkey; remkey < 268435456; remkey++) {
-        if (Testducouple(List.P0, List.P1, allkey[remkey].key) &&
-            Testducouple(List.P2, List.P3, allkey[remkey].key) &&
-            Testducouple(List.P4, List.P5, allkey[remkey].key) &&
-            Testducouple(List.P6, List.P7, allkey[remkey].key) &&
-            Testducouple(List.P8, List.P9, allkey[remkey].key)) {
-          // We have the key
-          PrintByteArray(allkey[remkey].key, 16, (const uchar *)"La clé est ");
-          return 0;
+      for (size_t key_guess_0 = 0; key_guess_0 < 256; key_guess_0++) {
+        // on alloue dans la clé
+        // PrintProgress(1.0 * key_guess_0 / 256);
+
+        key_guess[0] = key_guess_0;
+        key_guess[5] = key_guess_0 ^ i;
+        for (size_t key_guess_2 = 0; key_guess_2 < 256; key_guess_2++) {
+          // key_guess[10] = KEY[10];
+          key_guess[10] = key_guess_2;
+          for (size_t key_guess_3 = 0; key_guess_3 < 256; key_guess_3++) {
+            // key_guess[15] = KEY[15];
+            key_guess[15] = key_guess_3;
+            uchar key_tmp[16];
+            memcpy(key_tmp, key_guess, CELLS);
+            ShiftRows(key_tmp);
+
+            if (Testducouple(List.P0, List.P1, key_tmp) &&
+                Testducouple(List.P2, List.P3, key_tmp) &&
+                Testducouple(List.P4, List.P5, key_tmp) &&
+                Testducouple(List.P6, List.P7, key_tmp) &&
+                Testducouple(List.P8, List.P9, key_tmp)) {
+              // We have the first column
+              PrintByteArray(key_guess, 16, (const uchar *)"La clé est ");
+              PrintByteArray(key_tmp, 16, (const uchar *)"Ou la clé est ");
+              return 0;
+            }
+          }
         }
       }
     }
