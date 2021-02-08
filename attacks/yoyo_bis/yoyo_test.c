@@ -154,7 +154,7 @@ int main() {
             // key_guess[15] = KEY[15];
             key_guess[15] = key_guess_3;
             uchar key_tmp[16];
-            memcpy(key_tmp, key_guess, CELLS);
+            Copy1to0(key_guess, key_tmp);
             ShiftRows(key_tmp);
 
             if (Testducouple(List.P0, List.P1, key_tmp) &&

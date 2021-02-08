@@ -88,6 +88,14 @@ bool SimpleSwapCol(uchar *state1, uchar *state2, uchar *swaptmp,
   return TRUE;
 }
 
+// Remplace la liste 2 par le 1
+bool Copy1to0(uchar *text1, uchar *text2) {
+  for (int i = 0; i < 16; i++) {
+    text2[i] = text1[i];
+  }
+  return TRUE;
+}
+
 // Regarde si P0 et P1 vérifie la condition
 bool Testducouple(uchar *p0, uchar *p1, uchar *k0) {
   // Ajout de K0
@@ -95,8 +103,8 @@ bool Testducouple(uchar *p0, uchar *p1, uchar *k0) {
   uchar p0_tmp[16];
   uchar p1_tmp[16];
 
-  memcpy(p0_tmp, p0, CELLS);
-  memcpy(p1_tmp, p1, CELLS);
+  Copy1to0(p0, p0_tmp);
+  Copy1to0(p1, p1_tmp);
 
   for (int i = 0; i < 16; i++) {
     p0_tmp[i] ^= k0[i];
@@ -235,14 +243,6 @@ bool ModGenPlaintexts(plain *pairs) {
     pairs[i].plaintext0[4] = i;
     pairs[i].plaintext1[4] = i + 1;
     pairs[i].plaintext1[0] = 1;
-  }
-  return TRUE;
-}
-
-// Remplace la liste 2 par le 1
-bool Copy1to0(uchar *text1, uchar *text2) {
-  for (int i = 0; i < 16; i++) {
-    text2[i] = text1[i];
   }
   return TRUE;
 }
