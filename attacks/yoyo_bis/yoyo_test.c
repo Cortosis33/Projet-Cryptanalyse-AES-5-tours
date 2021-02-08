@@ -11,6 +11,9 @@ uchar KEY[16] = {0xd0, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
 uchar KEY2[16] = {0x50, 0xc9, 0xe1, 0x30, 0x14, 0xee, 0xff, 0x63,
                   0xde, 0xad, 0xbe, 0xef, 0xf9, 0x89, 0xc8, 0xa6};
 
+uchar KEY3[16] = {0x23, 0xc9, 0xff, 0x30, 0xDD, 0xee, 0xff, 0x63,
+                  0xCC, 0x00, 0xbe, 0xef, 0xf9, 0x14, 0xc8, 0x99};
+
 uchar Swaptmp[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 uchar Swaptmp2[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -115,9 +118,9 @@ int main() {
     for (int i = 0; i < 256; i += 2) {
       PrintProgress(1.0 * i / 256);
       List = CreateS(List);
-      List = AddList(List, pairs[i].plaintext0, pairs[i].plaintext1);
+      // List = AddList(List, pairs[i].plaintext0, pairs[i].plaintext1);
 
-      for (size_t j = 0; j < 4; j++) {
+      for (size_t j = 0; j < 5; j++) {
         // on chiffre
         ModEncryption(pairs[i].plaintext0, round_keys);
         ModEncryption(pairs[i].plaintext1, round_keys);
@@ -137,6 +140,7 @@ int main() {
         // on ajoute p0 et p1 dans S
         List = AddList(List, pairs[i].plaintext0, pairs[i].plaintext1);
       }
+      // PrintS(List);
       // On crée les clés restantes
       uchar key_guess[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
@@ -148,10 +152,10 @@ int main() {
         key_guess[0] = key_guess_0;
         key_guess[5] = key_guess_0 ^ i;
         for (size_t key_guess_2 = 0; key_guess_2 < 256; key_guess_2++) {
-          // key_guess[10] = KEY2[10];
+          // key_guess[10] = KEY[10];
           key_guess[10] = key_guess_2;
           for (size_t key_guess_3 = 0; key_guess_3 < 256; key_guess_3++) {
-            // key_guess[15] = KEY2[15];
+            // key_guess[15] = KEY[15];
             key_guess[15] = key_guess_3;
             uchar key_tmp[16];
             Copy1to0(key_guess, key_tmp);
@@ -164,7 +168,7 @@ int main() {
                 Testducouple(List.P8, List.P9, key_tmp)) {
               // We have the first column
               PrintByteArray(key_guess, 16, (const uchar *)"La clé est ");
-              PrintByteArray(key_tmp, 16, (const uchar *)"Ou la clé est ");
+              // PrintByteArray(key_tmp, 16, (const uchar *)"La clé est ");
               return 0;
             }
           }
