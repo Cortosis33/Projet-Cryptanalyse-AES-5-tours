@@ -34,7 +34,7 @@ int main() {
     uchar *p0;
     uchar *p1;
     // pour tous les clairs
-    for (size_t i = 0; i < 256; i++) {
+    for (size_t i = 60; i < 65; i++) {
 
       /************** affichage ***************/
       PrintProgress(1.0 * i / 255);
@@ -78,47 +78,59 @@ int main() {
       // on parcourt S
 
       for (size_t key_guess_0 = 0; key_guess_0 < 256; key_guess_0++) {
-
-        for (size_t key_guess_2 = 0; key_guess_2 < 256; key_guess_2++) {
-
+        // on alloue dans la clé
+        key_guess[0] = key_guess_0;
+        key_guess[5] = key_guess_0 ^ i;
+        for (size_t key_guess_2 = 0; key_guess_2 < 1; key_guess_2++) {
+          key_guess[10] = KEY[10];
+          // key_guess[10] = key_guess_2;
           for (size_t key_guess_3 = 0; key_guess_3 < 1; key_guess_3++) {
+            key_guess[15] = KEY[15];
+            // key_guess[15] = key_guess_3;
 
             size_t j = 0;
             for (j = 0; j < 4; j++) {
 
-              // uchar tmpkey0[16];
-              // uchar tmpkey1[16];
+              uchar key_tmp0[16];
+              uchar key_tmp1[16];
 
               uchar tmp0[16];
               uchar tmp1[16];
 
-              // on alloue dans la clé
-              key_guess[0] = key_guess_0;
-              key_guess[5] = key_guess_0 ^ i;
-              // key_guess[10] = 0x0C;
-              key_guess[10] = key_guess_2;
-              key_guess[15] = 0xA6;
-              // key_guess[15] = key_guess_3;
-
               // on copie les etats p0, p1
               memcpy(tmp0, (S.array[j]).p0, CELLS);
               memcpy(tmp1, (S.array[j]).p1, CELLS);
+              memcpy(key_tmp0, key_guess, CELLS);
+              memcpy(key_tmp1, key_guess, CELLS);
 
-              ShiftRows(key_guess);
-              for (size_t cels = 0; cels < CELLS; cels++) {
-                // AddRoundKey & SubBytes
-                tmp0[cels] = S_box[tmp0[cels] ^ key_guess[cels]];
-                tmp1[cels] = S_box[tmp1[cels] ^ key_guess[cels]];
-              }
-              IShiftRows(key_guess);
+              ShiftRows(key_tmp0);
+              AddRoundKey(tmp0, key_tmp0);
+              SubBytes(tmp0);
               MixColumns(tmp0);
+              // for (size_t cels = 0; cels < CELLS; cels++) {
+              //   // AddRoundKey & SubBytes
+              //   tmp0[cels] = S_box[tmp0[cels] ^ key_guess[cels]];
+              //   tmp1[cels] = S_box[tmp1[cels] ^ key_guess[cels]];
+              // }a
+
+              ShiftRows(key_tmp1);
+              AddRoundKey(tmp1, key_tmp1);
+              SubBytes(tmp1);
               MixColumns(tmp1);
+
               AddRoundKey(tmp0, tmp1);
               // on verifie la valeur du 3 ieme octet de la premiere colonne
               // if ((ComputeVerif(tmp0, key_guess) ^
               //      ComputeVerif(tmp1, key_guess)) != 0) {
               //   break;
               // }
+              if (key_guess[0] == KEY[0]) {
+                fprintf(stdout,
+                        "\npour i = %zu, pour j = %zu, key_guess_0 = %zX, "
+                        "key_guess_2 = %zX\n",
+                        i, j, key_guess_0, key_guess_2);
+                PrintByteArray(tmp0, CELLS, (uchar *)"tmp0");
+              }
 
               if (tmp0[8] != 0) {
                 break;
@@ -129,7 +141,7 @@ int main() {
               fprintf(stdout, "\npour i = %zu\n", i);
               PrintByteArray(key_guess, CELLS, (uchar *)"key_guess");
               // on sort
-              goto outloops;
+              // goto outloops;
             }
           }
         }
