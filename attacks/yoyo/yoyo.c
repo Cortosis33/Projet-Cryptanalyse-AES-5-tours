@@ -121,42 +121,30 @@ bool DecryptionExp(uchar *ciphertext, uchar **round_keys) {
 }
 
 // fonction permettant de creer les deux tableaux des plaintexts
-uchar GenPlaintexts_yoyo(plain_cipher *pairs1, plain_cipher *pairs2) {
-
+void GenPlaintexts_yoyo(plain *pset_0, plain *pset_1) {
   for (size_t i = 0; i < NBR_PAIRS; i++) {
     // on remplie de plaintext de 0
     for (size_t j = 0; j < CELLS; j++) {
-      pairs1[i].plaintext[j] = 0;
-      // on initilise aussi le text chiffré avec le text clair
-      pairs1[i].ciphertext[j] = 0;
-
-      pairs2[i].plaintext[j] = 0;
-      pairs2[i].ciphertext[j] = 0;
+      pset_0[i].plaintext[j] = 0;
+      pset_1[i].plaintext[j] = 0;
     }
+    pset_0[i].plaintext[4] = i;
 
-    // on fait varier l'octet identifié par active_byte_index
-    pairs1[i].plaintext[4] = i;
-    pairs1[i].ciphertext[4] = i;
-
-    pairs2[i].plaintext[0] = 1;
-    pairs2[i].ciphertext[0] = 1;
-    pairs2[i].plaintext[4] = i ^ 1;
-    pairs2[i].ciphertext[4] = i ^ 1;
+    pset_1[i].plaintext[0] = 1;
+    pset_1[i].plaintext[4] = i ^ 1;
   }
-  return EXIT_SUCCESS;
 }
 
 // fonction permettant d'ajouter un couple au tableau S
 // on donne l'adresse de S pour le modifier dynamiquement
 void AddList(couple_array *S, uchar *p0, uchar *p1) {
+  // on recupere la taille
   size_t index = S->len;
   // on cree le couple
   plain_couple pc;
   // on stoque les valeurs
-  CopyState(p0, pc.p0);
-  CopyState(p1, pc.p1);
-  // pc.p0 = p0;
-  // pc.p1 = p1;
+  memcpy(pc.p0, p0, CELLS);
+  memcpy(pc.p1, p1, CELLS);
   // on ajoute le couple
   S->array[index] = pc;
   // on incremente la taille

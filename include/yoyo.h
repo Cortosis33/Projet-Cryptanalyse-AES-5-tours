@@ -40,7 +40,7 @@ bool SimpleSwap(uchar *state0, uchar *state1, uchar *swaptmp);
 bool EncryptionExp(uchar *plaintext, uchar **round_keys);
 bool DecryptionExp(uchar *ciphertext, uchar **round_keys);
 
-uchar GenPlaintexts_yoyo(plain_cipher *pairs1, plain_cipher *pairs2);
+void GenPlaintexts_yoyo(plain *pset_0, plain *pset_1);
 void AddList(couple_array *S, uchar *p0, uchar *p1);
 void PrintSContent(couple_array S);
 uchar MixColOneByte(uchar *state);

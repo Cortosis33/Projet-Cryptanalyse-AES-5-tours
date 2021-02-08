@@ -151,7 +151,7 @@ int main() {
           // key_guess[10] = KEY2[10];
           key_guess[10] = key_guess_2;
           for (size_t key_guess_3 = 0; key_guess_3 < 256; key_guess_3++) {
-            // key_guess[15] = KEY2[15];
+            // key_guess[15] = 0xa6;
             key_guess[15] = key_guess_3;
             uchar key_tmp[16];
             Copy1to0(key_guess, key_tmp);
@@ -165,7 +165,7 @@ int main() {
               // We have the first column
               PrintByteArray(key_guess, 16, (const uchar *)"La clé est ");
               PrintByteArray(key_tmp, 16, (const uchar *)"Ou la clé est ");
-              return 0;
+              // return 0;
             }
           }
         }
