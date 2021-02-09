@@ -241,7 +241,7 @@ bool ModGenPlaintexts(plain *pairs) {
     }
     // on fait varier l'octet identifié par active_byte_index
     pairs[i].plaintext0[4] = i;
-    pairs[i].plaintext1[4] = i + 1;
+    pairs[i].plaintext1[4] = i ^ 1;
     pairs[i].plaintext1[0] = 1;
   }
   return TRUE;

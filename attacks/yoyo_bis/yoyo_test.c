@@ -20,7 +20,13 @@ uchar KEY4[16] = {0x04, 0xc9, 0xff, 0xaa, 0xDD, 0xfe, 0xff, 0xBB,
 uchar KEY5[16] = {0x1A, 0x66, 0x1C, 0xFF, 0xD0, 0x9B, 0xFE, 0xE5,
                   0xDA, 0x78, 0xA7, 0xE9, 0x38, 0x14, 0x7A, 0x23};
 
-// Marche pour KEY, KEY2 et KEY4 mais pas pour KEY3 et KEY5
+uchar KEY6[16] = {0x11, 0x22, 0x33, 0xDE, 0xAD, 0xBE, 0xEF, 0xCA,
+                  0xDA, 0xFE, 0xEE, 0x56, 0x87, 0x12, 0x46, 0x09};
+
+uchar KEY7[16] = {0x11, 0xAA, 0x33, 0xDE, 0xAD, 0xBE, 0xEF, 0xCA,
+                  0xDA, 0xFE, 0xEE, 0x56, 0xFF, 0x12, 0x46, 0x09};
+
+// Marche pour KEY, KEY2 et KEY4 mais pas pour KEY3, KEY5 et KEY6
 
 uchar Swaptmp[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
@@ -41,7 +47,7 @@ int main() {
 
   // to generate roundkeys with verbose = 1
 
-  uchar **round_keys = GenRoundkeys(KEY4, 1);
+  uchar **round_keys = GenRoundkeys(KEY5, 1);
 
   if (testdist) {
     printf("Test différence KEY,KEY \n");
@@ -123,7 +129,7 @@ int main() {
     S List;
     List = CreateS(List);
 
-    for (int i = 0; i < 256; i += 2) {
+    for (int i = 0; i < 256; i++) {
       PrintProgress(1.0 * i / 256);
       List = CreateS(List);
       // List = AddList(List, pairs[i].plaintext0, pairs[i].plaintext1);
@@ -163,8 +169,8 @@ int main() {
           // key_guess[10] = KEY[10];
           key_guess[10] = key_guess_2;
           for (size_t key_guess_3 = 0; key_guess_3 < 1; key_guess_3++) {
-            key_guess[15] = KEY4[15];
-            // key_guess[15] = key_guess_3;
+            // key_guess[15] = KEY5[15];
+            key_guess[15] = key_guess_3;
             uchar key_tmp[16];
             Copy1to0(key_guess, key_tmp);
             ShiftRows(key_tmp);
