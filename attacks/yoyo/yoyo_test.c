@@ -47,10 +47,10 @@ int main() {
     }
 
     fprintf(stdout, "\n### K0 diagonal finding... ###\n");
-    for (size_t i = 0; i < 256; i += 1) {
+    for (size_t i = 0; i < 128; i += 1) {
 
       /************** affichage ***************/
-      PrintProgress(1.0 * i / 128);
+      PrintProgress(1.0 * i / 127);
       /****************************************/
 
       // on pointe p0 et p1
