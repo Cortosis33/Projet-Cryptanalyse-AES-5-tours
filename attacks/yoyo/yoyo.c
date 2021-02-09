@@ -87,23 +87,6 @@ bool SimpleSwapCol(uchar *state1, uchar *state2, uchar *swaptmp1,
   return TRUE;
 }
 
-bool SimpleSwap(uchar *state0, uchar *state1, uchar *swaptmp) {
-  for (int i = 0; i < 16; i++) {
-    swaptmp[i] = state0[i];
-  }
-  for (size_t col = 0; col < 4; col++) {
-    for (size_t row = 0; row < 4; row++) {
-      if (state0[4 * row + col] != state1[4 * row + col]) {
-        for (size_t i = 0; i < 4; i++) {
-          swaptmp[4 * i + col] = state1[4 * i + col];
-        }
-        return TRUE;
-      }
-    }
-  }
-  return TRUE;
-}
-
 // chiffrement experimental sans le premier et le dernier ShiftRows
 bool EncryptionExp(uchar *plaintext, uchar **round_keys) {
   IShiftRows(plaintext);
@@ -130,8 +113,8 @@ void GenPlaintexts_yoyo(plain *pset_0, plain *pset_1) {
     }
     pset_0[i].plaintext[4] = i;
 
-    pset_1[i].plaintext[0] = 1;
-    pset_1[i].plaintext[4] = i ^ 1;
+    pset_1[i].plaintext[0] = 255;
+    pset_1[i].plaintext[4] = i ^ 255;
   }
 }
 

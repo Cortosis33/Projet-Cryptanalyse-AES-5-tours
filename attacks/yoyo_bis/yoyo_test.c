@@ -162,15 +162,9 @@ int main() {
         for (size_t key_guess_2 = 0; key_guess_2 < 256; key_guess_2++) {
           // key_guess[10] = KEY[10];
           key_guess[10] = key_guess_2;
-<<<<<<< HEAD
-          for (size_t key_guess_3 = 0; key_guess_3 < 256; key_guess_3++) {
-            // key_guess[15] = 0xa6;
-            key_guess[15] = key_guess_3;
-=======
           for (size_t key_guess_3 = 0; key_guess_3 < 1; key_guess_3++) {
             key_guess[15] = KEY4[15];
             // key_guess[15] = key_guess_3;
->>>>>>> fcf6b7ce97395348c44dc4fc87140702590a338c
             uchar key_tmp[16];
             Copy1to0(key_guess, key_tmp);
             ShiftRows(key_tmp);
@@ -182,13 +176,8 @@ int main() {
                 Testducouple(List.P8, List.P9, key_tmp)) {
               // We have the first column
               PrintByteArray(key_guess, 16, (const uchar *)"La clé est ");
-<<<<<<< HEAD
-              PrintByteArray(key_tmp, 16, (const uchar *)"Ou la clé est ");
-              // return 0;
-=======
               // PrintByteArray(key_tmp, 16, (const uchar *)"La clé est ");
               return 0;
->>>>>>> fcf6b7ce97395348c44dc4fc87140702590a338c
             }
           }
         }

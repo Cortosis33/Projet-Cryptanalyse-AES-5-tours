@@ -22,7 +22,7 @@ int main() {
   /*******************************/
 
   // to generate roundkeys with verbose =
-  uchar **round_keys = GenRoundkeys(KEY, 1);
+  uchar **round_keys = GenRoundkeys(KEY3, 1);
 
   if (ATTACK) {
     fprintf(stdout, "ATTACK\n");
@@ -36,11 +36,18 @@ int main() {
 
     uchar *p0;
     uchar *p1;
-    // pour tous les clairs
-    for (size_t i = 0; i < 256; i++) {
+
+    // on initialise la liste S
+    size_t size_S = 2 * 5;
+    uchar **S = (uchar **)malloc(size_S * sizeof(uchar *));
+    for (size_t k = 0; k < size_S; k++) {
+      S[k] = (uchar *)malloc(16 * sizeof(uchar));
+    }
+
+    for (size_t i = 0; i < 256; i += 2) {
 
       /************** affichage ***************/
-      PrintProgress(1.0 * i / 255);
+      PrintProgress(1.0 * i / 128);
       /****************************************/
 
       // on pointe p0 et p1
@@ -51,11 +58,7 @@ int main() {
       uchar c0tmp[CELLS];
       uchar c1tmp[CELLS];
 
-      // on initialise la liste S
-      couple_array S;
-      S.len = 0;
-
-      for (size_t j = 0; j < 4; j++) {
+      for (size_t j = 0; j < size_S; j += 2) {
         // on chiffre
         EncryptionExp(p0, round_keys);
         EncryptionExp(p1, round_keys);
@@ -67,7 +70,9 @@ int main() {
         // on re-swap
         SimpleSwapCol(c0tmp, c1tmp, p0, p1);
         // on ajoute p0 et p1 dans S
-        AddList(&S, p0, p1);
+        // AddList(&S, p0, p1);
+        memcpy(S[j], p0, CELLS);
+        memcpy(S[j + 1], p1, CELLS);
       }
 
       // PrintSContent(S);
@@ -76,63 +81,51 @@ int main() {
       uchar key_guess[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-      for (size_t key_guess_0 = 0; key_guess_0 < 256; key_guess_0++) {
-        // on alloue dans la clé
-        key_guess[0] = key_guess_0;
-        key_guess[5] = key_guess_0 ^ i;
+      for (size_t key_guess_0 = 1; key_guess_0 < 256; key_guess_0++) {
+
         for (size_t key_guess_2 = 0; key_guess_2 < 256; key_guess_2++) {
-          key_guess[10] = key_guess_2;
-          // key_guess[10] = key_guess_2;
-          for (size_t key_guess_3 = 0; key_guess_3 < 1; key_guess_3++) {
-            key_guess[15] = 0xa6;
-            // key_guess[15] = key_guess_3;
+
+          for (size_t key_guess_3 = 0; key_guess_3 < 256; key_guess_3++) {
+
             size_t j = 0;
-            for (j = 0; j < 4; j++) {
+            for (j = 0; j < size_S; j += 2) {
 
-              uchar tmp0[16];
-              uchar tmp1[16];
+              // on alloue dans la clé
+              key_guess[0] = key_guess_0;
+              key_guess[4] = key_guess_0 ^ i;
+              // key_guess[10] = 0x0c;
+              key_guess[8] = key_guess_2;
+              // key_guess[12] = 0x99;
+              key_guess[12] = key_guess_3;
 
-              uchar key_tmp0[16];
-              uchar key_tmp1[16];
+              if (ComputeVerif(S[j], key_guess) !=
+                  ComputeVerif(S[j + 1], key_guess)) {
+                // si les octets son différents
+                key_guess[4] = key_guess_0 ^ i ^ 255;
 
-              // on copie les etats p0, p1
-              memcpy(tmp0, (S.array[j]).p0, CELLS);
-              memcpy(tmp1, (S.array[j]).p1, CELLS);
-              memcpy(key_tmp0, key_guess, CELLS);
-              memcpy(key_tmp1, key_guess, CELLS);
-
-              // on applique le ShiftRows sur la clé
-              ShiftRows(key_tmp0);
-              AddRoundKey(tmp0, key_tmp0);
-              SubBytes(tmp0);
-              MixColumns(tmp0);
-
-              ShiftRows(key_tmp1);
-              AddRoundKey(tmp1, key_tmp1);
-              SubBytes(tmp1);
-              MixColumns(tmp1);
-
-              AddRoundKey(tmp0, tmp1);
-
-              // PrintByteArray(tmp0, CELLS, (uchar *)"tmp0");
-
-              if (tmp0[8] != 0) {
-                break;
+                if (ComputeVerif(S[j], key_guess) !=
+                    ComputeVerif(S[j + 1], key_guess)) {
+                  break;
+                }
               }
             }
-            // si j = 4 alors on a bien 4 bons couples
-            if (j == 4) {
+            if (j == size_S) {
               fprintf(stdout, "\npour i = %zu\n", i);
               PrintByteArray(key_guess, CELLS, (uchar *)"===> key_guess");
               // on sort
-              // goto outloops;
+              goto outloops;
             }
           }
         }
       }
     }
-    // outloops:
+  outloops:
     fprintf(stdout, "OK\n");
+
+    for (size_t k = 0; k < size_S; k++) {
+      free(S[k]);
+    }
+    free(S);
   }
 
   if (TEST) {
