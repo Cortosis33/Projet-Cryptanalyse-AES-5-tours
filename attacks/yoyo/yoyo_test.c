@@ -25,7 +25,9 @@ int main() {
   uchar **round_keys = GenRoundkeys(KEY3, 1);
 
   if (ATTACK) {
-    fprintf(stdout, "ATTACK\n");
+    fprintf(stdout, "Yoyo 5 rounds AES attack\n");
+
+    uchar KG0[CELLS];
 
     // on crée les ensembles de clairs :
     plain pset_0[256];
@@ -44,7 +46,8 @@ int main() {
       S[k] = (uchar *)malloc(16 * sizeof(uchar));
     }
 
-    for (size_t i = 0; i < 256; i += 2) {
+    fprintf(stdout, "\n### K0 diagonal finding... ###\n");
+    for (size_t i = 0; i < 256; i += 1) {
 
       /************** affichage ***************/
       PrintProgress(1.0 * i / 128);
@@ -95,7 +98,7 @@ int main() {
               key_guess[4] = key_guess_0 ^ i;
               // key_guess[10] = 0x0c;
               key_guess[8] = key_guess_2;
-              // key_guess[12] = 0x99;
+              // key_guess[12] = 0xa6;
               key_guess[12] = key_guess_3;
 
               if (ComputeVerif(S[j], key_guess) !=
@@ -112,6 +115,8 @@ int main() {
             if (j == size_S) {
               fprintf(stdout, "\npour i = %zu\n", i);
               PrintByteArray(key_guess, CELLS, (uchar *)"===> key_guess");
+              IShiftRows(key_guess);
+              memcpy(KG0, key_guess, CELLS);
               // on sort
               goto outloops;
             }

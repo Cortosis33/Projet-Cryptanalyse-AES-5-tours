@@ -118,22 +118,6 @@ void GenPlaintexts_yoyo(plain *pset_0, plain *pset_1) {
   }
 }
 
-// fonction permettant d'ajouter un couple au tableau S
-// on donne l'adresse de S pour le modifier dynamiquement
-void AddList(couple_array *S, uchar *p0, uchar *p1) {
-  // on recupere la taille
-  size_t index = S->len;
-  // on cree le couple
-  plain_couple pc;
-  // on stoque les valeurs
-  memcpy(pc.p0, p0, CELLS);
-  memcpy(pc.p1, p1, CELLS);
-  // on ajoute le couple
-  S->array[index] = pc;
-  // on incremente la taille
-  S->len = index + 1;
-}
-
 void PrintSContent(couple_array S) {
   size_t size = S.len;
   for (size_t i = 0; i < size; i++) {

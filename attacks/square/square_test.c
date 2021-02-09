@@ -9,8 +9,8 @@
 uchar KEY[16] = {0xd0, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
                  0xf9, 0x25, 0x0c, 0x0c, 0xa8, 0x89, 0xc8, 0xa6};
 
-// uchar KEY[16] = {0x54, 0x73, 0x20, 0x67, 0x68, 0x20, 0x4b, 0x20,
-//                  0x61, 0x6d, 0x75, 0x46, 0x74, 0x79, 0x6e, 0x75};
+uchar KEY1[16] = {0x54, 0x73, 0x20, 0x67, 0x68, 0x20, 0x4b, 0x20,
+                  0x61, 0x6d, 0x75, 0x46, 0x74, 0x79, 0x6e, 0x75};
 
 // uchar KEY[16] = {0xd1, 0xa9, 0xe2, 0xc6, 0x15, 0xfe, 0x2f, 0x13,
 //                  0xa9, 0x15, 0x1c, 0xcc, 0x48, 0xc9, 0xf8, 0xf6};
@@ -24,7 +24,7 @@ int main() {
   /*******************************/
 
   // to generate roundkeys with verbose = 1
-  uchar **round_keys = GenRoundkeys(KEY, 0);
+  uchar **round_keys = GenRoundkeys(KEY1, 0);
 
   if (AES_ROUNDS == 4 && ATTACK) {
 
@@ -594,6 +594,10 @@ int main() {
     fprintf(stdout, "\n### K5 finding... ###\n");
     // on n'utilise que 2 lambda-set
     nbr_lset = 2;
+    uchar b0 = 0;
+    uchar b1 = 0;
+    plain_cipher *lambdset0 = pairs_array[0];
+    plain_cipher *lambdset1 = pairs_array[1];
     // on determine tous les octets de K5 :
     for (size_t index_key_5 = 1; index_key_5 < CELLS; index_key_5++) {
 
@@ -603,21 +607,24 @@ int main() {
         key_guess_5[index_key_5] = key_0;
 
         // on initilise le tableau b
-        for (size_t i = 0; i < nbr_lset; i++) {
-          b[i] = 0;
+        b0 = 0;
+        b1 = 0;
+
+        for (size_t j = 0; j < NBR_PAIRS; j++) {
+          ciphertext = (lambdset0)[j].ciphertext;
+
+          // on somme les valeurs des tableaux et des chiffrés
+          b0 = IS_box[ciphertext[index_key_5] ^ key_guess_5[index_key_5]] ^ b0;
         }
 
-        for (size_t i = 0; i < nbr_lset; i++) {
-          for (size_t j = 0; j < NBR_PAIRS; j++) {
-            ciphertext = (pairs_array[i])[j].ciphertext;
+        for (size_t j = 0; j < NBR_PAIRS; j++) {
+          ciphertext = (lambdset1)[j].ciphertext;
 
-            // on somme les valeurs des tableaux et des chiffrés
-            b[i] = IS_box[ciphertext[index_key_5] ^ key_guess_5[index_key_5]] ^
-                   b[i];
-          }
+          // on somme les valeurs des tableaux et des chiffrés
+          b1 = IS_box[ciphertext[index_key_5] ^ key_guess_5[index_key_5]] ^ b1;
         }
 
-        if (AllZeroArray(b, nbr_lset)) {
+        if (b0 == 0 && b1 == 0) {
           goto outloops2_type2;
         }
       }
