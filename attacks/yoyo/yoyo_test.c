@@ -13,6 +13,12 @@ uchar KEY2[16] = {0x50, 0xc9, 0xe1, 0x30, 0x14, 0xe3, 0xff, 0x63,
 uchar KEY3[16] = {0x23, 0xc9, 0xff, 0x30, 0xDD, 0xee, 0xff, 0x63,
                   0xCC, 0x00, 0xbe, 0xef, 0xf9, 0x14, 0xc8, 0x99};
 
+uchar KEY4[16] = {0x04, 0xc9, 0xff, 0xaa, 0xDD, 0xfe, 0xff, 0xBB,
+                  0xCC, 0x77, 0xbe, 0xef, 0x67, 0x14, 0xc8, 0x45};
+
+uchar KEY5[16] = {0x1A, 0x66, 0x1C, 0xFF, 0xD0, 0x9B, 0xFE, 0xE5,
+                  0xDA, 0x78, 0xA7, 0xE9, 0x38, 0x14, 0x7A, 0x23};
+
 // key : d0c9e1b614ee3f63f9250c0ca889c8a6
 
 int main() {
@@ -22,7 +28,7 @@ int main() {
   /*******************************/
 
   // to generate roundkeys with verbose =
-  uchar **round_keys = GenRoundkeys(KEY3, 1);
+  uchar **round_keys = GenRoundkeys(KEY5, 1);
 
   if (ATTACK) {
     fprintf(stdout, "Yoyo 5 rounds AES attack\n");
@@ -104,6 +110,8 @@ int main() {
               if (ComputeVerif(S[j], key_guess) !=
                   ComputeVerif(S[j + 1], key_guess)) {
                 // si les octets son différents
+
+                // on change la deuxieme valeur de la colonne 1
                 key_guess[4] = key_guess_0 ^ i ^ 255;
 
                 if (ComputeVerif(S[j], key_guess) !=
@@ -113,9 +121,9 @@ int main() {
               }
             }
             if (j == size_S) {
+              IShiftRows(key_guess);
               fprintf(stdout, "\npour i = %zu\n", i);
               PrintByteArray(key_guess, CELLS, (uchar *)"===> key_guess");
-              IShiftRows(key_guess);
               memcpy(KG0, key_guess, CELLS);
               // on sort
               goto outloops;
