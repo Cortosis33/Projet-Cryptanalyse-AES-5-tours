@@ -142,5 +142,13 @@ uchar ComputeVerif(uchar *state, uchar *key_guess) {
   uchar b = S_box[state[4] ^ key_guess[4]];
   uchar c = S_box[state[8] ^ key_guess[8]];
   uchar d = S_box[state[12] ^ key_guess[12]];
-  return a ^ b ^ Multiply(c, 2) ^ Multiply(d, 3);
+  return a ^ b ^ xtime(c) ^ (xtime(d) ^ d);
+}
+
+bool DiagEqual(uchar *state0, uchar *state1) {
+  if (state0[0] == state1[0] && state0[5] == state1[5] &&
+      state0[10] == state1[10] && state0[15] == state1[15]) {
+    return TRUE;
+  }
+  return FALSE;
 }

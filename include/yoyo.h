@@ -44,3 +44,4 @@ void AddList(couple_array *S, uchar *p0, uchar *p1);
 void PrintSContent(couple_array S);
 uchar MixColOneByte(uchar *state);
 uchar ComputeVerif(uchar *state, uchar *key_guess);
+bool DiagEqual(uchar *state0, uchar *state1);
