@@ -4,10 +4,11 @@
 #define ATTACK 1
 // to test some code in TestingCode zone
 #define TEST 0
-#define TYPE 2
+#define TYPE 1
+#define RANDOM 1
 
-uchar KEY[16] = {0xd0, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
-                 0xf9, 0x25, 0x0c, 0x0c, 0xa8, 0x89, 0xc8, 0xa6};
+uchar KEY0[16] = {0xd0, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
+                  0xf9, 0x25, 0x0c, 0x0c, 0xa8, 0x89, 0xc8, 0xa6};
 
 uchar KEY1[16] = {0x54, 0x73, 0x20, 0x67, 0x68, 0x20, 0x4b, 0x20,
                   0x61, 0x6d, 0x75, 0x46, 0x74, 0x79, 0x6e, 0x75};
@@ -24,9 +25,20 @@ int main() {
   /*******************************/
 
   // to generate roundkeys with verbose = 1
-  uchar **round_keys = GenRoundkeys(KEY1, 0);
+  uchar KEY[CELLS];
+
+  if (RANDOM) {
+    for (size_t i = 0; i < CELLS; i++) {
+      KEY[i] = (uchar)RandInt(256);
+    }
+  } else {
+    memcpy(KEY, KEY0, CELLS);
+  }
+  uchar **round_keys = GenRoundkeys(KEY, 1);
 
   if (AES_ROUNDS == 4 && ATTACK) {
+
+    fprintf(stdout, "Square 4 rounds AES attack\n");
 
     /**************************************************************************/
     /************************ ATTACK ON 4 ROUNDS AES **************************/
@@ -40,39 +52,17 @@ int main() {
     plain_cipher pairs_1[NBR_PAIRS];
     plain_cipher pairs_2[NBR_PAIRS];
 
-    // on genere les clairs du premier lambda-set avec que des bits 0 à la suite
-    GenPlaintexts(pairs_1, 0, 0xFF);
-
     // on genere les clairs du plain_cipher pairs_2[NBR_PAIRS];premier
     // lambda-set avec que des bits 0 à la suite
-    GenPlaintexts(pairs_1, 0, 0xFF);
-    /* Exemple :
-          01 FF FF FF
-          FF FF FF FF
-          FF FF FF FF
-          FF FF FF FF
-    */
-    // PrintAllPairs(pairs_1);
+    GenPlaintexts(pairs_1, 0, 0);
 
     // on genere les clairs du deuxieme lambda-set avec que des bits 1 à la
     // suite
-    GenPlaintexts(pairs_2, 1, 0xFF);
-    /* Exemple :
-          FF 01 FF FF
-          FF FF FF FF
-          FF FF FF FF
-          FF FF FF FF
-    */
-    // PrintAllPairs(pairs_2);
+    GenPlaintexts(pairs_2, 1, 0);
 
     // chiffrements des clairs dans plaintext de la structure plain_cipher
     EncryptPlaintexts(pairs_1, round_keys);
     EncryptPlaintexts(pairs_2, round_keys);
-
-    PrintByteArray(pairs_1[255].plaintext, CELLS, (const uchar *)"Plaintext");
-    PrintByteArray(pairs_1[255].ciphertext, CELLS, (const uchar *)"Encrypted");
-
-    // PrintAllPairs(pairs_2);
 
     /**************************************************************************/
     /*                                 Attack                                 */
@@ -94,6 +84,7 @@ int main() {
 
     // pour toutes les octets de la clée
     // (on represente nos valeurs sur 1 dimension)
+    fprintf(stdout, "Key 0 finding...\n");
     for (uchar i = 0; i < 16; i++) {
       // pour toutes les valeurs possible d'un octet
       // (on utilise size_t pour que k atteigne 256)
@@ -107,7 +98,6 @@ int main() {
           b2 = IS_box[pairs_2[c].ciphertext[i] ^ k_byte] ^ b2;
         }
         if (b1 == 0 && b2 == 0) {
-          fprintf(stdout, "i=%d, k_bye=%zx\n", i, k_byte);
           key_guess[i] = (uchar)k_byte;
         }
       }
@@ -120,8 +110,14 @@ int main() {
     /***************************************/
     /*       Attack on the last key        */
     /***************************************/
-    PrintByteArray(key_guess, CELLS, (const uchar *)"key 4");
-    RewindKey(key_guess, 4, 1);
+    fprintf(stdout, "Key rewinding...\n");
+    RewindKey(key_guess, 4, 0);
+    PrintByteArray(key_guess, CELLS, (const uchar *)"key 0");
+    if (IsSameState(key_guess, round_keys[0])) {
+      fprintf(stdout, "\n===========SUCCESS===========\n");
+    } else {
+      fprintf(stdout, "\n===========ECHEC===========\n");
+    }
   }
 
   if (AES_ROUNDS == 5 && ATTACK && TYPE == 1) {
@@ -158,7 +154,7 @@ int main() {
 
     fprintf(stdout, "plaintext/ciphertext generation...\n");
     // on definit un nombre de lambda-set
-    size_t nbr_lset = 5;
+    size_t nbr_lset = 4;
 
     // on initilise le tableau des lambda-sets
     plain_cipher **pairs_array = malloc(nbr_lset * sizeof(plain_cipher *));
@@ -444,9 +440,12 @@ int main() {
   outloops4:
     printf("Let's find the key ! \n");
     RewindKey(key_guess_5, 5, 0);
+    PrintByteArray(key_guess_5, CELLS, (const uchar *)"key_guess_0");
 
-    if (IsSameState(key_guess_5, KEY)) {
-      fprintf(stdout, "SUCCESS\n");
+    if (IsSameState(key_guess_5, round_keys[0])) {
+      fprintf(stdout, "\n===========SUCCESS===========\n");
+    } else {
+      fprintf(stdout, "\n===========ECHEC===========\n");
     }
   }
 
@@ -640,8 +639,10 @@ int main() {
     RewindKey(key_guess_5, 5, 0);
     PrintByteArray(key_guess_5, CELLS, (const uchar *)"key_guess_0");
 
-    if (IsSameState(key_guess_5, KEY)) {
-      fprintf(stdout, "SUCCESS\n");
+    if (IsSameState(key_guess_5, round_keys[0])) {
+      fprintf(stdout, "\n===========SUCCESS===========\n");
+    } else {
+      fprintf(stdout, "\n===========ECHEC===========\n");
     }
   }
 
