@@ -3,9 +3,13 @@
 // to enable an attack
 #define ATTACK 1
 #define TEST 0
+#define RANDOM 1
 
-uchar KEY[16] = {0xd0, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
-                 0xf9, 0x25, 0x0c, 0x0c, 0xa8, 0x89, 0xc8, 0xa6};
+uchar KEY0[16] = {0xd0, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
+                  0xf9, 0x25, 0x0c, 0x0c, 0xa8, 0x89, 0xc8, 0xa6};
+
+uchar KEY1[16] = {0x54, 0x73, 0x20, 0x67, 0x68, 0x20, 0x4b, 0x20,
+                  0x61, 0x6d, 0x75, 0x46, 0x74, 0x79, 0x6e, 0x75};
 
 uchar KEY2[16] = {0x50, 0xc9, 0xe1, 0x30, 0x14, 0xe3, 0xff, 0x63,
                   0xde, 0xad, 0xbe, 0xef, 0xf9, 0x89, 0xc8, 0xa6};
@@ -25,6 +29,9 @@ uchar KEY6[16] = {0x11, 0x22, 0x33, 0xDE, 0xAD, 0xBE, 0xEF, 0xCA,
 uchar KEY7[16] = {0x11, 0xAA, 0x33, 0xDE, 0xAD, 0xBE, 0xEF, 0xCA,
                   0xDA, 0xFE, 0xEE, 0x56, 0xFF, 0x12, 0x46, 0x09};
 
+uchar KEY8[16] = {0x83, 0x57, 0x73, 0xAF, 0xB5, 0x4B, 0x3C, 0x67,
+                  0xB0, 0x2D, 0xB3, 0x7C, 0xD2, 0x8B, 0x52, 0x0F};
+
 // key : d0c9e1b614ee3f63f9250c0ca889c8a6
 
 int main() {
@@ -33,8 +40,17 @@ int main() {
   /*        Keys creation        */
   /*******************************/
 
-  // to generate roundkeys with verbose =
+  // to generate roundkeys with verbose = 1
+  uchar KEY[CELLS];
 
+  if (RANDOM) {
+    for (size_t i = 0; i < CELLS; i++) {
+      KEY[i] = (uchar)RandInt(256);
+    }
+  } else {
+    // to default
+    memcpy(KEY, KEY8, CELLS);
+  }
   uchar **round_keys = GenRoundkeys(KEY, 1);
 
   if (ATTACK) {
@@ -101,7 +117,7 @@ int main() {
 
         for (size_t key_guess_2 = 0; key_guess_2 < 256; key_guess_2++) {
 
-          for (size_t key_guess_3 = 0; key_guess_3 < 1; key_guess_3++) {
+          for (size_t key_guess_3 = 0; key_guess_3 < 256; key_guess_3++) {
 
             size_t j = 0;
             for (j = 0; j < size_S; j += 2) {
@@ -111,8 +127,8 @@ int main() {
               key_guess[4] = key_guess_0 ^ i;
               // key_guess[10] = 0x0c;
               key_guess[8] = key_guess_2;
-              key_guess[12] = 0xa6;
-              // key_guess[12] = key_guess_3;
+              // key_guess[12] = (round_keys[0])[15];
+              key_guess[12] = key_guess_3;
 
               if (ComputeVerif(S[j], key_guess) !=
                   ComputeVerif(S[j + 1], key_guess)) {
@@ -185,7 +201,7 @@ int main() {
     if (IsSameState(key_guess_5, round_keys[0])) {
       fprintf(stdout, "\n===========SUCCESS===========\n");
     } else {
-      fprintf(stdout, "\n===========ECHEC===========\n");
+      fprintf(stdout, "\n===========FAILED===========\n");
     }
   }
 

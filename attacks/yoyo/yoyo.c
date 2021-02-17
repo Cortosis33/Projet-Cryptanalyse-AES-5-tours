@@ -164,7 +164,7 @@ void FindKeyFromDiag(plain *lambdset0, plain *lambdset1, uchar *key_guess_5) {
   for (size_t index_key_5 = 0; index_key_5 < CELLS; index_key_5++) {
 
     // on genere le premier octet de la cle 5
-    for (size_t key_0 = index_key_5; key_0 < 256; key_0++) {
+    for (size_t key_0 = 0; key_0 < 256; key_0++) {
 
       key_guess_5[index_key_5] = key_0;
 
