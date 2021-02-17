@@ -45,3 +45,5 @@ void PrintSContent(couple_array S);
 uchar MixColOneByte(uchar *state);
 uchar ComputeVerif(uchar *state, uchar *key_guess);
 bool DiagEqual(uchar *state0, uchar *state1);
+
+void FindKeyFromDiag(plain *lambdset0, plain *lambdset1, uchar *key_guess_5);

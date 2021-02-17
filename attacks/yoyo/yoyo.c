@@ -152,3 +152,53 @@ bool DiagEqual(uchar *state0, uchar *state1) {
   }
   return FALSE;
 }
+
+// avant d'executer cette fonction, il faut initialiser
+// les lambda sets
+void FindKeyFromDiag(plain *lambdset0, plain *lambdset1, uchar *key_guess_5) {
+  fprintf(stdout, "\n### K5 finding... ###\n");
+  uchar b0 = 0;
+  uchar b1 = 0;
+  uchar *ciphertext;
+  // on determine tous les octets de K5 :
+  for (size_t index_key_5 = 0; index_key_5 < CELLS; index_key_5++) {
+
+    // on genere le premier octet de la cle 5
+    for (size_t key_0 = index_key_5; key_0 < 256; key_0++) {
+
+      key_guess_5[index_key_5] = key_0;
+
+      // on initilise le tableau b
+      b0 = 0;
+      b1 = 0;
+
+      for (size_t j = 0; j < NBR_PAIRS; j++) {
+        ciphertext = (lambdset0)[j].plaintext;
+
+        // on somme les valeurs des tableaux et des chiffrés
+        b0 = IS_box[ciphertext[index_key_5] ^ key_guess_5[index_key_5]] ^ b0;
+      }
+
+      for (size_t j = 0; j < NBR_PAIRS; j++) {
+        ciphertext = (lambdset1)[j].plaintext;
+
+        // on somme les valeurs des tableaux et des chiffrés
+        b1 = IS_box[ciphertext[index_key_5] ^ key_guess_5[index_key_5]] ^ b1;
+      }
+
+      if (b0 == 0 && b1 == 0) {
+        goto outloops2_type2;
+      }
+    }
+
+  outloops2_type2:
+    /************** affichage ***************/
+    PrintProgress(1.0 * index_key_5 / 15);
+    /****************************************/
+  }
+  PrintByteArray(key_guess_5, CELLS, (const uchar *)"\nkey_guess_5");
+  printf("\nLet's find the key ! \n");
+
+  RewindKey(key_guess_5, 5, 0);
+  PrintByteArray(key_guess_5, CELLS, (const uchar *)"key_guess_0");
+}

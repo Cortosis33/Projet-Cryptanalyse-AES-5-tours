@@ -101,7 +101,7 @@ int main() {
 
         for (size_t key_guess_2 = 0; key_guess_2 < 256; key_guess_2++) {
 
-          for (size_t key_guess_3 = 0; key_guess_3 < 256; key_guess_3++) {
+          for (size_t key_guess_3 = 0; key_guess_3 < 1; key_guess_3++) {
 
             size_t j = 0;
             for (j = 0; j < size_S; j += 2) {
@@ -111,8 +111,8 @@ int main() {
               key_guess[4] = key_guess_0 ^ i;
               // key_guess[10] = 0x0c;
               key_guess[8] = key_guess_2;
-              // key_guess[12] = 0xa6;
-              key_guess[12] = key_guess_3;
+              key_guess[12] = 0xa6;
+              // key_guess[12] = key_guess_3;
 
               if (ComputeVerif(S[j], key_guess) !=
                   ComputeVerif(S[j + 1], key_guess)) {
@@ -147,7 +147,42 @@ int main() {
     }
     free(S);
 
-    if (DiagEqual(KG0, round_keys[0])) {
+    // on cherche K0
+    // on genère 2 lambda sets
+    for (size_t i = 0; i < NBR_PAIRS; i++) {
+      for (size_t j = 0; j < CELLS; j++) {
+        pset_0[i].plaintext[j] = 0;
+        pset_1[i].plaintext[j] = 0;
+      }
+      pset_0[i].plaintext[0] = i;
+      pset_1[i].plaintext[4] = i;
+    }
+
+    // on applique les fonctions au plaintext
+    for (size_t j = 0; j < NBR_PAIRS; j++) {
+      uchar *ciphertext0 = pset_0[j].plaintext;
+      IMixColumns(ciphertext0);
+      IShiftRows(ciphertext0);
+      ISubBytes(ciphertext0);
+      AddRoundKey(ciphertext0, KG0);
+      Encryption(ciphertext0, round_keys);
+
+      uchar *ciphertext1 = pset_1[j].plaintext;
+      IMixColumns(ciphertext1);
+      IShiftRows(ciphertext1);
+      ISubBytes(ciphertext1);
+      AddRoundKey(ciphertext1, KG0);
+      Encryption(ciphertext1, round_keys);
+    }
+
+    uchar key_guess_5[16];
+    for (size_t i = 0; i < CELLS; i++) {
+      key_guess_5[i] = 0;
+    }
+
+    FindKeyFromDiag(pset_0, pset_1, key_guess_5);
+
+    if (IsSameState(key_guess_5, round_keys[0])) {
       fprintf(stdout, "\n===========SUCCESS===========\n");
     } else {
       fprintf(stdout, "\n===========ECHEC===========\n");
