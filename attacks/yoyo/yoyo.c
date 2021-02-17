@@ -155,11 +155,37 @@ bool DiagEqual(uchar *state0, uchar *state1) {
 
 // avant d'executer cette fonction, il faut initialiser
 // les lambda sets
-void FindKeyFromDiag(plain *lambdset0, plain *lambdset1, uchar *key_guess_5) {
-  fprintf(stdout, "\n### K5 finding... ###\n");
-  uchar b0 = 0;
-  uchar b1 = 0;
+void FindKeyFromDiag(uchar *key_guess_0, uchar *key_guess_5,
+                     uchar **round_keys) {
+  size_t nbr_lset = 3;
+
+  plain **lset_array = (plain **)malloc(nbr_lset * sizeof(plain *));
+  for (size_t i = 0; i < nbr_lset; i++) {
+    lset_array[i] = (plain *)malloc(256 * sizeof(plain));
+  }
+  plain *lambdset;
   uchar *ciphertext;
+  // on genère 2 lambda sets
+  for (size_t lset = 0; lset < nbr_lset; lset++) {
+    lambdset = lset_array[lset];
+    for (size_t i = 0; i < NBR_PAIRS; i++) {
+      for (size_t j = 0; j < CELLS; j++) {
+        lambdset[i].plaintext[j] = 0;
+      }
+      lambdset[i].plaintext[4 * lset] = i;
+
+      ciphertext = lambdset[i].plaintext;
+      IMixColumns(ciphertext);
+      IShiftRows(ciphertext);
+      ISubBytes(ciphertext);
+      AddRoundKey(ciphertext, key_guess_0);
+      Encryption(ciphertext, round_keys);
+    }
+  }
+
+  fprintf(stdout, "\n### K5 finding... ###\n");
+  uchar b_array[nbr_lset];
+
   // on determine tous les octets de K5 :
   for (size_t index_key_5 = 0; index_key_5 < CELLS; index_key_5++) {
 
@@ -169,24 +195,23 @@ void FindKeyFromDiag(plain *lambdset0, plain *lambdset1, uchar *key_guess_5) {
       key_guess_5[index_key_5] = key_0;
 
       // on initilise le tableau b
-      b0 = 0;
-      b1 = 0;
-
-      for (size_t j = 0; j < NBR_PAIRS; j++) {
-        ciphertext = (lambdset0)[j].plaintext;
-
-        // on somme les valeurs des tableaux et des chiffrés
-        b0 = IS_box[ciphertext[index_key_5] ^ key_guess_5[index_key_5]] ^ b0;
+      for (size_t lset = 0; lset < nbr_lset; lset++) {
+        b_array[lset] = 0;
       }
 
-      for (size_t j = 0; j < NBR_PAIRS; j++) {
-        ciphertext = (lambdset1)[j].plaintext;
+      for (size_t lset = 0; lset < nbr_lset; lset++) {
+        lambdset = lset_array[lset];
+        for (size_t j = 0; j < NBR_PAIRS; j++) {
+          ciphertext = (lambdset)[j].plaintext;
 
-        // on somme les valeurs des tableaux et des chiffrés
-        b1 = IS_box[ciphertext[index_key_5] ^ key_guess_5[index_key_5]] ^ b1;
+          // on somme les valeurs des tableaux et des chiffrés
+          b_array[lset] =
+              IS_box[ciphertext[index_key_5] ^ key_guess_5[index_key_5]] ^
+              b_array[lset];
+        }
       }
 
-      if (b0 == 0 && b1 == 0) {
+      if (AllZeroArray(b_array, nbr_lset)) {
         goto outloops2_type2;
       }
     }
@@ -196,6 +221,12 @@ void FindKeyFromDiag(plain *lambdset0, plain *lambdset1, uchar *key_guess_5) {
     PrintProgress(1.0 * index_key_5 / 15);
     /****************************************/
   }
+
+  for (size_t lset = 0; lset < nbr_lset; lset++) {
+    free(lset_array[lset]);
+  }
+  free(lset_array);
+
   PrintByteArray(key_guess_5, CELLS, (const uchar *)"\nkey_guess_5");
   printf("\nLet's find the key ! \n");
 

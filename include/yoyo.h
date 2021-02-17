@@ -46,4 +46,5 @@ uchar MixColOneByte(uchar *state);
 uchar ComputeVerif(uchar *state, uchar *key_guess);
 bool DiagEqual(uchar *state0, uchar *state1);
 
-void FindKeyFromDiag(plain *lambdset0, plain *lambdset1, uchar *key_guess_5);
+void FindKeyFromDiag(uchar *key_guess_0, uchar *key_guess_5,
+                     uchar **round_keys);

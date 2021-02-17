@@ -39,6 +39,8 @@ def test_game_time(n):
         if "===========SUCCESS===========" in 'STDOUT:{}'.format(stdout):
             nbr_succ=nbr_succ+1
         elif "===========FAILED===========" in 'STDOUT:{}'.format(stdout):
+            print(stdout.decode('ascii'))
+            exit()
             nbr_fail=nbr_fail+1
 
         bar.update(i+1)

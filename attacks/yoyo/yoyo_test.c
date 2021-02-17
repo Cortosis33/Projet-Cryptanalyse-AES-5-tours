@@ -29,8 +29,8 @@ uchar KEY6[16] = {0x11, 0x22, 0x33, 0xDE, 0xAD, 0xBE, 0xEF, 0xCA,
 uchar KEY7[16] = {0x11, 0xAA, 0x33, 0xDE, 0xAD, 0xBE, 0xEF, 0xCA,
                   0xDA, 0xFE, 0xEE, 0x56, 0xFF, 0x12, 0x46, 0x09};
 
-uchar KEY8[16] = {0x83, 0x57, 0x73, 0xAF, 0xB5, 0x4B, 0x3C, 0x67,
-                  0xB0, 0x2D, 0xB3, 0x7C, 0xD2, 0x8B, 0x52, 0x0F};
+uchar KEY8[16] = {0x38, 0xD1, 0x0B, 0x0D, 0x75, 0xA3, 0xA0, 0x46,
+                  0xA1, 0x66, 0x7C, 0x38, 0xA2, 0x53, 0x25, 0x51};
 
 // key : d0c9e1b614ee3f63f9250c0ca889c8a6
 
@@ -164,45 +164,24 @@ int main() {
     free(S);
 
     // on cherche K0
-    // on genère 2 lambda sets
-    for (size_t i = 0; i < NBR_PAIRS; i++) {
-      for (size_t j = 0; j < CELLS; j++) {
-        pset_0[i].plaintext[j] = 0;
-        pset_1[i].plaintext[j] = 0;
-      }
-      pset_0[i].plaintext[0] = i;
-      pset_1[i].plaintext[4] = i;
-    }
-
-    // on applique les fonctions au plaintext
-    for (size_t j = 0; j < NBR_PAIRS; j++) {
-      uchar *ciphertext0 = pset_0[j].plaintext;
-      IMixColumns(ciphertext0);
-      IShiftRows(ciphertext0);
-      ISubBytes(ciphertext0);
-      AddRoundKey(ciphertext0, KG0);
-      Encryption(ciphertext0, round_keys);
-
-      uchar *ciphertext1 = pset_1[j].plaintext;
-      IMixColumns(ciphertext1);
-      IShiftRows(ciphertext1);
-      ISubBytes(ciphertext1);
-      AddRoundKey(ciphertext1, KG0);
-      Encryption(ciphertext1, round_keys);
-    }
 
     uchar key_guess_5[16];
     for (size_t i = 0; i < CELLS; i++) {
       key_guess_5[i] = 0;
     }
 
-    FindKeyFromDiag(pset_0, pset_1, key_guess_5);
+    FindKeyFromDiag(KG0, key_guess_5, round_keys);
 
     if (IsSameState(key_guess_5, round_keys[0])) {
       fprintf(stdout, "\n===========SUCCESS===========\n");
     } else {
       fprintf(stdout, "\n===========FAILED===========\n");
     }
+    // if (DiagEqual(KG0, round_keys[0])) {
+    //   fprintf(stdout, "\n===========SUCCESS===========\n");
+    // } else {
+    //   fprintf(stdout, "\n===========FAILED===========\n");
+    // }
   }
 
   if (TEST) {
