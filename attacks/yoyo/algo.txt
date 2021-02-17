@@ -1,0 +1,188 @@
+
+chiffrement & dechiffrement variant :
+
+
+
+
+
+implementation :
+
+avant de parler de l'implementation de l'alforithme, nous allons
+aborder quelques autre fonctions necessaires:
+
+creation des ensembles GenPlaintexts_yoyo
+
+le chiffrement/dechiffrement variant EncryptionExp
+
+SimpleSwapCol
+
+
+p0            p1
+__ __ __ __     1 __ __ __
+ i __ __ __   1+i __ __ __
+__ __ __ __    __ __ __ __
+__ __ __ __    __ __ __ __
+
+
+algo 1 :
+
+on a deux psets pset0 et pset1
+
+pour i de 0 à 255:
+  on définit S une liste de couple
+  pour j de 0 à 5:
+    p0<-pset0[i], p1<-pset1[i]
+    c0 <- EncryptionExp(p0), c1 <- EncryptionExp(p1)
+    c0',c1' <- SimpleSwap(c0,c1)
+    p0' <- DecryptionExp(c0'), p1' <- DecryptionExp(c1')
+    p0,p1 <- SimpleSwap(p0',p1')
+    on ajoute (p0,p1) à S
+  on definit k une clé
+  pour a de 0 à 255
+    pour b de 0 à 255
+      pour c de 0 à 255
+        k[0]=a
+        k[5]=a+i
+        k[10]=b
+        k[15]=c
+        pour tous les couples de S
+          k' <- ShiftRows(k)
+          p0' <- AddRoundKey(p0,k'), p1' <- AddRoundKey(p1,k')
+          p0' <- SubBytes(p0'), p1' <- SubBytes(p1')
+          p0' <- MixColumns(p0'), p1' <- MixColumns(p0')
+          si p0'+p1' = 0
+            on a trouvé k
+
+algo 2 :
+
+on a deux psets pset0 et pset1
+
+pour i de 0 à 255:
+  on définit S une liste de couple
+  pour j de 0 à 5:
+    p0<-pset0[i], p1<-pset1[i]
+    c0 <- EncryptionExp(p0), c1 <- EncryptionExp(p1)
+    c0',c1' <- SimpleSwap(c0,c1)
+    p0' <- DecryptionExp(c0'), p1' <- DecryptionExp(c1')
+    p0,p1 <- SimpleSwap(p0',p1')
+    on ajoute (p0,p1) à S
+  on definit k une clé
+  pour a de 0 à 255
+    pour b de 0 à 255
+      pour c de 0 à 255
+        k[0]=a
+        k[5]=a+i
+        k[10]=b
+        k[15]=c
+        pour tous les couples de S
+          k' <- ShiftRows(k)
+          si ComputeVerif(p0,k) = ComputeVerif(p1,k)
+            on a trouvé k
+
+
+
+
+On applique le ShiftRows sur la clé :
+
+K0 __ __ __               K0 __ __ __
+__ K1 __ __   ShiftRows   K1 __ __ __
+__ __ K2 __      =>       K2 __ __ __
+__ __ __ K3               K3 __ __ __
+
+On applique la verification :
+
+p0 :               p1 :                        p0' :             p1' :
+
+CC' __ __ __       CC __ __ __                 CC __ __ __       CC' __ __ __
+CC' __ __ __       CC __ __ __    SimpleSwap   CC __ __ __       CC' __ __ __
+CC' __ __ __       CC __ __ __        =>       CC __ __ __       CC' __ __ __
+CC' __ __ __       CC __ __ __                 CC __ __ __       CC' __ __ __
+                                                                       |
+                                                                       |
+------------------------------------------------------------------------
+|
+|    AddRoundKey
+|
+|
+
+p0' :             p1' :                        p0' :             p1' :
+
+CC^K0 __ __ __    CC'^K0 __ __ __              BB __ __ __       BB' __ __ __
+CC^K1 __ __ __    CC'^K1 __ __ __   SubBytes   BB __ __ __       BB' __ __ __
+CC^K2 __ __ __    CC'^K2 __ __ __      =>      BB __ __ __       BB' __ __ __
+CC^K3 __ __ __    CC'^K3 __ __ __              BB __ __ __       BB' __ __ __
+
+                                                                       |
+                                                                       |
+------------------------------------------------------------------------
+|
+|    MixColumns
+|
+|
+
+p0' :             p1' :
+
+__ __ __ __       __ __ __ __
+__ __ __ __       __ __ __ __
+AA __ __ __       AA __ __ __
+__ __ __ __       __ __ __ __
+
+On suppose dans ce cas que i est correct et que les premieres colonnes de p0 et p1
+sont différentes
+
+
+S0 :             S1 :
+
+ A  B  C  D       A' B' C' D'     = SimpleSwap(S0,S1) =>   A' B  C  D
+
+
+Optimisation de la verification :
+
+On remarque que lors de la verification, seul le 3 ieme octet de la premiere
+colonne nous interesse. Ainsi, le calcul sur les autres valeurs sont inutile.
+
+avant de varifier l'egalité des deux valeurs, on applique un MixColumns sur les
+deux etats, or, on sais que le MixColumns correspond à un produit matriciel.
+On peut donc se restreindre à calculer uniquement la valeur que nous souhaitons.
+
+MixColumns :
+
+alpha              state
+02 03 01 01        AA BB CC DD         AA' BB' CC' DD'
+01 02 03 01   x    EE FF GG HH    =    EE' FF' GG' HH'
+01 01 02 03        II JJ KK LL         II' JJ' KK' LL'
+03 01 01 02        MM NN OO PP         MM' NN' OO' PP'
+
+
+On a dit precedemment que la valeur que l'on souhaite calculer est le 3 ieme octete
+de la premiere colonne du produit, soit 'II' dans notre cas. Nous aurons donc
+uniquement besoins de la troisième ligne de alpha
+
+on a donc II' = AA + EE + 2*II + 3*MM
+
+Aussi, juste avant le MixColumns, on applique un SubBytes sur toutes les valeurs
+de l'etat, on peut donc aussi reduire ceci uniquement sur la premiere colonne de
+l'état. On arrive au produit vectoriel suivant :
+
+                  Sbox[AA]
+                  Sbox[EE]
+                  Sbox[II]
+(01 01 02 03)  x  Sbox[JJ]
+
+Pour finir, on peut appliquer un xor avec la clé directement sur la premiere
+colonne :
+
+                  Sbox[AA + K0]
+                  Sbox[EE + K1]
+                  Sbox[II + K2]
+(01 01 02 03)  x  Sbox[JJ + K3]
+
+Ainsi, au lieu de parcourir nos etats 3 fois, on applique seulement
+4 xor pour le AddRoundKey contre 16
+4 Sbox pour le SubBytes contre 16
+3 xor et 2 produits pour le MixColumns contre 3*16 xor et 2*16 produits
+
+
+Optimisation des cas de i :
+
+on a vu dans la théorie que suivant la clé k, i in {k+p3,k+p3+z}

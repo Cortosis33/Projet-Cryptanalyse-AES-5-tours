@@ -34,7 +34,8 @@ int main() {
   /*******************************/
 
   // to generate roundkeys with verbose =
-  uchar **round_keys = GenRoundkeys(KEY, 0);
+
+  uchar **round_keys = GenRoundkeys(KEY, 1);
 
   if (ATTACK) {
     fprintf(stdout, "Yoyo 5 rounds AES attack\n");
@@ -155,13 +156,15 @@ int main() {
 
   if (TEST) {
 
-    size_t i = 63;
+    size_t i = 62;
 
     uchar p0[16] = {0x00, 0x00, 0x00, 0x00, i,    0x00, 0x00, 0x00,
                     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
     uchar p1[16] = {1,    0x00, 0x00, 0x00, 1 ^ i, 0x00, 0x00, 0x00,
                     0x00, 0x00, 0x00, 0x00, 0x00,  0x00, 0x00, 0x00};
+
+    PrintByteArray(p0, CELLS, (uchar *)"p0");
 
     EncryptionExp(p0, round_keys);
     EncryptionExp(p1, round_keys);
@@ -178,43 +181,81 @@ int main() {
 
     uchar key_guess[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    ShiftRows(KEY);
+    AddRoundKey(p0, KEY);
+    AddRoundKey(p1, KEY);
+    SubBytes(p0);
+    SubBytes(p1);
+    MixColumns(p0);
+    MixColumns(p1);
 
-    key_guess[0] = 0xd0;
-    key_guess[5] = 0xd0 ^ i;
-    key_guess[10] = 0x0c;
-    key_guess[15] = 0xa6;
+    PrintByteArray(p0, CELLS, (uchar *)"p0");
+    PrintByteArray(p1, CELLS, (uchar *)"p1");
 
-    // commence
+    ShiftRows(p0);
 
-    uchar tmp0[16];
-    uchar tmp1[16];
-
-    uchar key_tmp0[16];
-    uchar key_tmp1[16];
-
-    // on copie les etats p0, p1
-    memcpy(tmp0, p0, CELLS);
-    memcpy(tmp1, p1, CELLS);
-    memcpy(key_tmp0, key_guess, CELLS);
-    memcpy(key_tmp1, key_guess, CELLS);
-
-    // on applique le ShiftRows sur la clé ShiftRows(key_tmp0);
-    ShiftRows(key_tmp0);
-    AddRoundKey(tmp0, key_tmp0);
-    SubBytes(tmp0);
+    // key_guess[0] = 0xd0;
+    // key_guess[5] = 0xd0 ^ i;
+    // key_guess[10] = 0x0c;
+    // key_guess[15] = 0xa6;
+    //
+    // // commence
+    //
+    // uchar tmp0[16];
+    // uchar tmp1[16];
+    //
+    // uchar key_tmp0[16];
+    // uchar key_tmp1[16];
+    //
+    // // on copie les etats p0, p1
+    // memcpy(tmp0, p0, CELLS);
+    // memcpy(tmp1, p1, CELLS);
+    // memcpy(key_tmp0, key_guess, CELLS);
+    // memcpy(key_tmp1, key_guess, CELLS);
+    //
+    // // on applique le ShiftRows sur la clé ShiftRows(key_tmp0);
+    // ShiftRows(key_tmp0);
+    // AddRoundKey(tmp0, key_tmp0);
+    // SubBytes(tmp0);
+    // // MixColumns(tmp0);
+    //
+    // ShiftRows(key_tmp1);
+    // AddRoundKey(tmp1, key_tmp1);
+    // SubBytes(tmp1);
+    // // MixColumns(tmp1);
+    //
+    // AddRoundKey(tmp0, tmp1);
+    //
     // MixColumns(tmp0);
-
-    ShiftRows(key_tmp1);
-    AddRoundKey(tmp1, key_tmp1);
-    SubBytes(tmp1);
-    // MixColumns(tmp1);
-
-    AddRoundKey(tmp0, tmp1);
-
-    MixColumns(tmp0);
-
-    PrintByteArray(tmp0, CELLS, (uchar *)"tmp0");
+    //
+    // PrintByteArray(tmp0, CELLS, (uchar *)"tmp0");
   }
+
+  /*
+
+pour la clé :
+si on a le bon i :
+p0:
+        00 00 00 00
+         i 00 00 00
+        00 00 00 00
+        00 00 00 00
+
+  p1:
+         1 00 00 00
+       i^1 00 00 00
+        00 00 00 00
+        00 00 00 00
+
+        on applique le chiffrement :
+
+        XX 00 00 00
+         i 00 00 00
+        00 00 00 00
+        00 00 00 00
+
+
+  */
 
   // methode 1
   // // on alloue dans la clé

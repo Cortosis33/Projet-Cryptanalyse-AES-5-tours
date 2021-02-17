@@ -116,7 +116,7 @@ int main() {
     if (IsSameState(key_guess, round_keys[0])) {
       fprintf(stdout, "\n===========SUCCESS===========\n");
     } else {
-      fprintf(stdout, "\n===========ECHEC===========\n");
+      fprintf(stdout, "\n===========FAILED===========\n");
     }
   }
 
@@ -445,7 +445,7 @@ int main() {
     if (IsSameState(key_guess_5, round_keys[0])) {
       fprintf(stdout, "\n===========SUCCESS===========\n");
     } else {
-      fprintf(stdout, "\n===========ECHEC===========\n");
+      fprintf(stdout, "\n===========FAILED===========\n");
     }
   }
 
@@ -642,7 +642,7 @@ int main() {
     if (IsSameState(key_guess_5, round_keys[0])) {
       fprintf(stdout, "\n===========SUCCESS===========\n");
     } else {
-      fprintf(stdout, "\n===========ECHEC===========\n");
+      fprintf(stdout, "\n===========FAILED===========\n");
     }
   }
 
