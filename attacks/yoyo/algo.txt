@@ -186,3 +186,24 @@ Ainsi, au lieu de parcourir nos etats 3 fois, on applique seulement
 Optimisation des cas de i :
 
 on a vu dans la théorie que suivant la clé k, i in {k+p3,k+p3+z}
+
+type 1: 5 P0,P1
+100 tests
+100.0 % of success
+0.0 % of fail
+2416.719302415848 seconde
+24.16719302415848 secondes en moyenne
+
+type 2: 5 P0,P1
+100 tests
+93.0 % of success
+7.0 % of fail
+1673.6454255580902 seconde
+16.736454255580902 secondes en moyenne
+
+type 2: 6 P0,P1
+100 tests
+99.0 % of success
+1.0 % of fail
+2048.6701765060425 seconde
+20.486701765060424 secondes en moyenne

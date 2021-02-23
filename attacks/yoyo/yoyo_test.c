@@ -29,8 +29,12 @@ uchar KEY6[16] = {0x11, 0x22, 0x33, 0xDE, 0xAD, 0xBE, 0xEF, 0xCA,
 uchar KEY7[16] = {0x11, 0xAA, 0x33, 0xDE, 0xAD, 0xBE, 0xEF, 0xCA,
                   0xDA, 0xFE, 0xEE, 0x56, 0xFF, 0x12, 0x46, 0x09};
 
+// key needs 3 lambda-set
 uchar KEY8[16] = {0x38, 0xD1, 0x0B, 0x0D, 0x75, 0xA3, 0xA0, 0x46,
                   0xA1, 0x66, 0x7C, 0x38, 0xA2, 0x53, 0x25, 0x51};
+
+uchar KEY9[16] = {0x5D, 0x72, 0xF4, 0xDD, 0xA4, 0xF6, 0x31, 0x50,
+                  0x0B, 0xF2, 0x1C, 0xA8, 0x6F, 0xFD, 0xC9, 0x55};
 
 // key : d0c9e1b614ee3f63f9250c0ca889c8a6
 
@@ -49,7 +53,7 @@ int main() {
     }
   } else {
     // to default
-    memcpy(KEY, KEY8, CELLS);
+    memcpy(KEY, KEY0, CELLS);
   }
   uchar **round_keys = GenRoundkeys(KEY, 1);
 
@@ -69,7 +73,7 @@ int main() {
     uchar *p1;
 
     // on initialise la liste S
-    size_t size_S = 2 * 5;
+    size_t size_S = 2 * 6;
     uchar **S = (uchar **)malloc(size_S * sizeof(uchar *));
     for (size_t k = 0; k < size_S; k++) {
       S[k] = (uchar *)malloc(16 * sizeof(uchar));
@@ -113,7 +117,7 @@ int main() {
       uchar key_guess[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-      for (size_t key_guess_0 = 1; key_guess_0 < 256; key_guess_0++) {
+      for (size_t key_guess_0 = 0; key_guess_0 < 256; key_guess_0++) {
 
         for (size_t key_guess_2 = 0; key_guess_2 < 256; key_guess_2++) {
 
@@ -125,7 +129,7 @@ int main() {
               // on alloue dans la clé
               key_guess[0] = key_guess_0;
               key_guess[4] = key_guess_0 ^ i;
-              // key_guess[10] = 0x0c;
+              // key_guess[8] = (round_keys[0])[10];
               key_guess[8] = key_guess_2;
               // key_guess[12] = (round_keys[0])[15];
               key_guess[12] = key_guess_3;
@@ -141,6 +145,7 @@ int main() {
                     ComputeVerif(S[j + 1], key_guess)) {
                   break;
                 }
+                // break;
               }
             }
             if (j == size_S) {
@@ -186,43 +191,55 @@ int main() {
 
   if (TEST) {
 
-    size_t i = 62;
+    // size_t i = 62;
+    //
+    // uchar p0[16] = {0x00, 0x00, 0x00, 0x00, i,    0x00, 0x00, 0x00,
+    //                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    //
+    // uchar p1[16] = {1,    0x00, 0x00, 0x00, 1 ^ i, 0x00, 0x00, 0x00,
+    //                 0x00, 0x00, 0x00, 0x00, 0x00,  0x00, 0x00, 0x00};
+    //
+    // PrintByteArray(p0, CELLS, (uchar *)"p0");
+    //
+    // EncryptionExp(p0, round_keys);
+    // EncryptionExp(p1, round_keys);
+    //
+    // uchar swap0[16];
+    // uchar swap1[16];
+    //
+    // SimpleSwapCol(p0, p1, swap0, swap1);
+    //
+    // DecryptionExp(swap0, round_keys);
+    // DecryptionExp(swap1, round_keys);
+    //
+    // SimpleSwapCol(swap0, swap1, p0, p1);
 
-    uchar p0[16] = {0x00, 0x00, 0x00, 0x00, i,    0x00, 0x00, 0x00,
+    uchar key4[16] = {0x99, 0xbe, 0xd1, 0xc1, 0xeb, 0x0e, 0x0b, 0x42,
+                      0xfb, 0x5c, 0x2b, 0x2a, 0x5c, 0x04, 0x50, 0xfe};
+
+    uchar key0[16] = {0x54, 0x73, 0x20, 0x67, 0x68, 0x20, 0x4b, 0x20,
+                      0x61, 0x6d, 0x75, 0x46, 0x74, 0x79, 0x6e, 0x75};
+
+    uchar **round_keys = GenRoundkeys(key0, 1);
+
+    uchar p0[16] = {0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    // RewindKey(key4, 4, 1);
+    Encryption(p0, round_keys);
 
-    uchar p1[16] = {1,    0x00, 0x00, 0x00, 1 ^ i, 0x00, 0x00, 0x00,
-                    0x00, 0x00, 0x00, 0x00, 0x00,  0x00, 0x00, 0x00};
-
-    PrintByteArray(p0, CELLS, (uchar *)"p0");
-
-    EncryptionExp(p0, round_keys);
-    EncryptionExp(p1, round_keys);
-
-    uchar swap0[16];
-    uchar swap1[16];
-
-    SimpleSwapCol(p0, p1, swap0, swap1);
-
-    DecryptionExp(swap0, round_keys);
-    DecryptionExp(swap1, round_keys);
-
-    SimpleSwapCol(swap0, swap1, p0, p1);
-
-    uchar key_guess[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                           0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-    ShiftRows(KEY);
-    AddRoundKey(p0, KEY);
-    AddRoundKey(p1, KEY);
-    SubBytes(p0);
-    SubBytes(p1);
-    MixColumns(p0);
-    MixColumns(p1);
-
-    PrintByteArray(p0, CELLS, (uchar *)"p0");
-    PrintByteArray(p1, CELLS, (uchar *)"p1");
-
-    ShiftRows(p0);
+    PrintByteArray(p0, CELLS, (uchar *)"k");
+    // ShiftRows(KEY);
+    // AddRoundKey(p0, KEY);
+    // AddRoundKey(p1, KEY);
+    // SubBytes(p0);
+    // SubBytes(p1);
+    // MixColumns(p0);
+    // MixColumns(p1);
+    //
+    // PrintByteArray(p0, CELLS, (uchar *)"p0");
+    // PrintByteArray(p1, CELLS, (uchar *)"p1");
+    //
+    // ShiftRows(p0);
 
     // key_guess[0] = 0xd0;
     // key_guess[5] = 0xd0 ^ i;
