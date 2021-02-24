@@ -2,7 +2,7 @@
 
 ## Structure du code
 
-Le code est structurer comme suit :
+Le code est structuré comme suit :
 * `src` : c'est ici que se trouve l'implémentation du chiffrement AES, ainsi qu'un fichier contenant du code commun aux attaques.
 * `include` : ici, se trouve tous les fichiers `.h` des fichiers `.c`
 * `attacks` : dans ce dossier se trouve les deux attaques implémentés (pour yoyo, il y a deux implémentations basé sur le même algorithme mais codé différemment)
