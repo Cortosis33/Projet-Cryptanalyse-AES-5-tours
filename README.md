@@ -3,7 +3,7 @@
 ## Structure du code
 
 Le code est structurer comme suit :
-* `src` : c'est ici que se trouve l'implémentation du chiffrement AES ainsi, qu'un fichier contenant du code commun aux attaques.
+* `src` : c'est ici que se trouve l'implémentation du chiffrement AES, ainsi qu'un fichier contenant du code commun aux attaques.
 * `include` : ici, se trouve tous les fichiers `.h` des fichiers `.c`
 * `attacks` : dans ce dossier se trouve les deux attaques implémentés (pour yoyo, il y a deux implémentations basé sur le même algorithme mais codé différemment)
 
@@ -26,18 +26,18 @@ ou
 Par défaut, l'attaque s'effectuera sur une clé aléatoire. Si vous changer ce paramètre :
 
 ```c
-#define RANDOM 1
+#define RANDOM 0
 ```
 
 la clé par défaut deviendra `K0`
 
 ### Yoyo
 
-De meme que pour l'attaque Square, l'attaque s'effectuera sur une clé aléatoire.
+De même que pour l'attaque Square, l'attaque s'effectuera sur une clé aléatoire.
 
 ## Execution du code
 
-Pour executer l'attaque Square, il vous suffit de vous rendre dans le dossier correspondant :
+Pour exécuter l'attaque Square, il vous suffit de vous rendre dans le dossier correspondant :
 
 ```bash
 cd attack/square
@@ -71,4 +71,4 @@ Les deux attaques carrées ont été modifiés pour être plus rapide.
 
 * L'attaque Square de type 1 est réglé pour générer seulement 2 octets sur 5 par parties (4).
 * L'attaque Square de type 2 est réglé pour générer seulement 2 octets sur 5.
-* L'attaque yoyo quand à elle n'est pas réglé pour être plus rapide 
+* L'attaque yoyo quand à elle n'est pas réglé pour être plus rapide
