@@ -23,7 +23,7 @@ ou
 #define TYPE 2
 ```
 
-Par défaut, l'attaque s'effectuera sur une clé aléatoire. Si vous changer ce parametre :
+Par défaut, l'attaque s'effectuera sur une clé aléatoire. Si vous changer ce paramètre :
 
 ```c
 #define RANDOM 1
@@ -37,13 +37,25 @@ De meme que pour l'attaque Square, l'attaque s'effectuera sur une clé aléatoir
 
 ## Execution du code
 
-Pour executer l'attaque Square, il vous suffit de faire :
+Pour executer l'attaque Square, il vous suffit de vous rendre dans le dossier correspondant :
 
 ```bash
 cd attack/square
+```
+
+de compiler :
+
+```bash
 make
+```
+
+et d'executer :
+
+```bash
 ./square_test
 ```
+
+
 
 Pour l'attaque yoyo, les commandes sont les memes :
 
@@ -52,3 +64,11 @@ cd attack/yoyo
 make
 ./yoyo_test
 ```
+
+## Notes sur l'implémentation des attaques
+
+Les deux attaques carrées ont été modifiés pour être plus rapide.
+
+* L'attaque Square de type 1 est réglé pour générer seulement 2 octets sur 5 par parties (4).
+* L'attaque Square de type 2 est réglé pour générer seulement 2 octets sur 5.
+* L'attaque yoyo quand à elle n'est pas réglé pour être plus rapide 
