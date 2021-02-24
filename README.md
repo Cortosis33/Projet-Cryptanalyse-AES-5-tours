@@ -7,34 +7,6 @@ Le code est structurer comme suit :
 * `include` : ici, se trouve tous les fichiers `.h` des fichiers `.c`
 * `attacks` : dans ce dossier se trouve les deux attaques implémentés (pour yoyo, il y a deux implémentations basé sur le même algorithme mais codé différemment)
 
-## Parametres
-
-### Square
-
-Pour l'attaque Square, vous pouvez tester les deux types d'attaques. Pour cela, il vous suffit de modifier la constante dans le fichier `attacks/square/square_test.c`:
-
-```c
-#define TYPE 1
-```
-
-ou
-
-```c
-#define TYPE 2
-```
-
-Par défaut, l'attaque s'effectuera sur une clé aléatoire. Si vous changer ce paramètre :
-
-```c
-#define RANDOM 0
-```
-
-la clé par défaut deviendra `K0`
-
-### Yoyo
-
-De même que pour l'attaque Square, l'attaque s'effectuera sur une clé aléatoire.
-
 ## Execution du code
 
 Pour exécuter l'attaque Square, il vous suffit de vous rendre dans le dossier correspondant :
@@ -64,6 +36,34 @@ cd attack/yoyo
 make
 ./yoyo_test
 ```
+
+## Parametres
+
+### Square
+
+Pour l'attaque Square, vous pouvez tester les deux types d'attaques. Pour cela, il vous suffit de modifier la constante dans le fichier `attacks/square/square_test.c`:
+
+```c
+#define TYPE 1
+```
+
+ou
+
+```c
+#define TYPE 2
+```
+
+Par défaut, l'attaque s'effectuera sur une clé aléatoire. Si vous changer ce paramètre :
+
+```c
+#define RANDOM 0
+```
+
+la clé par défaut deviendra `K0`
+
+### Yoyo
+
+De même que pour l'attaque Square, l'attaque s'effectuera sur une clé aléatoire.
 
 ## Notes sur l'implémentation des attaques
 
