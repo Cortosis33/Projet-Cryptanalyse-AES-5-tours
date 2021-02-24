@@ -3,9 +3,9 @@
 ## Structure du code
 
 Le code est structuré comme suit :
-* `src` : c'est ici que se trouve l'implémentation du chiffrement AES, ainsi qu'un fichier contenant du code commun aux attaques.
-* `include` : ici, se trouve tous les fichiers `.h` des fichiers `.c`
-* `attacks` : dans ce dossier se trouve les deux attaques implémentés (pour yoyo, il y a deux implémentations basé sur le même algorithme mais codé différemment)
+* `src` : C'est ici que se trouve l'implémentation du chiffrement AES, ainsi qu'un fichier contenant du code commun aux attaques.
+* `include` : Ici, se trouve tous les fichiers `.h` des fichiers `.c`
+* `attacks` : Dans ce dossier se trouve les deux attaques implémentés (pour yoyo, il y a deux implémentations basé sur le même algorithme mais codé différemment)
 
 ## Execution du code
 
@@ -29,7 +29,7 @@ et d'executer :
 
 
 
-Pour l'attaque yoyo, les commandes sont les memes :
+Pour l'attaque yoyo, les commandes sont les mêmes :
 
 ```bash
 cd attack/yoyo
