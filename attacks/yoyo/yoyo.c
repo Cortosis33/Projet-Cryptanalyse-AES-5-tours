@@ -113,8 +113,8 @@ void GenPlaintexts_yoyo(plain *pset_0, plain *pset_1) {
     }
     pset_0[i].plaintext[4] = i;
 
-    pset_1[i].plaintext[0] = 255;
-    pset_1[i].plaintext[4] = i ^ 255;
+    pset_1[i].plaintext[0] = 1;
+    pset_1[i].plaintext[4] = i ^ 1;
   }
 }
 
