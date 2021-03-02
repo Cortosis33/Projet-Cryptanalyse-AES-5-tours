@@ -39,7 +39,7 @@ bool SimpleSwapCol(uchar *text1, uchar *text2, uchar *Swaptmp, uchar *Swaptmp2);
 bool EncryptionExp(uchar *plaintext, uchar **round_keys);
 bool DecryptionExp(uchar *ciphertext, uchar **round_keys);
 
-void GenPlaintexts_yoyo(plain *pset_0, plain *pset_1);
+void GenPlaintexts_yoyo(plain *pset_0, plain *pset_1, bool yoyo_type);
 void AddList(couple_array *S, uchar *p0, uchar *p1);
 void PrintSContent(couple_array S);
 uchar MixColOneByte(uchar *state);

@@ -104,7 +104,7 @@ bool DecryptionExp(uchar *ciphertext, uchar **round_keys) {
 }
 
 // fonction permettant de creer les deux tableaux des plaintexts
-void GenPlaintexts_yoyo(plain *pset_0, plain *pset_1) {
+void GenPlaintexts_yoyo(plain *pset_0, plain *pset_1, bool yoyo_type) {
   for (size_t i = 0; i < NBR_PAIRS; i++) {
     // on remplie de plaintext de 0
     for (size_t j = 0; j < CELLS; j++) {
@@ -113,8 +113,13 @@ void GenPlaintexts_yoyo(plain *pset_0, plain *pset_1) {
     }
     pset_0[i].plaintext[4] = i;
 
-    pset_1[i].plaintext[0] = 1;
-    pset_1[i].plaintext[4] = i ^ 1;
+    if (yoyo_type) {
+      pset_1[i].plaintext[0] = 255;
+      pset_1[i].plaintext[4] = i ^ 255;
+    } else {
+      pset_1[i].plaintext[0] = 1;
+      pset_1[i].plaintext[4] = i ^ 1;
+    }
   }
 }
 

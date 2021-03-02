@@ -5,7 +5,7 @@
 // to enable test part
 #define TEST 0
 // to enable random mode
-#define RANDOM 1
+#define RANDOM 0
 
 uchar KEY0[16] = {0xd0, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
                   0xf9, 0x25, 0x0c, 0x0c, 0xa8, 0x89, 0xc8, 0xa6};
@@ -43,23 +43,28 @@ uchar KEY9[16] = {0x5D, 0x72, 0xF4, 0xDD, 0xA4, 0xF6, 0x31, 0x50,
 /*******************************************/
 /************** YOYO ATTACK ****************/
 /*******************************************/
-void YoyoAttack(uchar **round_keys) {
+void YoyoAttack(uchar **round_keys, bool yoyo_type) {
 
-  fprintf(stdout, "Yoyo 5 rounds AES attack\n");
+  fprintf(stdout, "############################################################"
+                  "\n################# Yoyo 5 rounds AES attack "
+                  "#################\n#########################################"
+                  "###################\n");
+  fprintf(stdout, "======> Yoyo type : %d\n", yoyo_type);
 
+  // we define the guessing KEY
   uchar KG0[CELLS];
 
-  // on crée les ensembles de clairs :
+  // we define plaintext's sets (lambda-sets)
   plain pset_0[256];
   plain pset_1[256];
 
-  // on genere les clairs
-  GenPlaintexts_yoyo(pset_0, pset_1);
+  // we create plaintexts
+  GenPlaintexts_yoyo(pset_0, pset_1, yoyo_type);
 
   uchar *p0;
   uchar *p1;
 
-  // on initialise la liste S
+  // init S array
   size_t size_S = 2 * 6;
   uchar **S = (uchar **)malloc(size_S * sizeof(uchar *));
   for (size_t k = 0; k < size_S; k++) {
@@ -67,10 +72,15 @@ void YoyoAttack(uchar **round_keys) {
   }
 
   fprintf(stdout, "\n### K0 diagonal finding... ###\n");
-  for (size_t i = 0; i < 256; i += 1) {
 
+  size_t limit = 256;
+  if (yoyo_type) {
+    limit = 128;
+  }
+
+  for (size_t i = 0; i < limit; i += 1) {
     /************** affichage ***************/
-    PrintProgress(1.0 * i / 255);
+    PrintProgress(1.0 * i / (limit - 1));
     /****************************************/
 
     // on pointe p0 et p1
@@ -123,16 +133,19 @@ void YoyoAttack(uchar **round_keys) {
 
             if (ComputeVerif(S[j], key_guess) !=
                 ComputeVerif(S[j + 1], key_guess)) {
-              // si les octets son différents
 
-              // on change la deuxieme valeur de la colonne 1
-              // key_guess[4] = key_guess_0 ^ i ^ 255;
-              //
-              // if (ComputeVerif(S[j], key_guess) !=
-              //     ComputeVerif(S[j + 1], key_guess)) {
-              //   break;
-              // }
-              break;
+              // si les octets son différents
+              if (yoyo_type) {
+                // on change la deuxieme valeur de la colonne 1
+                key_guess[4] = key_guess_0 ^ i ^ 255 ^ 1;
+
+                if (ComputeVerif(S[j], key_guess) !=
+                    ComputeVerif(S[j + 1], key_guess)) {
+                  break;
+                }
+              } else {
+                break;
+              }
             }
           }
           if (j == size_S) {
@@ -191,12 +204,12 @@ int main() {
     }
   } else {
     // to default
-    memcpy(KEY, KEY0, CELLS);
+    memcpy(KEY, KEY1, CELLS);
   }
   uchar **round_keys = GenRoundkeys(KEY, 1);
 
   if (ATTACK) {
-    YoyoAttack(round_keys);
+    YoyoAttack(round_keys, 1);
   }
 
   if (TEST) {
