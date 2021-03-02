@@ -137,7 +137,7 @@ void YoyoAttack(uchar **round_keys, bool yoyo_type) {
               // si les octets son différents
               if (yoyo_type) {
                 // on change la deuxieme valeur de la colonne 1
-                key_guess[4] = key_guess_0 ^ i ^ 255 ^ 1;
+                key_guess[4] = key_guess_0 ^ i ^ 255;
 
                 if (ComputeVerif(S[j], key_guess) !=
                     ComputeVerif(S[j + 1], key_guess)) {
@@ -178,9 +178,9 @@ outloops:
   FindKeyFromDiag(KG0, key_guess_5, round_keys);
 
   if (IsSameState(key_guess_5, round_keys[0])) {
-    fprintf(stdout, "\n===========SUCCESS===========\n");
+    fprintf(stdout, "\n======================SUCCESS======================\n");
   } else {
-    fprintf(stdout, "\n===========FAILED===========\n");
+    fprintf(stdout, "\n======================FAILED======================\n");
   }
   // if (DiagEqual(KG0, round_keys[0])) {
   //   fprintf(stdout, "\n===========SUCCESS===========\n");
@@ -204,7 +204,7 @@ int main() {
     }
   } else {
     // to default
-    memcpy(KEY, KEY1, CELLS);
+    memcpy(KEY, KEY2, CELLS);
   }
   uchar **round_keys = GenRoundkeys(KEY, 1);
 
