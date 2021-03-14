@@ -5,7 +5,7 @@
 // to enable test part
 #define TEST 0
 // to enable random mode
-#define RANDOM 0
+#define RANDOM 1
 
 uchar KEY0[16] = {0xd0, 0xc9, 0xe1, 0xb6, 0x14, 0xee, 0x3f, 0x63,
                   0xf9, 0x25, 0x0c, 0x0c, 0xa8, 0x89, 0xc8, 0xa6};
@@ -44,12 +44,15 @@ uchar KEY9[16] = {0x5D, 0x72, 0xF4, 0xDD, 0xA4, 0xF6, 0x31, 0x50,
 /************** YOYO ATTACK ****************/
 /*******************************************/
 void YoyoAttack(uchar **round_keys, bool yoyo_type) {
-
-  fprintf(stdout, "############################################################"
-                  "\n################# Yoyo 5 rounds AES attack "
-                  "#################\n#########################################"
-                  "###################\n");
-  fprintf(stdout, "======> Yoyo type : %d\n", yoyo_type);
+  // printer
+  if (VERBOSE) {
+    fprintf(stdout,
+            "############################################################"
+            "\n################# Yoyo 5 rounds AES attack "
+            "#################\n#########################################"
+            "###################\n");
+    fprintf(stdout, "======> Yoyo type : %d\n", yoyo_type);
+  }
 
   // we define the guessing KEY
   uchar KG0[CELLS];
@@ -71,7 +74,9 @@ void YoyoAttack(uchar **round_keys, bool yoyo_type) {
     S[k] = (uchar *)malloc(16 * sizeof(uchar));
   }
 
-  fprintf(stdout, "\n### K0 diagonal finding... ###\n");
+  if (VERBOSE) {
+    fprintf(stdout, "\n### K0 diagonal finding... ###\n");
+  }
 
   size_t limit = 256;
   if (yoyo_type) {
